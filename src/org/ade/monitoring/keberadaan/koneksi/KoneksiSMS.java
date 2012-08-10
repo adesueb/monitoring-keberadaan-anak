@@ -28,7 +28,7 @@ public class KoneksiSMS extends BroadcastReceiver implements Koneksi {
 		Lokasi lokasi 		= dataMonitoring.getLokasi();
 		double latitude		= lokasi.getlatitude();
 		double longitude 	= lokasi.getLongitude();
-		Date date = dataMonitoring.getWaktu();
+		Date date = dataMonitoring.getWaktuMulai();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		String teksData = latitude+","+longitude+","+cal.getTimeInMillis();

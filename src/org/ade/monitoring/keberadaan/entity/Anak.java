@@ -1,32 +1,42 @@
 package org.ade.monitoring.keberadaan.entity;
 
+import java.util.List;
 
-/**
- * Class Anak
- */
+
+
 public class Anak {
 
-  //
-  // Fields
-  //
-
+    public Anak () { }
   
-  //
-  // Constructors
-  //
-  public Anak () { };
-  
-  //
-  // Methods
-  //
+    
+    public String getIdAnak() {
+		return idAnak;
+	}
+	public void setIdAnak(String idAnak) {
+		this.idAnak = idAnak;
+	}
+	public String getNamaAnak() {
+		return namaAnak;
+	}
+	public void setNamaAnak(String namaAnak) {
+		this.namaAnak = namaAnak;
+	}
+	public String getNoHpAnak() {
+		return noHpAnak;
+	}
+	public void setNoHpAnak(String noHpAnak) {
+		this.noHpAnak = noHpAnak;
+	}
+	public List<Pelanggaran> getPelanggarans() {
+		return pelanggarans;
+	}
+	public void setPelanggarans(List<Pelanggaran> pelanggarans) {
+		this.pelanggarans = pelanggarans;
+	}
 
-
-  //
-  // Accessor methods
-  //
-
-  //
-  // Other methods
-  //
-
+	private String idAnak;
+    private String namaAnak;
+    private String noHpAnak;
+    
+    private List<Pelanggaran> pelanggarans;
 }
