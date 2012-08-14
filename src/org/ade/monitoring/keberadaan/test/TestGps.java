@@ -1,7 +1,8 @@
 package org.ade.monitoring.keberadaan.test;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.service.GpsManager;
+import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.service.Status;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ public class TestGps extends Activity{
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch(msg.what){
-				case 0 :{
+				case Status.SUCCESS :{
 					TextView txt = (TextView) findViewById(R.id.txtTest);
 					txt.setText("Lokasi : "+
 							mGps.getLokasi().getlatitude()+"Latitude"+

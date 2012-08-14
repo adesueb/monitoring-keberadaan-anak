@@ -1,6 +1,7 @@
-package org.ade.monitoring.service;
+package org.ade.monitoring.keberadaan.lokasi;
 
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.service.Status;
 
 import android.content.Context;
 import android.location.Criteria;
@@ -60,15 +61,17 @@ public class Tracker implements LocationListener{
 	public void stopTracking(){
 		mlocManager.removeUpdates(this);
 	}
-
-	public void onLocationChanged(Location loc) {
-		mLokasi.setLatitude(loc.getLatitude());
-		mLokasi.setLongitude(loc.getLongitude());
-		mHandler.sendEmptyMessage(0);
-	}
 	
 	public Lokasi getLokasi(){
 		return mLokasi;
+	}
+	
+	public void onLocationChanged(Location loc) {
+		mLokasi.setLatitude(loc.getLatitude());
+		mLokasi.setLongitude(loc.getLongitude());
+		if(mHandler != null){
+			mHandler.sendEmptyMessage(Status.SUCCESS);
+		}	
 	}
 
 	public void onProviderDisabled(String provider) {

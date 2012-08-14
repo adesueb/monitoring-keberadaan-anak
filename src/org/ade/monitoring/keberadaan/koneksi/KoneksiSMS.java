@@ -28,9 +28,9 @@ public class KoneksiSMS extends BroadcastReceiver implements Koneksi {
 		Lokasi lokasi 		= dataMonitoring.getLokasi();
 		double latitude		= lokasi.getlatitude();
 		double longitude 	= lokasi.getLongitude();
-		Date date = dataMonitoring.getWaktuMulai();
+		long date = dataMonitoring.getWaktuMulaiLong();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		cal.setTimeInMillis(date);
 		String teksData = latitude+","+longitude+","+cal.getTimeInMillis();
 		SmsManager sms = SmsManager.getDefault();
 		sms.sendTextMessage("000", null, teksData, null, null);

@@ -1,14 +1,18 @@
 package org.ade.monitoring.keberadaan.storage;
 
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -22,6 +26,16 @@ public class DatabaseManager {
 	  
 	  
 	public void addDataMonitoring( DataMonitoring dataMonitoring ){
+		
+	}
+	
+	public List<DataMonitoring> getAllDataMonitorings(){
+		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null,null);
+		if(cursor != null){
+			return getDataMonitoringsFromCursor(cursor);
+		}else{
+			return null;
+		}
 		
 	}
 	
@@ -49,6 +63,44 @@ public class DatabaseManager {
 		cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
 		cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
 		getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);
+	}
+	
+	private List<DataMonitoring> getDataMonitoringsFromCursor(Cursor cursor){
+		List <DataMonitoring> dataMonitorings = new ArrayList<DataMonitoring>();
+		if(cursor.moveToFirst()){
+			do{
+				 DataMonitoring dataMonitoring = new DataMonitoring();
+				 
+				 int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
+				 int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
+				 int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
+				 int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
+				 int indexDateMulaiMonitoring 	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
+				 int indexDateSelesaiMonitoring = cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
+				 
+				 dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
+				 dataMonitoring.setLokasi(
+						 new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
+								 cursor.getDouble(indexLongitudeMonitoring)));
+				 dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
+				 
+				 dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
+				 
+				 dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
+				 
+				 dataMonitorings.add(dataMonitoring);
+			}while(cursor.moveToNext());
+		}
+		return dataMonitorings;
+	}
+	
+	private Cursor actionQuery(String table, String[]columns, String selection){
+	  
+		SQLiteDatabase db 	= getDb();
+		final Cursor cursor = 
+				db.query(table, columns, selection, null, null, null, null, null);
+		db = null;
+		return cursor;
 	}
 	  
 	private SQLiteDatabase getDb(){

@@ -9,7 +9,7 @@ public class DataMonitoring {
   
 	public DataMonitoring () { };
   
-    public void setTanda( Lokasi lokasi, Date waktuMulai, Date waktuSelesai ){
+    public void setTanda( Lokasi lokasi, long waktuMulai, long waktuSelesai ){
     	setLokasi(lokasi);
     	setWaktuMulai(waktuMulai);
     	setWaktuSelesai(waktuSelesai);
@@ -23,22 +23,37 @@ public class DataMonitoring {
 		this.lokasi = lokasi;
 	}
 
-	public Date getWaktuMulai() {
-		return waktuMulai;
-	}
+	
 
-	public void setWaktuMulai(Date waktuMulai) {
+	public void setWaktuMulai(long waktuMulai) {
 		this.waktuMulai = waktuMulai;
 	}
-
-	public Date getWaktuSelesai() {
-		return waktuSelesai;
-	}
-
-	public void setWaktuSelesai(Date waktuSelesai) {
+	
+	public void setWaktuSelesai(long waktuSelesai) {
 		this.waktuSelesai = waktuSelesai;
 	}
 	
+	public long getWaktuSelesaiLong(){
+		
+		return waktuSelesai;
+	}
+	
+	public Date getWaktuMulaiDate() {
+		Calendar calMulai = Calendar.getInstance();
+		calMulai.setTimeInMillis(waktuMulai);
+		return calMulai.getTime();
+	}
+	
+	public long getWaktuMulaiLong(){
+		return waktuMulai;
+	}
+
+	public Date getWaktuSelesaiDate() {
+		Calendar calSelesai = Calendar.getInstance();
+		calSelesai.setTimeInMillis(waktuSelesai);
+		return calSelesai.getTime();		
+	}
+
 	public String getIdMonitoring() {
 		return idMonitoring;
 	}
@@ -75,8 +90,8 @@ public class DataMonitoring {
 	private String 	idMonitoring;
 	private int		status;
 	private Lokasi 	lokasi;
-    private Date 	waktuMulai;
-    private Date 	waktuSelesai;
+    private long 	waktuMulai;
+    private long 	waktuSelesai;
     
     private final static int SEHARUSNYA = 0;
     private final static int TERLARANG	= 1;

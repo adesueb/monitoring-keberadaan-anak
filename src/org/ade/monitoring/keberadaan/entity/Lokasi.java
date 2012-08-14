@@ -4,7 +4,12 @@ package org.ade.monitoring.keberadaan.entity;
 public class Lokasi {
 
  
-	public Lokasi () { }
+	public Lokasi (double latitude, double longitude) {
+		mLatitude 	= latitude;
+		mLongitude 	= longitude;
+	}
+	
+	public Lokasi(){}
 	  
 	
 	public double getLongitude(  ){
