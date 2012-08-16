@@ -48,6 +48,7 @@ public class BackgroundService extends Service{
 					if(now>mulai && now<selesai){
 						Lokasi lokasiMonitoring = dataMonitoring.getLokasi();
 						Lokasi lokasiHp 		= mTracker.getLokasi();
+						//TODO : cocokkan lokasi
 					}
 
 				}
