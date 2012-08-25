@@ -2,7 +2,6 @@ package org.ade.monitoring.keberadaan.storage;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.Anak;
@@ -26,37 +25,93 @@ public class DatabaseManager {
 	  
 	  
 	public void addDataMonitoring( DataMonitoring dataMonitoring ){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_ID_MONITORING, dataMonitoring.getIdMonitoring());
+		cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulaiLong());
+		cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesaiLong());
+		cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
+		cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
+		cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
+		if(dataMonitoring.getAnak()!=null){
+			cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
+		}
+		getDb().insert(MONITORING_TABLE_NAME, null, cv);
 		
 	}
 	
-	public List<DataMonitoring> getAllDataMonitorings(){
+	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
+		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
+		if(cursor!=null && cursor.getCount()>0){
+			return getAnaksFromCursor(cursor, withPelanggaran, withMonitoring);
+		}
+		return null;
+	}
+	
+	public Anak getAnakById(String idAnak, boolean withPelanggaran, boolean withMonitoring){
+		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null,COLUMN_ID_ANAK+"='"+idAnak+"'");
+		if(cursor!=null && cursor.getCount()>0){			
+			return getAnakFromCursor(cursor, withPelanggaran, withMonitoring);
+		}else{
+			return null;
+		}
+	}
+	
+	
+	public List<DataMonitoring> getAllDataMonitorings(boolean withAnak){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null,null);
-		if(cursor != null){
-			return getDataMonitoringsFromCursor(cursor);
+		if(cursor != null && cursor.getCount()>0){
+			return getDataMonitoringsFromCursor(cursor, withAnak);
 		}else{
 			return null;
 		}
 		
 	}
 	
-	private void addAnak(Anak anak){
+	public DataMonitoring getDataMonitoringByIdMonitoring(String idDataMonitoring, boolean withAnak){
+		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ID_MONITORING+"='"+idDataMonitoring+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			return getDataMonitoringFromCursor(cursor, withAnak);
+		}else{
+			return null;
+		}
+	}
+	
+	public List<DataMonitoring> getDataMonitoringsByAnak(String idAnak){
+		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ANAK_MONITORING+"='"+idAnak+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			return getDataMonitoringsFromCursor(cursor, false);
+		}else{
+			return null;
+		}
+	}
+	
+	
+	public void addAnak(Anak anak){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID_ANAK, anak.getIdAnak());
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
 		long result = getDb().insert(ANAK_TABLE_NAME, null, cv);
 		
-		if(result <=0 || anak.getPelanggarans()==null)return;
-		addPelanggarans(anak.getPelanggarans());
+		if(result <=0 || anak.getPelanggarans()==null){
+			
+		}else{
+			addPelanggarans(anak.getPelanggarans());
+		}
+		if(result <=0 || anak.getDataMonitorings()==null){
+			
+		}else{
+			//TODO : add datamonitoring.....
+		}
 	}
 	
-	private void addPelanggarans(List<Pelanggaran> pelanggarans){
+	public void addPelanggarans(List<Pelanggaran> pelanggarans){
 		for(Pelanggaran pelanggaran:pelanggarans){
 			addPelanggaran(pelanggaran);
 		}
 	}
 	
-	private void addPelanggaran(Pelanggaran pelanggaran){
+	public void addPelanggaran(Pelanggaran pelanggaran){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID_PELANGGARAN, pelanggaran.getIdPelanggaran());
 		cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
@@ -65,33 +120,74 @@ public class DatabaseManager {
 		getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);
 	}
 	
-	private List<DataMonitoring> getDataMonitoringsFromCursor(Cursor cursor){
+	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
+		List<Anak> anaks =  new ArrayList<Anak>();
+		if(cursor.moveToFirst()){
+			do{	anaks.add(getAnakFromCursor(cursor, withPelanggaran, withMonitoring));
+			}while(cursor.moveToNext());
+		}
+		return anaks;
+	}
+	
+	private Anak getAnakFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
+		if(cursor!=null && cursor.getCount()>0){
+			Anak anak = new Anak();
+			int indexIdAnak 	= cursor.getColumnIndex(COLUMN_ID_ANAK);
+			int indexNamaAnak		= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
+			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
+			
+			anak.setIdAnak(cursor.getString(indexIdAnak));
+			anak.setNamaAnak(cursor.getString(indexNamaAnak));
+			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
+			if(withPelanggaran){
+				//TODO : query all pelanggaran anak
+				
+			}
+			if(withMonitoring){
+				anak.setDataMonitorings(getDataMonitoringsByAnak(cursor.getString(indexIdAnak)));
+			}
+			return anak;
+		}
+		return null;
+		
+	}
+	
+	
+	private List<DataMonitoring> getDataMonitoringsFromCursor(Cursor cursor, boolean withAnak){
 		List <DataMonitoring> dataMonitorings = new ArrayList<DataMonitoring>();
 		if(cursor.moveToFirst()){
 			do{
-				 DataMonitoring dataMonitoring = new DataMonitoring();
-				 
-				 int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
-				 int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
-				 int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
-				 int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
-				 int indexDateMulaiMonitoring 	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
-				 int indexDateSelesaiMonitoring = cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
-				 
-				 dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
-				 dataMonitoring.setLokasi(
-						 new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
-								 cursor.getDouble(indexLongitudeMonitoring)));
-				 dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
-				 
-				 dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
-				 
-				 dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
-				 
-				 dataMonitorings.add(dataMonitoring);
+				 dataMonitorings.add(getDataMonitoringFromCursor(cursor, withAnak));
 			}while(cursor.moveToNext());
 		}
 		return dataMonitorings;
+	}
+	
+	private DataMonitoring getDataMonitoringFromCursor(Cursor cursor, boolean withAnak){
+		DataMonitoring dataMonitoring = new DataMonitoring();
+		 
+		 int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
+		 int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
+		 int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
+		 int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
+		 int indexDateMulaiMonitoring 	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
+		 int indexDateSelesaiMonitoring = cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
+		 
+		 dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
+		 dataMonitoring.setLokasi(
+				 new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
+						 cursor.getDouble(indexLongitudeMonitoring)));
+		 dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
+		 
+		 dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
+		 
+		 dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
+		 
+		 if(withAnak){
+			 int indexAnakMonitoring		= cursor.getColumnIndex(COLUMN_ANAK_MONITORING);
+			 dataMonitoring.setAnak(getAnakById(cursor.getString(indexAnakMonitoring), false, false)); 
+		 }
+		 return dataMonitoring;
 	}
 	
 	private Cursor actionQuery(String table, String[]columns, String selection){
@@ -154,16 +250,20 @@ public class DatabaseManager {
 	    		PELANGGARAN_TABLE_NAME+" ("+
 	    		COLUMN_ID_PELANGGARAN+" VARCHAR(10) PRIMARY KEY,"+
 	    		COLUMN_ANAK_PELANGGARAN+" VARCHAR(10),"+
+	    		COLUMN_MONITORING_PELANGGARAN+ " VARCHAR(10)," +
 	    		COLUMN_DATE_PELANGGARAN+" INTEGER,"+
 	    		COLUMN_LATITUDE_PELANGGARAN+" VARCHAR(50),"+
 	    		COLUMN_LONGITUDE_PELANGGARAN+" VARCHAR(50),"+
 	    		"FOREIGN KEY("+COLUMN_ANAK_PELANGGARAN+") REFERENCES "+
-	    		ANAK_TABLE_NAME+"("+COLUMN_ID_ANAK+"))";
+	    		ANAK_TABLE_NAME+"("+COLUMN_ID_ANAK+"),"+
+	    		"FOREIGN KEY("+COLUMN_MONITORING_PELANGGARAN+") REFERENCES "+
+	    		ANAK_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	    private static final String CREATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		MONITORING_TABLE_NAME+" ("+
 	    		COLUMN_ID_MONITORING+" VARCHAR(10) PRIMARY KEY,"+
+	    		COLUMN_ANAK_MONITORING+ " VARCHAR(10),"+
 	    		COLUMN_LATITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_LONGITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_STATUS_MONITORING+" INTEGER,"+
@@ -184,6 +284,7 @@ public class DatabaseManager {
     		"pelanggaran";
     private static final String COLUMN_ID_PELANGGARAN			= "pelanggaran_id";
     private static final String COLUMN_ANAK_PELANGGARAN			= "pelanggaran_anak";
+    private static final String COLUMN_MONITORING_PELANGGARAN	= "pelanggaran_monitoring";
     private static final String COLUMN_DATE_PELANGGARAN			= "pelanggaran_waktu";
     private static final String COLUMN_LONGITUDE_PELANGGARAN	= "pelanggaran_longitude";
     private static final String COLUMN_LATITUDE_PELANGGARAN		= "pelanggaran_latitude";
@@ -191,6 +292,7 @@ public class DatabaseManager {
     private static final String MONITORING_TABLE_NAME			= 
     		"monitoring";
     private static final String COLUMN_ID_MONITORING			= "monitoring_id";
+    private static final String COLUMN_ANAK_MONITORING			= "monitoring_anak";
     private static final String COLUMN_LONGITUDE_MONITORING 	= "monitoring_longitude";
     private static final String COLUMN_LATITUDE_MONITORING		= "monitoring_latitude";
     private static final String COLUMN_STATUS_MONITORING		= "monitoring_status";

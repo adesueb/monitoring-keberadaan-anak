@@ -30,7 +30,7 @@ public class BackgroundService extends Service{
 	@Override
 	public void onCreate() {
 		mTracker = new Tracker(this, null);
-		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings();
+		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false);
 	}
 
 	@Override

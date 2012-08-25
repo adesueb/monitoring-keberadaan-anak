@@ -33,10 +33,17 @@ public class Anak {
 	public void setPelanggarans(List<Pelanggaran> pelanggarans) {
 		this.pelanggarans = pelanggarans;
 	}
+	public List<DataMonitoring> getDataMonitorings() {
+		return dataMonitorings;
+	}
+	public void setDataMonitorings(List<DataMonitoring> dataMonitorings) {
+		this.dataMonitorings = dataMonitorings;
+	}
 
 	private String idAnak;
     private String namaAnak;
     private String noHpAnak;
     
-    private List<Pelanggaran> pelanggarans;
+    private List<Pelanggaran> 		pelanggarans;
+    private List<DataMonitoring> 	dataMonitorings;
 }

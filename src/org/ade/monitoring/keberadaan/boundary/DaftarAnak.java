@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -19,9 +20,10 @@ public class DaftarAnak extends ListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		//TODO : get anak all
-		getListView().setAdapter(new AdapterDaftarAnak(this, R.layout.daftar_anak_item, null));
+		databaseManager = new DatabaseManager(this);
+		getListView().setAdapter
+			(new AdapterDaftarAnak
+					(this, R.layout.daftar_anak_item, databaseManager.getAllAnak(true,false)));
 	}
 	
 	private class AdapterDaftarAnak extends ArrayAdapter<Anak>{
@@ -61,5 +63,5 @@ public class DaftarAnak extends ListActivity{
 		
 	}
 
-	
+	private DatabaseManager databaseManager;
 }

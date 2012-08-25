@@ -1,5 +1,8 @@
 package org.ade.monitoring.keberadaan.entity;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class Pelanggaran {
 	
 	public String getIdPelanggaran() {
@@ -8,10 +11,21 @@ public class Pelanggaran {
 	public void setIdPelanggaran(String idPelanggaran) {
 		this.idPelanggaran = idPelanggaran;
 	}
-	public String getWaktuPelanggaran() {
+	public Anak getAnak() {
+		return anak;
+	}
+	public void setAnak(Anak anak) {
+		this.anak = anak;
+	}
+	public long getWaktuPelanggaran() {
 		return waktuPelanggaran;
 	}
-	public void setWaktuPelanggaran(String waktuPelanggaran) {
+	public Date getWaktuPelanggaranDate(){
+		Calendar calMulai = Calendar.getInstance();
+		calMulai.setTimeInMillis(waktuPelanggaran);
+		return calMulai.getTime();
+	}
+	public void setWaktuPelanggaran(long waktuPelanggaran) {
 		this.waktuPelanggaran = waktuPelanggaran;
 	}
 	public Lokasi getLokasi() {
@@ -21,6 +35,7 @@ public class Pelanggaran {
 		this.lokasi = lokasi;
 	}
 	
-	private String idPelanggaran;
-	private String waktuPelanggaran;
-	private Lokasi lokasi;}
+	private Anak	anak;
+	private String 	idPelanggaran;
+	private long 	waktuPelanggaran;
+	private Lokasi 	lokasi;}

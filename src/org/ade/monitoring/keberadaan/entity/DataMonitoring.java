@@ -70,6 +70,14 @@ public class DataMonitoring {
 		this.status = status;
 	}
 	
+	public Anak getAnak() {
+		return anak;
+	}
+
+	public void setAnak(Anak anak) {
+		this.anak = anak;
+	}
+
 	public boolean isTerlarang(){
 		if(status == TERLARANG){
 			return true;
@@ -92,6 +100,7 @@ public class DataMonitoring {
 	private Lokasi 	lokasi;
     private long 	waktuMulai;
     private long 	waktuSelesai;
+    private Anak	anak;
     
     private final static int SEHARUSNYA = 0;
     private final static int TERLARANG	= 1;
