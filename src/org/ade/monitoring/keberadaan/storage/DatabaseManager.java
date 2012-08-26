@@ -23,22 +23,8 @@ public class DatabaseManager {
 		mDatabaseHelper = new DatabaseHelper(context);
 	}
 	  
-	  
-	public void addDataMonitoring( DataMonitoring dataMonitoring ){
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ID_MONITORING, dataMonitoring.getIdMonitoring());
-		cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulaiLong());
-		cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesaiLong());
-		cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
-		cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
-		cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
-		if(dataMonitoring.getAnak()!=null){
-			cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
-		}
-		getDb().insert(MONITORING_TABLE_NAME, null, cv);
-		
-	}
 	
+	// get.................................................................
 	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
@@ -75,7 +61,7 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-	
+		
 	public List<DataMonitoring> getDataMonitoringsByAnak(String idAnak){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ANAK_MONITORING+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){
@@ -85,6 +71,52 @@ public class DatabaseManager {
 		}
 	}
 	
+	public List<Pelanggaran> getDataPelanggaransByAnak(String idAnak){
+		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, COLUMN_ANAK_PELANGGARAN+"='"+idAnak+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			return getPelanggaransFromCursor(cursor, false, false);
+		}else{
+			return null;
+		}
+	}
+	
+	public List<Pelanggaran> getAllDataPelanggarans(boolean withAnak, boolean withMonitoring){
+		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, null);
+		if(cursor!=null && cursor.getCount()>0){
+			return getPelanggaransFromCursor(cursor, withAnak, withMonitoring);
+		}else{
+			return null;
+		}
+	}
+	//...................................................................
+	
+	// add...............................................................
+	public void addDataMonitorings(List<DataMonitoring> dataMonitorings){
+		if(dataMonitorings!=null){
+			for(DataMonitoring dataMonitoring:dataMonitorings){
+				addDataMonitoring(dataMonitoring);
+			}
+		}
+		
+	}
+	  
+	public void addDataMonitoring( DataMonitoring dataMonitoring ){
+		if(dataMonitoring!=null){
+			ContentValues cv = new ContentValues();
+			cv.put(COLUMN_ID_MONITORING, dataMonitoring.getIdMonitoring());
+			cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulaiLong());
+			cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesaiLong());
+			cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
+			cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
+			cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
+			if(dataMonitoring.getAnak()!=null){
+				cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
+			}
+			getDb().insert(MONITORING_TABLE_NAME, null, cv);	
+		}
+		
+		
+	}
 	
 	public void addAnak(Anak anak){
 		ContentValues cv = new ContentValues();
@@ -101,25 +133,32 @@ public class DatabaseManager {
 		if(result <=0 || anak.getDataMonitorings()==null){
 			
 		}else{
-			//TODO : add datamonitoring.....
+			addDataMonitorings(anak.getDataMonitorings());
 		}
 	}
 	
 	public void addPelanggarans(List<Pelanggaran> pelanggarans){
-		for(Pelanggaran pelanggaran:pelanggarans){
-			addPelanggaran(pelanggaran);
+		if(pelanggarans!=null){
+			for(Pelanggaran pelanggaran:pelanggarans){
+				addPelanggaran(pelanggaran);
+			}	
 		}
+		
 	}
 	
 	public void addPelanggaran(Pelanggaran pelanggaran){
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ID_PELANGGARAN, pelanggaran.getIdPelanggaran());
-		cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
-		cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
-		cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
-		getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);
+		if(pelanggaran!=null){
+			ContentValues cv = new ContentValues();
+			cv.put(COLUMN_ID_PELANGGARAN, pelanggaran.getIdPelanggaran());
+			cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
+			cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
+			cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
+			getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);	
+		}
 	}
+	//............................................................................
 	
+	//get from Cursor.............................................................
 	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
 		List<Anak> anaks =  new ArrayList<Anak>();
 		if(cursor.moveToFirst()){
@@ -133,7 +172,7 @@ public class DatabaseManager {
 		if(cursor!=null && cursor.getCount()>0){
 			Anak anak = new Anak();
 			int indexIdAnak 	= cursor.getColumnIndex(COLUMN_ID_ANAK);
-			int indexNamaAnak		= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
+			int indexNamaAnak	= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
 			
 			anak.setIdAnak(cursor.getString(indexIdAnak));
@@ -164,31 +203,76 @@ public class DatabaseManager {
 	}
 	
 	private DataMonitoring getDataMonitoringFromCursor(Cursor cursor, boolean withAnak){
-		DataMonitoring dataMonitoring = new DataMonitoring();
+		if(cursor!=null && cursor.getCount()>0){
+			
+			DataMonitoring dataMonitoring = new DataMonitoring();
+			 
+			int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
+			int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
+			int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
+			int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
+			int indexDateMulaiMonitoring 	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
+			int indexDateSelesaiMonitoring = cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
+			 
 		 
-		 int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
-		 int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
-		 int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
-		 int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
-		 int indexDateMulaiMonitoring 	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
-		 int indexDateSelesaiMonitoring = cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
-		 
-		 dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
-		 dataMonitoring.setLokasi(
-				 new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
+			dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
+			dataMonitoring.setLokasi(
+				new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
 						 cursor.getDouble(indexLongitudeMonitoring)));
-		 dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
+			dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
 		 
-		 dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
+			dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
 		 
-		 dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
+			dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
 		 
-		 if(withAnak){
-			 int indexAnakMonitoring		= cursor.getColumnIndex(COLUMN_ANAK_MONITORING);
-			 dataMonitoring.setAnak(getAnakById(cursor.getString(indexAnakMonitoring), false, false)); 
-		 }
-		 return dataMonitoring;
+			if(withAnak){
+			
+				int indexAnakMonitoring		= cursor.getColumnIndex(COLUMN_ANAK_MONITORING);
+				dataMonitoring.setAnak(getAnakById(cursor.getString(indexAnakMonitoring), false, false)); 
+			}
+			return dataMonitoring;
+		}
+		return null;
+		
 	}
+	
+	public List<Pelanggaran> getPelanggaransFromCursor(Cursor cursor, boolean withAnak, boolean withMonitoring){
+		List<Pelanggaran> pelanggarans = new ArrayList<Pelanggaran>();
+		if(cursor.moveToFirst()){
+			do{
+				 pelanggarans.add(getPelanggaranFromCursor(cursor, withAnak, withMonitoring));
+			}while(cursor.moveToNext());
+		}
+		return pelanggarans;
+	}
+	public Pelanggaran getPelanggaranFromCursor(Cursor cursor, boolean withAnak, boolean withMonitoring){
+		if(cursor!=null && cursor.getCount()>0){
+			Pelanggaran pelanggaran = new Pelanggaran();
+			int indexIdPelanggaran 			= cursor.getColumnIndex(COLUMN_ID_PELANGGARAN);
+			int indexLatitudePelanggaran 	= cursor.getColumnIndex(COLUMN_LATITUDE_PELANGGARAN);
+			int indexLongitudePelanggaran 	= cursor.getColumnIndex(COLUMN_LONGITUDE_PELANGGARAN);
+			int indexDatePelanggaran 		= cursor.getColumnIndex(COLUMN_DATE_PELANGGARAN);
+				pelanggaran.setIdPelanggaran(cursor.getString(indexIdPelanggaran));
+			pelanggaran.setWaktuPelanggaran(cursor.getLong(indexDatePelanggaran));
+			Lokasi lokasi = new Lokasi();
+			lokasi.setLatitude(cursor.getDouble(indexLatitudePelanggaran));
+			lokasi.setLongitude(cursor.getDouble(indexLongitudePelanggaran));
+			pelanggaran.setLokasi(lokasi);
+			if(withAnak){
+				int indexAnakPelanggaran		= cursor.getColumnIndex(COLUMN_ANAK_PELANGGARAN);
+				pelanggaran.setAnak(getAnakById(cursor.getString(indexAnakPelanggaran), false, false));
+			}
+			if(withMonitoring){
+				int indexMonitoringPelanggaran	= cursor.getColumnIndex(COLUMN_MONITORING_PELANGGARAN);
+				pelanggaran.setDataMonitoring(
+						getDataMonitoringByIdMonitoring(cursor.getString(indexMonitoringPelanggaran), false));
+			}
+			return pelanggaran;
+		}
+		return null;
+		
+	}
+	//............................................................................
 	
 	private Cursor actionQuery(String table, String[]columns, String selection){
 	  

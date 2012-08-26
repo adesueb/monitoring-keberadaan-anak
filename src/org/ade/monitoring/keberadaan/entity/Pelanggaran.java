@@ -34,7 +34,15 @@ public class Pelanggaran {
 	public void setLokasi(Lokasi lokasi) {
 		this.lokasi = lokasi;
 	}
-	
+	public DataMonitoring getDataMonitoring() {
+		return dataMonitoring;
+	}
+	public void setDataMonitoring(DataMonitoring dataMonitoring) {
+		this.dataMonitoring = dataMonitoring;
+	}
+
+
+	private DataMonitoring dataMonitoring;
 	private Anak	anak;
 	private String 	idPelanggaran;
 	private long 	waktuPelanggaran;
