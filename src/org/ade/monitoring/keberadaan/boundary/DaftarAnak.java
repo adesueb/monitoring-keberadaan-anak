@@ -20,6 +20,7 @@ public class DaftarAnak extends ListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.list_monak);
 		databaseManager = new DatabaseManager(this);
 		getListView().setAdapter
 			(new AdapterDaftarAnak

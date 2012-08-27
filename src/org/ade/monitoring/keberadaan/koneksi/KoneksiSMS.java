@@ -24,16 +24,16 @@ public class KoneksiSMS extends BroadcastReceiver implements Koneksi {
 
 	
 	public void kirimPesanData( PesanData pesanData ){
-		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
-		Lokasi lokasi 		= dataMonitoring.getLokasi();
-		double latitude		= lokasi.getlatitude();
-		double longitude 	= lokasi.getLongitude();
-		long date = dataMonitoring.getWaktuMulaiLong();
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(date);
-		String teksData = latitude+","+longitude+","+cal.getTimeInMillis();
-		SmsManager sms = SmsManager.getDefault();
-		sms.sendTextMessage("000", null, teksData, null, null);
+//		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
+//		Lokasi lokasi 		= dataMonitoring.getLokasi();
+//		double latitude		= lokasi.getlatitude();
+//		double longitude 	= lokasi.getLongitude();
+//		long date = dataMonitoring.getWaktuMulaiLong();
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTimeInMillis(date);
+//		String teksData = latitude+","+longitude+","+cal.getTimeInMillis();
+//		SmsManager sms = SmsManager.getDefault();
+//		sms.sendTextMessage("000", null, teksData, null, null);
 		
 	}
 

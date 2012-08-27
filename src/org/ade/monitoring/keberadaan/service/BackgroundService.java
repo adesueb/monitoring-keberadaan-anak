@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.entity.WaktuMonitoring;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
@@ -23,7 +24,7 @@ public class BackgroundService extends Service{
 	@Override
 	public void onCreate() {
 		mTracker = new Tracker(this, null);
-		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false);
+		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
 	}
 
@@ -35,25 +36,34 @@ public class BackgroundService extends Service{
 					Calendar cal = Calendar.getInstance();
 					long now = cal.getTimeInMillis();					
 					cal = null;
-
-					long mulai 		= dataMonitoring.getWaktuMulaiLong();
-					long selesai 	= dataMonitoring.getWaktuSelesaiLong();
-					
-					if(now>mulai && now<selesai){
-						Lokasi lokasiMonitoring = dataMonitoring.getLokasi();
-						Lokasi lokasiHp 		= mTracker.getLokasi();
-						locationMonitorUtil.setCurrentLocation(lokasiHp);
-						locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
-						if(locationMonitorUtil.isInTolerancy()){
-							if(dataMonitoring.isTerlarang()){
-								//TODO : mengirim peringatan
-							}						
-						}else{
-							if(dataMonitoring.isSeharusnya()){
-								//TODO : mengirim peringatan
+					List<WaktuMonitoring> waktuMonitorings = dataMonitoring.getWaktuMonitorings();
+					if(waktuMonitorings!=null){
+						for(WaktuMonitoring waktuMonitoring:waktuMonitorings){
+							long mulai 		= waktuMonitoring.getWaktuMulai();
+							long selesai 	= waktuMonitoring.getWaktuSelesai();
+							
+							if(now>mulai && now<selesai){
+								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
+								Lokasi 	lokasiHp 			= mTracker.getLokasi();
+								int		tolerancy			= dataMonitoring.getTolerancy();
+								locationMonitorUtil.setCurrentLocation(lokasiHp);
+								locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
+								if(tolerancy!=0){
+									locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
+								}
+								if(locationMonitorUtil.isInTolerancy()){
+									if(dataMonitoring.isTerlarang()){
+										//TODO : mengirim peringatan
+									}						
+								}else{
+									if(dataMonitoring.isSeharusnya()){
+										//TODO : mengirim peringatan
+									}
+								}
 							}
 						}
 					}
+					
 
 				}
 			}

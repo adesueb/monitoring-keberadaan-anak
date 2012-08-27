@@ -8,50 +8,13 @@ public class DataMonitoring {
 
   
 	public DataMonitoring () { };
-  
-    public void setTanda( Lokasi lokasi, long waktuMulai, long waktuSelesai ){
-    	setLokasi(lokasi);
-    	setWaktuMulai(waktuMulai);
-    	setWaktuSelesai(waktuSelesai);
-    }
-    
+      
     public Lokasi getLokasi() {
 		return lokasi;
 	}
 
 	public void setLokasi(Lokasi lokasi) {
 		this.lokasi = lokasi;
-	}
-
-	
-
-	public void setWaktuMulai(long waktuMulai) {
-		this.waktuMulai = waktuMulai;
-	}
-	
-	public void setWaktuSelesai(long waktuSelesai) {
-		this.waktuSelesai = waktuSelesai;
-	}
-	
-	public long getWaktuSelesaiLong(){
-		
-		return waktuSelesai;
-	}
-	
-	public Date getWaktuMulaiDate() {
-		Calendar calMulai = Calendar.getInstance();
-		calMulai.setTimeInMillis(waktuMulai);
-		return calMulai.getTime();
-	}
-	
-	public long getWaktuMulaiLong(){
-		return waktuMulai;
-	}
-
-	public Date getWaktuSelesaiDate() {
-		Calendar calSelesai = Calendar.getInstance();
-		calSelesai.setTimeInMillis(waktuSelesai);
-		return calSelesai.getTime();		
 	}
 
 	public String getIdMonitoring() {
@@ -73,9 +36,24 @@ public class DataMonitoring {
 	public Anak getAnak() {
 		return anak;
 	}
+	public int getTolerancy() {
+		return tolerancy;
+	}
+
+	public void setTolerancy(int tolerancy) {
+		this.tolerancy = tolerancy;
+	}
 
 	public void setAnak(Anak anak) {
 		this.anak = anak;
+	}
+	
+	public List<WaktuMonitoring> getWaktuMonitorings() {
+		return waktuMonitorings;
+	}
+
+	public void setWaktuMonitorings(List<WaktuMonitoring> waktuMonitorings) {
+		this.waktuMonitorings = waktuMonitorings;
 	}
 
 	public boolean isTerlarang(){
@@ -98,9 +76,10 @@ public class DataMonitoring {
 	private String 	idMonitoring;
 	private int		status;
 	private Lokasi 	lokasi;
-    private long 	waktuMulai;
-    private long 	waktuSelesai;
     private Anak	anak;
+    private int		tolerancy;
+    
+    private List<WaktuMonitoring> waktuMonitorings;
     
     private final static int SEHARUSNYA = 0;
     private final static int TERLARANG	= 1;
