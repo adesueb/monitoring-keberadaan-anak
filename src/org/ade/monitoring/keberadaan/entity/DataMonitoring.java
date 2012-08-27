@@ -48,11 +48,40 @@ public class DataMonitoring {
 		this.anak = anak;
 	}
 	
-	public List<WaktuMonitoring> getWaktuMonitorings() {
+	public void setWaktuMulai(long waktuMulai) {
+		this.waktuMulai = waktuMulai;
+	}
+	
+	public void setWaktuSelesai(long waktuSelesai) {
+		this.waktuSelesai = waktuSelesai;
+	}
+		
+	public Date getWaktuMulaiInDate() {
+		Calendar calMulai = Calendar.getInstance();
+		calMulai.setTimeInMillis(waktuMulai);
+		return calMulai.getTime();
+	}
+	
+	public long getWaktuSelesai(){
+		
+		return waktuSelesai;
+	}
+	
+	public long getWaktuMulai(){
+		return waktuMulai;
+	}
+
+	public Date getWaktuSelesaiInDate() {
+		Calendar calSelesai = Calendar.getInstance();
+		calSelesai.setTimeInMillis(waktuSelesai);
+		return calSelesai.getTime();		
+	}
+	
+	public List<TanggalMonitoring> getWaktuMonitorings() {
 		return waktuMonitorings;
 	}
 
-	public void setWaktuMonitorings(List<WaktuMonitoring> waktuMonitorings) {
+	public void setWaktuMonitorings(List<TanggalMonitoring> waktuMonitorings) {
 		this.waktuMonitorings = waktuMonitorings;
 	}
 
@@ -78,8 +107,9 @@ public class DataMonitoring {
 	private Lokasi 	lokasi;
     private Anak	anak;
     private int		tolerancy;
-    
-    private List<WaktuMonitoring> waktuMonitorings;
+    private long 	waktuMulai;
+    private long 	waktuSelesai;
+    private List<TanggalMonitoring> waktuMonitorings;
     
     private final static int SEHARUSNYA = 0;
     private final static int TERLARANG	= 1;

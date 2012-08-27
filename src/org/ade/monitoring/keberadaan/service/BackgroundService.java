@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.entity.WaktuMonitoring;
+import org.ade.monitoring.keberadaan.entity.TanggalMonitoring;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
@@ -34,33 +34,43 @@ public class BackgroundService extends Service{
 			if(dataMonitorings != null && locationMonitorUtil != null){
 				for(DataMonitoring dataMonitoring:dataMonitorings){
 					Calendar cal = Calendar.getInstance();
-					long now = cal.getTimeInMillis();					
+					
+					long 	now 	= cal.getTimeInMillis();	
+					int		hari 	= cal.get(Calendar.DAY_OF_WEEK);
+					int 	tanggal	= cal.get(Calendar.DAY_OF_MONTH);
+				
+					long mulai 		= dataMonitoring.getWaktuMulai();
+					long selesai 	= dataMonitoring.getWaktuSelesai();
+				
 					cal = null;
-					List<WaktuMonitoring> waktuMonitorings = dataMonitoring.getWaktuMonitorings();
+					List<TanggalMonitoring> waktuMonitorings = dataMonitoring.getWaktuMonitorings();
 					if(waktuMonitorings!=null){
-						for(WaktuMonitoring waktuMonitoring:waktuMonitorings){
-							long mulai 		= waktuMonitoring.getWaktuMulai();
-							long selesai 	= waktuMonitoring.getWaktuSelesai();
-							
-							if(now>mulai && now<selesai){
-								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
-								Lokasi 	lokasiHp 			= mTracker.getLokasi();
-								int		tolerancy			= dataMonitoring.getTolerancy();
-								locationMonitorUtil.setCurrentLocation(lokasiHp);
-								locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
-								if(tolerancy!=0){
-									locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
-								}
-								if(locationMonitorUtil.isInTolerancy()){
-									if(dataMonitoring.isTerlarang()){
-										//TODO : mengirim peringatan
-									}						
-								}else{
-									if(dataMonitoring.isSeharusnya()){
-										//TODO : mengirim peringatan
+						
+						for(TanggalMonitoring waktuMonitoring:waktuMonitorings){
+							if(hari == waktuMonitoring.getDay() 
+									|| tanggal == waktuMonitoring.getDate()){
+								if(now>mulai && now<selesai){
+									Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
+									Lokasi 	lokasiHp 			= mTracker.getLokasi();
+									int		tolerancy			= dataMonitoring.getTolerancy();
+									locationMonitorUtil.setCurrentLocation(lokasiHp);
+									locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
+									if(tolerancy!=0){
+										locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
+									}
+									if(locationMonitorUtil.isInTolerancy()){
+										if(dataMonitoring.isTerlarang()){
+											//TODO : mengirim peringatan
+										}						
+									}else{
+										if(dataMonitoring.isSeharusnya()){
+											//TODO : mengirim peringatan
+										}
 									}
 								}
 							}
+							
+							
 						}
 					}
 					

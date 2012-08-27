@@ -8,7 +8,7 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
-import org.ade.monitoring.keberadaan.entity.WaktuMonitoring;
+import org.ade.monitoring.keberadaan.entity.TanggalMonitoring;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -92,7 +92,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public List<WaktuMonitoring> getWaktuMonitoringsByMonitoring(String idMonitoring){
+	public List<TanggalMonitoring> getWaktuMonitoringsByMonitoring(String idMonitoring){
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"="+idMonitoring);
 		if(cursor!=null && cursor.getCount()>0){
@@ -102,7 +102,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public List<WaktuMonitoring> getAllWaktuMonitorings(boolean withDataMonitoring){
+	public List<TanggalMonitoring> getAllWaktuMonitorings(boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
@@ -130,6 +130,8 @@ public class DatabaseManager {
 			cv.put(COLUMN_ID_MONITORING, dataMonitoring.getIdMonitoring());
 			cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
 			cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
+			cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
+			cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());			
 			cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
 			if(dataMonitoring.getAnak()!=null){
 				cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
@@ -186,21 +188,21 @@ public class DatabaseManager {
 		}
 	}
 	
-	public void addWaktuMonitorings(List<WaktuMonitoring> waktuMonitorings){
+	public void addWaktuMonitorings(List<TanggalMonitoring> waktuMonitorings){
 		if(waktuMonitorings!=null){
-			for(WaktuMonitoring waktuMonitoring:waktuMonitorings){
+			for(TanggalMonitoring waktuMonitoring:waktuMonitorings){
 				addWaktuMonitoring(waktuMonitoring);
 			}
 		}
 		
 	}
 	
-	public void addWaktuMonitoring(WaktuMonitoring waktuMonitoring){
+	public void addWaktuMonitoring(TanggalMonitoring waktuMonitoring){
 		if(waktuMonitoring!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_ID_DATE_MONITORING, waktuMonitoring.getIdWaktuMonitoring());
-			cv.put(COLUMN_DATE_MULAI_DATE_MONITORING, waktuMonitoring.getWaktuMulai());
-			cv.put(COLUMN_DATE_SELESAI_DATE_MONITORING, waktuMonitoring.getWaktuSelesai());
+			cv.put(COLUMN_DATE_DATE_MONITORING, waktuMonitoring.getDate());
+			cv.put(COLUMN_DAY_DATE_MONITORING, waktuMonitoring.getDay());
 			if(waktuMonitoring.getDataMonitoring()!=null){
 				cv.put(COLUMN_MONITORING_DATE_MONITORING, 
 						waktuMonitoring.getDataMonitoring().getIdMonitoring());
@@ -266,6 +268,8 @@ public class DatabaseManager {
 			int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
 			int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
 			int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
+			int indexDateMulaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
+			int indexDateSelesaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
 			int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
 			int indexTolerancy				= cursor.getColumnIndex(COLUMN_TOLERANCY_MONITORING);
 			 
@@ -274,6 +278,8 @@ public class DatabaseManager {
 			dataMonitoring.setLokasi(
 				new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
 						 cursor.getDouble(indexLongitudeMonitoring)));
+			dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
+			dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
 			dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
 			dataMonitoring.setTolerancy(cursor.getInt(indexTolerancy));
 			if(withWaktuMonitoring){
@@ -329,8 +335,8 @@ public class DatabaseManager {
 		
 	}
 	
-	public List<WaktuMonitoring> getWaktuMonitoringsFromCursor(Cursor cursor, boolean withDataMonitoring){
-		List<WaktuMonitoring> waktuMonitorings = new ArrayList<WaktuMonitoring>();
+	public List<TanggalMonitoring> getWaktuMonitoringsFromCursor(Cursor cursor, boolean withDataMonitoring){
+		List<TanggalMonitoring> waktuMonitorings = new ArrayList<TanggalMonitoring>();
 		if(cursor.moveToFirst()){
 			do{
 				 waktuMonitorings.add(getWaktuMonitoringFromCursor(cursor, withDataMonitoring));
@@ -339,16 +345,16 @@ public class DatabaseManager {
 		return waktuMonitorings;
 	}
 	
-	public WaktuMonitoring getWaktuMonitoringFromCursor(Cursor cursor, boolean withDataMonitoring){
+	public TanggalMonitoring getWaktuMonitoringFromCursor(Cursor cursor, boolean withDataMonitoring){
 		if(cursor!=null && cursor.getCount()>0){
-			WaktuMonitoring waktuMonitoring = new WaktuMonitoring();
+			TanggalMonitoring waktuMonitoring = new TanggalMonitoring();
 			int indexIdDateMonitoring		= cursor.getColumnIndex(COLUMN_ID_DATE_MONITORING);
-			int indexDateMulai 				= cursor.getColumnIndex(COLUMN_DATE_MULAI_DATE_MONITORING);
-			int indexDateSelesai 			= cursor.getColumnIndex(COLUMN_DATE_SELESAI_DATE_MONITORING);
+			int indexDate 					= cursor.getColumnIndex(COLUMN_DATE_DATE_MONITORING);
+			int indexDay 					= cursor.getColumnIndex(COLUMN_DAY_DATE_MONITORING);
 			
 			waktuMonitoring.setIdWaktuMonitoring(cursor.getString(indexIdDateMonitoring));
-			waktuMonitoring.setWaktuMulai(cursor.getLong(indexDateMulai));
-			waktuMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesai));
+			waktuMonitoring.setDate(cursor.getInt(indexDate));
+			waktuMonitoring.setDay(cursor.getInt(indexDay));
 			
 			if(withDataMonitoring){
 				int indexMonitoringDateMonitoring = 
@@ -441,6 +447,8 @@ public class DatabaseManager {
 	    		COLUMN_ANAK_MONITORING+ " VARCHAR(10),"+
 	    		COLUMN_LATITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_LONGITUDE_MONITORING+" VARCHAR(50),"+
+	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+	    		
+	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+
 	    		COLUMN_STATUS_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_TOLERANCY_MONITORING+" INTEGER,"+
 	    		"FOREIGN KEY("+COLUMN_ANAK_MONITORING+") REFERENCES "+
@@ -451,8 +459,8 @@ public class DatabaseManager {
 	    		DATE_MONITORING_TABLE_NAME+" ("+
 	    		COLUMN_ID_DATE_MONITORING+" VARCHAR(10) PRIMARY KEY,"+
 	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+
-	    		COLUMN_DATE_MULAI_DATE_MONITORING+" INTEGER,"+	    		
-	    		COLUMN_DATE_MULAI_DATE_MONITORING+" INTEGER,"+
+	    		COLUMN_DAY_DATE_MONITORING+" INTEGER,"+	    		
+	    		COLUMN_DATE_DATE_MONITORING+" INTEGER,"+	    		
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
@@ -481,6 +489,8 @@ public class DatabaseManager {
     private static final String COLUMN_ANAK_MONITORING			= "monitoring_anak";
     private static final String COLUMN_LONGITUDE_MONITORING 	= "monitoring_longitude";
     private static final String COLUMN_LATITUDE_MONITORING		= "monitoring_latitude";
+    private static final String COLUMN_DATE_MULAI_MONITORING	= "monitoring_waktu_mulai";
+    private static final String COLUMN_DATE_SELESAI_MONITORING	= "monitoring_waktu_selesai";
     private static final String COLUMN_STATUS_MONITORING		= "monitoring_status";
     private static final String COLUMN_TOLERANCY_MONITORING		= "monitoring_tolerancy";
 
@@ -488,7 +498,7 @@ public class DatabaseManager {
     		"date_monitoring";
     private static final String COLUMN_ID_DATE_MONITORING			= "date_id";
     private static final String COLUMN_MONITORING_DATE_MONITORING	= "date_monitoring";
-    private static final String COLUMN_DATE_MULAI_DATE_MONITORING	= "date_waktu_mulai";
-    private static final String COLUMN_DATE_SELESAI_DATE_MONITORING	= "date_waktu_selesai";
-    
+    private static final String COLUMN_DAY_DATE_MONITORING			= "date_day";
+    private static final String COLUMN_DATE_DATE_MONITORING			= "date_date";
+      
 }
