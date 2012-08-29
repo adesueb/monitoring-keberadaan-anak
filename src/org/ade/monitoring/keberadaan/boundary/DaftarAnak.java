@@ -6,6 +6,7 @@ import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
@@ -63,6 +64,17 @@ public class DaftarAnak extends ListActivity{
 		private final int resource;
 		
 	}
+	
+	
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		//TODO :  create dialog add or edit... n open it!!! 
+		
+		return super.onCreateDialog(id);
+	}
+
+
 
 	private DatabaseManager databaseManager;
 }

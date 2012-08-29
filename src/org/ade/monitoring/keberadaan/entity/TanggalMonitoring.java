@@ -1,7 +1,5 @@
 package org.ade.monitoring.keberadaan.entity;
 
-import java.util.Calendar;
-import java.util.Date;
 
 public class TanggalMonitoring {
 	
