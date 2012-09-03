@@ -9,15 +9,16 @@
         android:paddingBottom="50dip" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/listGeneralTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent" android:layout_height="match_parent">
+            android:layout_width="match_parent" 
+            android:layout_height="match_parent" 
+            android:id="@+id/listGeneral">
         </ListView>
 	
     </LinearLayout>
@@ -28,12 +29,11 @@
         android:layout_gravity="bottom"
         android:gravity="center" >
 
-        <ImageView
-            android:id="@+id/daftarBack"
+        <Button
+            android:id="@+id/listGeneralButtonOk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/icon" />
+            android:layout_gravity="center" android:text="@string/ok"/>
 
     </LinearLayout>
 
