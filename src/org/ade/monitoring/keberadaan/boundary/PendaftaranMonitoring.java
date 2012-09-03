@@ -15,8 +15,10 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -45,7 +47,7 @@ public class PendaftaranMonitoring extends Activity{
 		pilihWaktu 		= new PilihWaktu(this, mHandler);
 		pilihMingguan 	= new PilihMingguan(this, mHandler);
 		pilihLokasi 	= new PilihLokasi(this);
-		pilihToleransi 	= new PilihToleransi(this);
+		pilihToleransi 	= new PilihToleransi(this, mHandler);
 	}
 
 	private void initAllButton(){
@@ -121,7 +123,7 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionPilihToleransi(){
-		
+		showDialog(TOLERANSI);
 	}
 	
 	private void actionOk(){
@@ -148,7 +150,17 @@ public class PendaftaranMonitoring extends Activity{
 			}case MINGGUAN:{
 				return pilihMingguan;
 			}case LOKASI:{
-				return pilihLokasi;
+				final CharSequence[] items = {"Tandai Sendiri", "Dari Map"};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Pilih Tandai");
+				builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+				    }
+				});
+				AlertDialog alert = builder.create();
+				return alert;
 			}case TOLERANSI:{
 				return pilihToleransi;
 			}
@@ -156,6 +168,7 @@ public class PendaftaranMonitoring extends Activity{
 		return null;
 		
 	}
+	
 	Handler mHandler = new Handler(){
 
 		@Override
@@ -180,7 +193,10 @@ public class PendaftaranMonitoring extends Activity{
 					dataMonitoring.setHaris(haris);
 					break;
 				}case LOKASI:{
-					
+					break;
+				}case TOLERANSI:{
+					dataMonitoring.setTolerancy(pilihToleransi.getToleransi());
+					break;
 				}
 			}
 		}

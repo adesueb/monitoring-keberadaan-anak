@@ -24,26 +24,29 @@ public class PilihWaktu extends Dialog{
 		buttonOk.setOnClickListener( new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				
+				List<Long> waktus = new ArrayList<Long>();
+				TimePicker time1 = (TimePicker) findViewById(R.id.monitoringTime1);
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.HOUR_OF_DAY, time1.getCurrentHour()+1);
+				cal.set(Calendar.MINUTE, time1.getCurrentMinute());
+				waktus.add(cal.getTimeInMillis());
+				TimePicker time2 = (TimePicker) findViewById(R.id.monitoringTime2);
+				Calendar cal2 = Calendar.getInstance();
+				cal2.set(Calendar.HOUR_OF_DAY, time2.getCurrentHour()+1);
+				cal2.set(Calendar.MINUTE, time2.getCurrentMinute());
+				waktus.add(cal2.getTimeInMillis());
 				mHandler.sendEmptyMessage(PendaftaranMonitoring.WAKTU);
+				dismiss();
 			}
 		});
 	}
 	
 	public List<Long> getWaktus(){
-		List<Long> waktus = new ArrayList<Long>();
-		TimePicker time1 = (TimePicker) findViewById(R.id.monitoringTime1);
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, time1.getCurrentHour()+1);
-		cal.set(Calendar.MINUTE, time1.getCurrentMinute());
-		waktus.add(cal.getTimeInMillis());
-		TimePicker time2 = (TimePicker) findViewById(R.id.monitoringTime2);
-		Calendar cal2 = Calendar.getInstance();
-		cal2.set(Calendar.HOUR_OF_DAY, time2.getCurrentHour()+1);
-		cal2.set(Calendar.MINUTE, time2.getCurrentMinute());
-		waktus.add(cal2.getTimeInMillis());
+		
 		return waktus;
 	}
+	
+	private List<Long> waktus = new ArrayList<Long>();
 	
 	private Handler mHandler;
 

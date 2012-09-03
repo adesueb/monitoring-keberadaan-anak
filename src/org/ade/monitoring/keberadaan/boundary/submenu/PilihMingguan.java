@@ -38,6 +38,7 @@ public class PilihMingguan extends Dialog{
 					 }
 				}
 				mHandler.sendEmptyMessage(PendaftaranMonitoring.MINGGUAN);
+				dismiss();
 			}
 		});
 	}

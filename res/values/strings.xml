@@ -10,4 +10,9 @@
     <string name="kosong">...</string>
     <string name="ok">OK</string>
     <string name="pilih_waktu">Pilih Waktu</string>
+    <string name="m">Meters</string>
+    <string name="nol">0</string>
+    <string name="sepuluh">10</string>
+    <string name="seratus">100</string>
+    <string name="meter">m</string>
 </resources>
