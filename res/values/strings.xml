@@ -15,4 +15,9 @@
     <string name="sepuluh">10</string>
     <string name="seratus">100</string>
     <string name="meter">m</string>
+    <string name="pilih_anak">Pilih Anak</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_anak">Add Anak</string>
+    <string name="nama">nama</string>
+    <string name="no_hp">no hp</string>
 </resources>

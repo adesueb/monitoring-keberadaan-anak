@@ -20,16 +20,18 @@
     <TimePicker 
     	android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/monitoringTime2">
     </TimePicker>
+
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right" >
+
+        <Button
+            android:id="@+id/monitoringWaktuBtnOk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right" >
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OK" android:id="@+id/monitoringWaktuBtnOk"/>
-
-      </LinearLayout>
+            android:text="@string/ok"
+            android:textSize="30dip" />
+    </LinearLayout>
     
 </LinearLayout>

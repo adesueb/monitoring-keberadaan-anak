@@ -77,6 +77,13 @@ public class DataMonitoring {
 		return calSelesai.getTime();		
 	}
 	
+	public String getKeterangan() {
+		return keterangan;
+	}
+
+	public void setKeterangan(String keterangan) {
+		this.keterangan = keterangan;
+	}
 
 	public List<Integer> getHaris() {
 		return haris;
@@ -111,6 +118,7 @@ public class DataMonitoring {
 	}
 
 
+	private String	keterangan;
 	private String 	idMonitoring;
 	private int		status;
 	private Lokasi 	lokasi;
@@ -121,7 +129,7 @@ public class DataMonitoring {
     private List<Integer> 	haris;
     private List<Long>		tanggals;
     
-    private final static int SEHARUSNYA = 0;
-    private final static int TERLARANG	= 1;
+    public final static int SEHARUSNYA = 0;
+    public final static int TERLARANG	= 1;
 
 }

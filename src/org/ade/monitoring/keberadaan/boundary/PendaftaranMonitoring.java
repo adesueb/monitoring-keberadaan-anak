@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihAnak;
-import org.ade.monitoring.keberadaan.boundary.submenu.PilihLokasi;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihMingguan;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihToleransi;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihWaktu;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.tanda.ITandaLokasi;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,7 +46,6 @@ public class PendaftaranMonitoring extends Activity{
 		pilihAnak 		= new PilihAnak(this, databaseManager, mHandler);
 		pilihWaktu 		= new PilihWaktu(this, mHandler);
 		pilihMingguan 	= new PilihMingguan(this, mHandler);
-		pilihLokasi 	= new PilihLokasi(this);
 		pilihToleransi 	= new PilihToleransi(this, mHandler);
 	}
 
@@ -119,7 +118,7 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionPilihLokasi(){
-		
+		showDialog(STATUS_LOKASI);
 	}
 	
 	private void actionPilihToleransi(){
@@ -132,6 +131,21 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void actionCancel(){
 		finish();
+	}
+	
+	private void actionTandaSeharusnya(){
+		dataMonitoring.setStatus(DataMonitoring.SEHARUSNYA);
+	}
+	
+	private void actionTandaTerlarang(){
+		dataMonitoring.setStatus(DataMonitoring.TERLARANG);
+	}
+	
+	private void actionTandaiDariMap(){
+		
+	}
+	
+	private void actionTandaiSendiri(){
 	}
 	
 	@Override
@@ -149,20 +163,49 @@ public class PendaftaranMonitoring extends Activity{
 								cal.get(Calendar.MONTH),cal.get(Calendar.DATE));
 			}case MINGGUAN:{
 				return pilihMingguan;
-			}case LOKASI:{
-				final CharSequence[] items = {"Tandai Sendiri", "Dari Map"};
+			}case STATUS_LOKASI:{
+				final CharSequence[] items = {"Seharusnya", "Terlarang"};
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("Pilih Tandai");
+				builder.setTitle("Pilih Status Tanda");
 				builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
-				        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+				    	switch(item){
+				    		case 0:{
+				    			actionTandaSeharusnya();
+				    			break;
+				    		}case 1:{
+				    			actionTandaTerlarang();
+				    			break;
+				    		}
+				    	}
+				    	showDialog(LOKASI);
 				    }
 				});
 				AlertDialog alert = builder.create();
 				return alert;
 			}case TOLERANSI:{
 				return pilihToleransi;
+			}case LOKASI:{
+				final CharSequence[] items = {"Sendiri","Dari Map"};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Pilih Tandai");
+				builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				    	switch(item){
+				    		case 0:{
+				    			actionTandaiSendiri();
+				    			break;
+				    		}case 1:{
+				    			actionTandaiDariMap();
+				    			break;
+				    		}
+				    	}
+				    }
+				});
+				AlertDialog alert = builder.create();
+				return alert;
 			}
 		}
 		return null;
@@ -193,6 +236,7 @@ public class PendaftaranMonitoring extends Activity{
 					dataMonitoring.setHaris(haris);
 					break;
 				}case LOKASI:{
+					dataMonitoring.setLokasi(tandaLokasi.getLokasi());
 					break;
 				}case TOLERANSI:{
 					dataMonitoring.setTolerancy(pilihToleransi.getToleransi());
@@ -226,16 +270,17 @@ public class PendaftaranMonitoring extends Activity{
 	private PilihAnak 		pilihAnak;
 	private PilihWaktu 		pilihWaktu;
 	private PilihMingguan 	pilihMingguan;
-	private PilihLokasi 	pilihLokasi;
 	private PilihToleransi 	pilihToleransi;
+	private ITandaLokasi	tandaLokasi;
 	
 	private DataMonitoring dataMonitoring;
 	
-	public final static int ANAK		= 0;
-	public final static int WAKTU		= 1;
-	public final static int TANGGAL		= 2;
-	public final static int MINGGUAN	= 3;
-	public final static int LOKASI		= 4;
-	public final static int TOLERANSI	= 5;
+	public final static int ANAK			= 0;
+	public final static int WAKTU			= 1;
+	public final static int TANGGAL			= 2;
+	public final static int MINGGUAN		= 3;
+	public final static int STATUS_LOKASI	= 4;
+	public final static int TOLERANSI		= 5;
+	public final static int LOKASI			= 6;
 	
 }

@@ -13,12 +13,16 @@
         	android:id="@+id/linearLayout3" 
         	android:layout_height="match_parent" 
         	android:orientation="vertical">
+
+          
+
             <EditText 
             	android:layout_height="wrap_content" 
             	android:layout_width="match_parent" 
-            	android:text="@string/seratus" 
-            	android:numeric="integer" 
+            	android:text="@string/seratus"
+                android:inputType="number"
             	android:id="@+id/monitoringToleransiTextNumber">
+                <requestFocus />
             </EditText>
         </LinearLayout>
         

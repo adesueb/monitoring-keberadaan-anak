@@ -281,6 +281,7 @@ public class DatabaseManager {
 			DataMonitoring dataMonitoring = new DataMonitoring();
 			 
 			int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
+			int indexKetMonitoring			= cursor.getColumnIndex(COLUMN_KET_MONITORING);
 			int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
 			int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
 			int indexDateMulaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
@@ -290,6 +291,7 @@ public class DatabaseManager {
 			 
 		 
 			dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
+			dataMonitoring.setKeterangan(cursor.getString(indexKetMonitoring));
 			dataMonitoring.setLokasi(
 				new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
 						 cursor.getDouble(indexLongitudeMonitoring)));
@@ -472,6 +474,7 @@ public class DatabaseManager {
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		MONITORING_TABLE_NAME+" ("+
 	    		COLUMN_ID_MONITORING+" VARCHAR(10) PRIMARY KEY,"+
+	    		COLUMN_KET_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_ANAK_MONITORING+ " VARCHAR(10),"+
 	    		COLUMN_LATITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_LONGITUDE_MONITORING+" VARCHAR(50),"+
@@ -520,6 +523,7 @@ public class DatabaseManager {
     private static final String MONITORING_TABLE_NAME			= 
     		"monitoring";
     private static final String COLUMN_ID_MONITORING			= "monitoring_id";
+    private static final String COLUMN_KET_MONITORING			= "monitoring_ket";
     private static final String COLUMN_ANAK_MONITORING			= "monitoring_anak";
     private static final String COLUMN_LONGITUDE_MONITORING 	= "monitoring_longitude";
     private static final String COLUMN_LATITUDE_MONITORING		= "monitoring_latitude";
