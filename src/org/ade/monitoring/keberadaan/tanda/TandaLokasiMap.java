@@ -12,7 +12,6 @@ public class TandaLokasiMap implements ITandaLokasi{
 		mHandler	= handler;
 	}
 	public void actionTandaiLokasi() {
-		
 	}
 
 	public Lokasi getLokasi() {

@@ -23,8 +23,9 @@ import android.os.Message;
  */
 public class MonitoringOverlayFactory {
 	
-	public MonitoringOverlayFactory(Context context){
+	public MonitoringOverlayFactory(Context context, Handler handler){
 		mContext = context;
+		mHandler = handler;
 	}
 	
 	public boolean anyPosition(){
@@ -50,7 +51,7 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayPelanggaran(List<Pelanggaran> pelanggarans){
 		PetaOverlay petaOverlay	= 
-				new PetaOverlay(mContext.getResources().getDrawable(PELANGGARAN), mContext);
+				new PetaOverlay(mContext.getResources().getDrawable(PELANGGARAN), mContext, mHandler);
 		for(Pelanggaran pelanggaran:pelanggarans){
 			OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
 			petaOverlay.addOverLay(overlayItem);
@@ -61,10 +62,10 @@ public class MonitoringOverlayFactory {
 	public void makeOverlayDataMonitoring(List<DataMonitoring> dataMonitorings){
 		
 		PetaOverlay petaOverlaySeharusnya 	= 
-				new PetaOverlay(mContext.getResources().getDrawable(SEHARUSNYA), mContext);
+				new PetaOverlay(mContext.getResources().getDrawable(SEHARUSNYA), mContext, mHandler);
 		
 		PetaOverlay petaOverlayTerlarang 	= 
-				new PetaOverlay(mContext.getResources().getDrawable(TERLARANG), mContext);
+				new PetaOverlay(mContext.getResources().getDrawable(TERLARANG), mContext, mHandler);
 		for(DataMonitoring dataMonitoring: dataMonitorings){
 			OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
 			if(dataMonitoring.isSeharusnya()){
@@ -130,7 +131,7 @@ public class MonitoringOverlayFactory {
 					double longitude 	= mGpsManager.getLokasi().getLongitude();
 					
 					PetaOverlay petaOverlay	= 
-							new PetaOverlay(mContext.getResources().getDrawable(POSITION), mContext);
+							new PetaOverlay(mContext.getResources().getDrawable(POSITION), mContext, mHandler);
 					GeoPoint point = new GeoPoint((int)(latitude*1E6),(int) (longitude*1E6));
 					OverlayItem overlayItem = 
 							new OverlayItem
@@ -150,6 +151,7 @@ public class MonitoringOverlayFactory {
 	private Map<Integer,PetaOverlay> petaOverlays = new HashMap<Integer, PetaOverlay>();
 	
 	private final Context mContext;
+	private final Handler mHandler;
 	
 	public final static int POSITION	= 0;
 	public final static int SEHARUSNYA = 1;

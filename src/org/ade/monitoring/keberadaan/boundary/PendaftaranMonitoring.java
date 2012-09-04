@@ -11,14 +11,18 @@ import org.ade.monitoring.keberadaan.boundary.submenu.PilihToleransi;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihWaktu;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.tanda.ITandaLokasi;
+import org.ade.monitoring.keberadaan.tanda.TandaLokasiSendiri;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -126,7 +130,9 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionOk(){
-		
+		if(dataMonitoring!=null){
+			databaseManager.addDataMonitoring(dataMonitoring);
+		}
 	}
 	
 	private void actionCancel(){
@@ -142,12 +148,30 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionTandaiDariMap(){
-		
+		Intent intent = new Intent(this, Peta.class);
+		startActivityForResult(intent, LOKASI);
 	}
 	
 	private void actionTandaiSendiri(){
+		tandaLokasi = new TandaLokasiSendiri(this, mHandler);
+		tandaLokasi.actionTandaiLokasi();
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch(requestCode){
+			case LOKASI:{
+				if(resultCode==RESULT_OK && data!=null){
+					Lokasi lokasi = new Lokasi();
+					lokasi.setLatitude(data.getDoubleExtra("latitude", 0));
+					lokasi.setLongitude(data.getDoubleExtra("longitude", 0));
+					dataMonitoring.setLokasi(lokasi);
+				}
+				break;
+			}
+		}
+	}
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		

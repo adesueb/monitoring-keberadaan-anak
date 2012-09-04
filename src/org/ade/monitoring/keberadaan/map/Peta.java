@@ -2,13 +2,19 @@ package org.ade.monitoring.keberadaan.map;
 
 import org.ade.monitoring.keberadaan.R;
 
+import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.MotionEvent;
 
 
-public class Peta extends Activity{
+public class Peta extends MapActivity{
 
   
   	@Override
@@ -19,28 +25,33 @@ public class Peta extends Activity{
 	    mapView.setBuiltInZoomControls(true);
 	    
 	}
-
-	public void tampilkanPeta(  ){
-  	}
-
-  	public long getLongitude(  ){
-	  
-  		return 0;
-  	}
-
-
-  	public long getLatitude(  ){
-	  
-  		return 0;
-  	}
-
-  	public void setLongitude( long longitude ){
-  	}
-
-  
-
-  	public void setLatitude( long latitude ){
-  	}
+  	
+  	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
+		
+	}
+  	
+  	@Override
+	protected Dialog onCreateDialog(int id) {
+		return super.onCreateDialog(id);
+	}
 
 
+
+	private final Handler handler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			Bundle bundle = msg.getData();
+			if(bundle!=null){
+				Intent intent = new Intent();
+				intent.putExtras(bundle);
+				Peta.this.setResult(RESULT_OK, intent);
+			}
+		}
+  		
+  	};
+
+	
 }
