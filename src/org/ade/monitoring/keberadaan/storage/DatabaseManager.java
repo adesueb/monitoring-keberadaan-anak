@@ -368,7 +368,7 @@ public class DatabaseManager {
 		return null;
 	}
 	//............................................................................
-	
+	//method buat melakukan query.................................................
 	private Cursor actionQuery(String table, String[]columns, String selection){
 	  
 		SQLiteDatabase db 	= getDb();

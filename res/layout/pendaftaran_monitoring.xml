@@ -40,7 +40,9 @@
 
 		        <LinearLayout
 		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content" android:background="@drawable/back_menu" android:id="@+id/monitoringButtonAnak">
+		            android:layout_height="wrap_content" 
+		            android:background="@drawable/back_menu" 
+		            android:id="@+id/monitoringButtonAnak">
 		
 		            <TextView
 		                android:id="@+id/textView2"
@@ -56,12 +58,20 @@
 		                android:layout_height="wrap_content"
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip" />
+
+		            <TextView
+		                android:id="@+id/monitoringAnak"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
 		
 		        </LinearLayout>
 		        <LinearLayout
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content" 
-		            android:background="@drawable/back_menu" android:id="@+id/monitoringButtonWaktu">
+		            android:background="@drawable/back_menu" 
+		            android:id="@+id/monitoringButtonWaktu">
 		
 		            <TextView
 		                android:id="@+id/textView2"
@@ -77,18 +87,28 @@
 		                android:layout_height="wrap_content"
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip"/>
+
+		            <TextView
+		                android:id="@+id/monitoringWaktu"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
 		
 		        </LinearLayout>
 		        <LinearLayout
 		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content" android:background="@drawable/back_menu" android:id="@+id/monitoringButtonMingguan">
+		            android:layout_height="wrap_content" 
+		            android:background="@drawable/back_menu" 
+		            android:id="@+id/monitoringButtonMingguan">
 		
 		            <TextView
 		                android:id="@+id/textView2"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:padding="10dip"
-		                android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/pilih_mingguan"/>
+		                android:textAppearance="?android:attr/textAppearanceLarge" 
+		                android:text="@string/pilih_mingguan"/>
 		
 		            <ImageView
 		                android:id="@+id/imageView1"
@@ -96,12 +116,21 @@
 		                android:layout_height="wrap_content"
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip"/>
+
+		            <TextView
+		                android:id="@+id/monitoringMingguan"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
 		
 		        </LinearLayout>
 		
 		        <LinearLayout
 		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content" android:background="@drawable/back_menu" android:id="@+id/MonitoringButtonTanggal">
+		            android:layout_height="wrap_content" 
+		            android:background="@drawable/back_menu" 
+		            android:id="@+id/MonitoringButtonTanggal">
 		
 		            <TextView
 		                android:id="@+id/TextView01"
@@ -117,11 +146,20 @@
 		                android:layout_height="wrap_content"
 		                android:paddingTop="10dip"
 		                android:src="@drawable/enter" />
+
+		            <TextView
+		                android:id="@+id/monitoringTanggal"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
+
 		        </LinearLayout>
 		        <LinearLayout 
 		        	android:layout_height="wrap_content" 
 		        	android:layout_width="match_parent" 
-		        	android:background="@drawable/back_menu" android:id="@+id/monitoringButtonLokasi">
+		        	android:background="@drawable/back_menu" 
+		        	android:id="@+id/monitoringButtonLokasi">
 		            <TextView 
 		            	android:padding="10dip" 
 		            	android:textAppearance="?android:attr/textAppearanceLarge" 
@@ -135,10 +173,20 @@
 		            	android:id="@+id/ImageView02" 
 		            	android:src="@drawable/enter" 
 		            	android:paddingTop="10dip"></ImageView>
+
+		            <TextView
+		                android:id="@+id/monitoringLokasi"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
+
 		        </LinearLayout>
 		        <LinearLayout 
 		        	android:layout_height="wrap_content" 
-		        	android:layout_width="match_parent" android:background="@drawable/back_menu" android:id="@+id/monitoringButtonToleransi">
+		        	android:layout_width="match_parent" 
+		        	android:background="@drawable/back_menu" 
+		        	android:id="@+id/monitoringButtonToleransi">
 		            <TextView 
 		            	android:padding="10dip" 
 		            	android:textAppearance="?android:attr/textAppearanceLarge" 
@@ -152,6 +200,14 @@
 		            	android:id="@+id/ImageView03" 
 		            	android:src="@drawable/enter" 
 		            	android:paddingTop="10dip"></ImageView>
+
+		            <TextView
+		                android:id="@+id/monitoringToleransi"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="TextView" />
+
 		        </LinearLayout>
         	</LinearLayout>
 
@@ -180,13 +236,15 @@
 	             android:layout_width="match_parent"
 	             android:layout_height="wrap_content"
 	             android:text="Cancel" 
-	             android:layout_weight="1" android:id="@+id/monitoringButtonCancel"/>
+	             android:layout_weight="1" 
+	             android:id="@+id/monitoringButtonCancel"/>
 	
 	        <Button
 	             android:layout_width="match_parent"
 	             android:layout_height="wrap_content"
 	             android:text="OK" 
-	             android:layout_weight="1" android:id="@+id/monitoringButtonOk"/>
+	             android:layout_weight="1" 
+	             android:id="@+id/monitoringButtonOk"/>
 	    </LinearLayout>
 
     </LinearLayout>
