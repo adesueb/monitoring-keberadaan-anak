@@ -77,12 +77,28 @@ public class DataMonitoring {
 		return calSelesai.getTime();		
 	}
 	
-	public List<TanggalMonitoring> getWaktuMonitorings() {
-		return waktuMonitorings;
+	public String getKeterangan() {
+		return keterangan;
 	}
 
-	public void setWaktuMonitorings(List<TanggalMonitoring> waktuMonitorings) {
-		this.waktuMonitorings = waktuMonitorings;
+	public void setKeterangan(String keterangan) {
+		this.keterangan = keterangan;
+	}
+
+	public List<Integer> getHaris() {
+		return haris;
+	}
+
+	public void setHaris(List<Integer> haris) {
+		this.haris = haris;
+	}
+
+	public List<Long> getTanggals() {
+		return tanggals;
+	}
+
+	public void setTanggals(List<Long> tanggals) {
+		this.tanggals = tanggals;
 	}
 
 	public boolean isTerlarang(){
@@ -102,6 +118,7 @@ public class DataMonitoring {
 	}
 
 
+	private String	keterangan;
 	private String 	idMonitoring;
 	private int		status;
 	private Lokasi 	lokasi;
@@ -109,9 +126,10 @@ public class DataMonitoring {
     private int		tolerancy;
     private long 	waktuMulai;
     private long 	waktuSelesai;
-    private List<TanggalMonitoring> waktuMonitorings;
+    private List<Integer> 	haris;
+    private List<Long>		tanggals;
     
-    private final static int SEHARUSNYA = 0;
-    private final static int TERLARANG	= 1;
+    public final static int SEHARUSNYA = 0;
+    public final static int TERLARANG	= 1;
 
 }

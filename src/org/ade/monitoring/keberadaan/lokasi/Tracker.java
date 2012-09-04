@@ -34,7 +34,6 @@ public class Tracker implements LocationListener{
 		 if (!mlocManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
 			 return ;
 		 }
-		
 		LocationProvider high =
 			    mlocManager.getProvider(mlocManager.getBestProvider(createFineCriteria(), true));
 		

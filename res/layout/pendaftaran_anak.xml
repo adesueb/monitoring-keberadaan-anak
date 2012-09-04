@@ -11,16 +11,16 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Anak"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:text="@string/add_anak"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
             android:id="@+id/pendaftaranTxtName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="name"  >
+            android:hint="@string/nama"
+            android:inputType="textPersonName" >
 
             <requestFocus />
         </EditText>
@@ -30,8 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="phone"
-            android:hint="phone"  />
+            android:hint="@string/no_hp"
+            android:inputType="phone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,13 +43,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Cancel" />
+                android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/pendaftaranBtnOk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OK" />
+                android:text="@string/ok" />
 
         </LinearLayout>
 

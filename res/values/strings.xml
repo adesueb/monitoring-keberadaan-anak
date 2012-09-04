@@ -7,4 +7,17 @@
     <string name="pilih_mingguan">Pilih Mingguan</string>
     <string name="set_tolerancy">Set Toleransi</string>
     <string name="monitoring">MONITORING</string>
+    <string name="kosong">...</string>
+    <string name="ok">OK</string>
+    <string name="pilih_waktu">Pilih Waktu</string>
+    <string name="m">Meters</string>
+    <string name="nol">0</string>
+    <string name="sepuluh">10</string>
+    <string name="seratus">100</string>
+    <string name="meter">m</string>
+    <string name="pilih_anak">Pilih Anak</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_anak">Add Anak</string>
+    <string name="nama">nama</string>
+    <string name="no_hp">no hp</string>
 </resources>

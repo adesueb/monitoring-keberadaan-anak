@@ -3,13 +3,13 @@
       package="org.ade.monitoring.keberadaan"
       android:versionCode="1"
       android:versionName="1.0">
-		<uses-sdk android:minSdkVersion="9" 
-          		android:targetSdkVersion="9"
-          		android:maxSdkVersion="16" />
-		<uses-permission 
-				android:name="android.permission.INTERNET" />   
-		<uses-permission 
-		  	android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-sdk android:minSdkVersion="9" 
+         		android:targetSdkVersion="9"
+         		android:maxSdkVersion="16" />
+	<uses-permission 
+			android:name="android.permission.INTERNET" />   
+	<uses-permission 
+	  	android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission 
       	android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission 
@@ -17,6 +17,8 @@
 
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
+        
+		<uses-library android:name="com.google.android.maps"/>
         <activity android:name=".MonitoringKeberadaan"
                   android:label="@string/app_name">
             <intent-filter>
@@ -26,7 +28,8 @@
         </activity>
         
         <activity android:name=".test.TestGps"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" 
+                  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -34,7 +37,8 @@
         </activity>
         
         <activity android:name=".boundary.DaftarAnak"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" 
+                  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -42,7 +46,8 @@
         </activity>
         
         <activity android:name=".boundary.PendaftaranAnak"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" 
+                  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -50,21 +55,25 @@
         </activity>
         
         <activity android:name=".boundary.DaftarMonitoring"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" 
+                  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".boundary.PendaftaranMonitoring"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" 
+                  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
-        <receiver android:name=".koneksi.KoneksiSMS"> 
+        <receiver 
+            android:name=".koneksi.KoneksiSMS" 
+            android:exported="false"> 
             <intent-filter> 
                 <action android:name=
                     "android.provider.Telephony.SMS_RECEIVED" /> 

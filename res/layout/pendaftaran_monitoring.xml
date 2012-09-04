@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" android:background="@drawable/back_main">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/back_main">
 
 	
     <LinearLayout
@@ -9,17 +10,20 @@
 		android:orientation="vertical">
 
         <LinearLayout
+            
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dip"
             android:layout_marginTop="5dip"
             android:gravity="center" >
-            <ImageView 
             
+            <ImageView 
         		android:layout_width="30dip"
         	 	android:layout_height="30dip"
             	android:id="@+id/imageView2" 
-            	android:src="@drawable/add"></ImageView>
+            	android:src="@drawable/add">
+                
+            </ImageView>
             
             <TextView
                 android:id="@+id/textView1"
@@ -27,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:padding="10dip"
                 android:textAppearance="?android:attr/textAppearanceLarge" 
-                android:text="@string/monitoring" android:textStyle="bold"/>
+                android:text="@string/monitoring" 
+                android:textStyle="bold"/>
 
         </LinearLayout>
         <ScrollView
@@ -35,7 +40,7 @@
 		android:layout_height="match_parent">
 	        <LinearLayout
 		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
+		        android:layout_height="wrap_content"
 		        android:orientation="vertical" >
 
 		        <LinearLayout
@@ -49,7 +54,7 @@
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:padding="10dip"
-		                android:text="Pilih Anak"
+		                android:text="@string/pilih_anak"
 		                android:textAppearance="?android:attr/textAppearanceLarge" />
 		
 		            <ImageView
@@ -59,12 +64,11 @@
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip" />
 
-		            <TextView
-		                android:id="@+id/monitoringAnak"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
+		            <TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextAnak" android:text="@string/kosong"></TextView>
 		
 		        </LinearLayout>
 		        <LinearLayout
@@ -74,26 +78,24 @@
 		            android:id="@+id/monitoringButtonWaktu">
 		
 		            <TextView
-		                android:id="@+id/textView2"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:padding="10dip"
-		                android:text="Pilih Waktu"
+		                android:text="@string/pilih_waktu"
 		                android:textAppearance="?android:attr/textAppearanceLarge" />
 		
 		            <ImageView
-		                android:id="@+id/imageView1"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip"/>
 
-		            <TextView
-		                android:id="@+id/monitoringWaktu"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
+		                
+		            <TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextWaktu" android:text="@string/kosong"></TextView>
 		
 		        </LinearLayout>
 		        <LinearLayout
@@ -103,7 +105,6 @@
 		            android:id="@+id/monitoringButtonMingguan">
 		
 		            <TextView
-		                android:id="@+id/textView2"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:padding="10dip"
@@ -111,18 +112,17 @@
 		                android:text="@string/pilih_mingguan"/>
 		
 		            <ImageView
-		                android:id="@+id/imageView1"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:src="@drawable/enter" 
 		                android:paddingTop="10dip"/>
 
-		            <TextView
-		                android:id="@+id/monitoringMingguan"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
+		                
+	                <TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextMingguan" android:text="@string/kosong"></TextView>
 		
 		        </LinearLayout>
 		
@@ -141,19 +141,16 @@
 		                android:text="@string/pilih_date"/>
 		
 		            <ImageView
-		                android:id="@+id/ImageView01"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:paddingTop="10dip"
 		                android:src="@drawable/enter" />
 
-		            <TextView
-		                android:id="@+id/monitoringTanggal"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
-
+		            <TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextTanggal" android:text="@string/kosong"></TextView>
 		        </LinearLayout>
 		        <LinearLayout 
 		        	android:layout_height="wrap_content" 
@@ -170,17 +167,14 @@
 		            <ImageView 
 		            	android:layout_width="wrap_content" 
 		            	android:layout_height="wrap_content" 
-		            	android:id="@+id/ImageView02" 
 		            	android:src="@drawable/enter" 
 		            	android:paddingTop="10dip"></ImageView>
 
-		            <TextView
-		                android:id="@+id/monitoringLokasi"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
-
+	            	<TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextLokasi" android:text="@string/kosong"></TextView>
 		        </LinearLayout>
 		        <LinearLayout 
 		        	android:layout_height="wrap_content" 
@@ -196,18 +190,15 @@
 		            	android:text="@string/set_tolerancy"></TextView>
 		            <ImageView 
 		            	android:layout_height="wrap_content" 
-		            	android:layout_width="wrap_content" 
-		            	android:id="@+id/ImageView03" 
+		            	android:layout_width="wrap_content"
 		            	android:src="@drawable/enter" 
 		            	android:paddingTop="10dip"></ImageView>
 
-		            <TextView
-		                android:id="@+id/monitoringToleransi"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="TextView" />
-
+            	 	<TextView 
+		            	android:paddingLeft="5dip"
+		             	android:layout_width="wrap_content" 
+		             	android:layout_height="wrap_content" 
+		             	android:id="@+id/monitoringTextToleransi" android:text="@string/kosong"></TextView>
 		        </LinearLayout>
         	</LinearLayout>
 
@@ -232,19 +223,23 @@
 	        android:paddingLeft = "30dip"
 	        android:paddingRight = "30dip"
 	        android:background="#aa000000">
+
 	        <Button
-	             android:layout_width="match_parent"
-	             android:layout_height="wrap_content"
-	             android:text="Cancel" 
-	             android:layout_weight="1" 
-	             android:id="@+id/monitoringButtonCancel"/>
+
+	            android:id="@+id/monitoringButtonCancel"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/cancel" />
 	
 	        <Button
-	             android:layout_width="match_parent"
-	             android:layout_height="wrap_content"
-	             android:text="OK" 
-	             android:layout_weight="1" 
-	             android:id="@+id/monitoringButtonOk"/>
+
+	            android:id="@+id/monitoringButtonOk"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/ok" />
+
 	    </LinearLayout>
 
     </LinearLayout>
