@@ -9,7 +9,13 @@ public class Anak {
     public Anak () { }
   
     
-    public String getIdAnak() {
+    public String getIdOrtu() {
+		return idOrtu;
+	}
+	public void setIdOrtu(String idOrtu) {
+		this.idOrtu = idOrtu;
+	}
+	public String getIdAnak() {
 		return idAnak;
 	}
 	public void setIdAnak(String idAnak) {
@@ -41,6 +47,7 @@ public class Anak {
 	}
 
 	private String idAnak;
+	private String idOrtu;
     private String namaAnak;
     private String noHpAnak;
     

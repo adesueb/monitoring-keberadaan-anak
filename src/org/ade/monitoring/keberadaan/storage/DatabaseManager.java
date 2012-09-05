@@ -242,10 +242,12 @@ public class DatabaseManager {
 		if(cursor!=null && cursor.getCount()>0){
 			Anak anak = new Anak();
 			int indexIdAnak 	= cursor.getColumnIndex(COLUMN_ID_ANAK);
+			int indexOrtuAnak	= cursor.getColumnIndex(COLUMN_ORTU_ANAK);
 			int indexNamaAnak	= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
 			
 			anak.setIdAnak(cursor.getString(indexIdAnak));
+			anak.setIdOrtu(cursor.getString(indexOrtuAnak));
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
 			if(withPelanggaran){
@@ -453,6 +455,7 @@ public class DatabaseManager {
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		ANAK_TABLE_NAME+" ("+
 	    		COLUMN_ID_ANAK+" VARCHAR(10) PRIMARY KEY,"+
+	    		COLUMN_ORTU_ANAK+" VARCHAR(10),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50))";
 	    
@@ -508,6 +511,7 @@ public class DatabaseManager {
 	private static final String ANAK_TABLE_NAME 	= 
     		"anak";
     private static final String COLUMN_ID_ANAK 		= "anak_id";
+    private static final String COLUMN_ORTU_ANAK		= "anak_ortu";
     private static final String COLUMN_NAMA_ANAK	= "anak_nama";
     private static final String COLUMN_NO_HP_ANAK	= "anak_no_hp";
     

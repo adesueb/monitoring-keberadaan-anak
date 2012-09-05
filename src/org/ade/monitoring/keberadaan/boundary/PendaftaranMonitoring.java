@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,10 +48,10 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void initSubMenu(){
-		pilihAnak 		= new PilihAnak(this, databaseManager, mHandler);
-		pilihWaktu 		= new PilihWaktu(this, mHandler);
-		pilihMingguan 	= new PilihMingguan(this, mHandler);
-		pilihToleransi 	= new PilihToleransi(this, mHandler);
+		pilihAnak 		= new PilihAnak(this, databaseManager, new MonitoringHandler(this));
+		pilihWaktu 		= new PilihWaktu(this, new MonitoringHandler(this));
+		pilihMingguan 	= new PilihMingguan(this, new MonitoringHandler(this));
+		pilihToleransi 	= new PilihToleransi(this, new MonitoringHandler(this));
 	}
 
 	private void initAllButton(){
@@ -58,6 +59,12 @@ public class PendaftaranMonitoring extends Activity{
 		buttonAnak.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {actionPilihAnak();}
+		});
+		
+		LinearLayout buttonKeterangan	= (LinearLayout) findViewById(R.id.monitoringButtonKeterangan);
+		buttonKeterangan.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {actionPilihKeterangan();}
 		});
 		
 		LinearLayout buttonWaktu 		= (LinearLayout) findViewById(R.id.monitoringButtonWaktu);
@@ -109,6 +116,10 @@ public class PendaftaranMonitoring extends Activity{
 		showDialog(ANAK);
 	}
 	
+	private void actionPilihKeterangan() {
+		showDialog(KETERANGAN);
+	}
+	
 	private void actionPilihWaktu(){
 		showDialog(WAKTU);
 	}
@@ -132,6 +143,7 @@ public class PendaftaranMonitoring extends Activity{
 	private void actionOk(){
 		if(dataMonitoring!=null){
 			databaseManager.addDataMonitoring(dataMonitoring);
+			// TODO : kirim ke anak....
 		}
 	}
 	
@@ -153,7 +165,7 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionTandaiSendiri(){
-		tandaLokasi = new TandaLokasiSendiri(this, mHandler);
+		tandaLokasi = new TandaLokasiSendiri(this, new MonitoringHandler(this));
 		tandaLokasi.actionTandaiLokasi();
 	}
 	
@@ -178,6 +190,33 @@ public class PendaftaranMonitoring extends Activity{
 		switch(id){
 			case ANAK:{
 				return pilihAnak;
+			}case KETERANGAN : {
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+				alert.setTitle("Add Keterangan");  
+				alert.setMessage("keterangan");                
+
+				final EditText input = new EditText(this); 
+				input.setSingleLine(false);
+			    input.setLines(3);
+				alert.setView(input);
+
+				alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {  
+			          
+						dataMonitoring.setKeterangan(input.getText().toString());
+						return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+		              return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				return alertDialog;
 			}case WAKTU:{
 				return pilihWaktu;
 			}case TANGGAL:{
@@ -236,40 +275,49 @@ public class PendaftaranMonitoring extends Activity{
 		
 	}
 	
-	Handler mHandler = new Handler(){
+	private void setMonitoringFromHandlerCalling(int what){
+		switch(what){
+			case ANAK :{
+				Anak anak = pilihAnak.getAnak(); 
+				if(anak !=null){
+					dataMonitoring.setAnak(anak);
+					TextView textAnak = (TextView) findViewById(R.id.monitoringTextAnak);
+					textAnak.setText(pilihAnak.getAnak().getNamaAnak());	
+				}
+				break;
+			}case WAKTU:{
+				List<Long> waktus = pilihWaktu.getWaktus();
+				dataMonitoring.setWaktuMulai(waktus.get(0));
+				dataMonitoring.setWaktuSelesai(waktus.get(1));
+				break;
+			}case MINGGUAN:{
+				List<Integer> haris = pilihMingguan.getHaris();
+				dataMonitoring.setHaris(haris);
+				break;
+			}case LOKASI:{
+				dataMonitoring.setLokasi(tandaLokasi.getLokasi());
+				break;
+			}case TOLERANSI:{
+				dataMonitoring.setTolerancy(pilihToleransi.getToleransi());
+				break;
+			}
+	}
+	}
+	
+	private static class MonitoringHandler extends Handler{
 
+		public MonitoringHandler(PendaftaranMonitoring pendaftaran){
+			mPendaftaran = pendaftaran;
+		}
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			switch(msg.what){
-				case ANAK :{
-					Anak anak = pilihAnak.getAnak(); 
-					if(anak !=null){
-						dataMonitoring.setAnak(anak);
-						TextView textAnak = (TextView) findViewById(R.id.monitoringTextAnak);
-						textAnak.setText(pilihAnak.getAnak().getNamaAnak());	
-					}
-					break;
-				}case WAKTU:{
-					List<Long> waktus = pilihWaktu.getWaktus();
-					dataMonitoring.setWaktuMulai(waktus.get(0));
-					dataMonitoring.setWaktuSelesai(waktus.get(1));
-					break;
-				}case MINGGUAN:{
-					List<Integer> haris = pilihMingguan.getHaris();
-					dataMonitoring.setHaris(haris);
-					break;
-				}case LOKASI:{
-					dataMonitoring.setLokasi(tandaLokasi.getLokasi());
-					break;
-				}case TOLERANSI:{
-					dataMonitoring.setTolerancy(pilihToleransi.getToleransi());
-					break;
-				}
-			}
+			mPendaftaran.setMonitoringFromHandlerCalling(msg.what);
 		}
 		
-	};
+		private PendaftaranMonitoring mPendaftaran;
+		
+	}
 	
 	private DatePickerDialog.OnDateSetListener datePickerListener = 
 			new DatePickerDialog.OnDateSetListener() {
@@ -300,11 +348,12 @@ public class PendaftaranMonitoring extends Activity{
 	private DataMonitoring dataMonitoring;
 	
 	public final static int ANAK			= 0;
-	public final static int WAKTU			= 1;
-	public final static int TANGGAL			= 2;
-	public final static int MINGGUAN		= 3;
-	public final static int STATUS_LOKASI	= 4;
-	public final static int TOLERANSI		= 5;
-	public final static int LOKASI			= 6;
+	public final static int KETERANGAN		= 1;
+	public final static int WAKTU			= 2;
+	public final static int TANGGAL			= 3;
+	public final static int MINGGUAN		= 4;
+	public final static int STATUS_LOKASI	= 5;
+	public final static int TOLERANSI		= 6;
+	public final static int LOKASI			= 7;
 	
 }

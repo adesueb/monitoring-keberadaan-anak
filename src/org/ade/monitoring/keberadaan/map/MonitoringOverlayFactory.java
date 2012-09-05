@@ -8,15 +8,12 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
-import org.ade.monitoring.keberadaan.lokasi.GpsManager;
-import org.ade.monitoring.keberadaan.service.Status;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Message;
 
 /*
  * belum ada pembuatan overlay seharusnya dan terlarang yang satu2...
@@ -28,8 +25,8 @@ public class MonitoringOverlayFactory {
 		mHandler = handler;
 	}
 	
-	public boolean anyPosition(){
-		return petaOverlays.get(POSITION)!=null;
+	public boolean anyaAnak(){
+		return petaOverlays.get(ANAK)!=null;
 	}
 	
 	public boolean anySeharusnya(){
@@ -44,9 +41,25 @@ public class MonitoringOverlayFactory {
 		return petaOverlays.get(PELANGGARAN)!=null;
 	}
 	
-	public void makeOverlayPosition(Anak anak){
-		mGpsManager = new GpsManager(mContext, new PositionHandler(anak));
-		mGpsManager.searchLokasi();
+	public void makeOverlayAnak(List<Anak> anaks, List<Lokasi> lokasis){
+		PetaOverlay petaOverlay	= 
+				new PetaOverlay(mContext.getResources().getDrawable(ANAK), 
+							mContext, mHandler);
+		
+		for(int i = 0 ;i<anaks.size();i++){
+			Lokasi 	lokasi 	= lokasis.get(i);
+			Anak	anak	= anaks.get(i);
+			
+			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+			OverlayItem overlayItem = 
+					new OverlayItem
+						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
+
+			petaOverlay.addOverLay(overlayItem);
+			
+		}
+
+		petaOverlays.put(ANAK, petaOverlay);
 	}
 	
 	public void makeOverlayPelanggaran(List<Pelanggaran> pelanggarans){
@@ -98,8 +111,8 @@ public class MonitoringOverlayFactory {
 	}
 	
 	
-	public PetaOverlay getPosition(){
-		return petaOverlays.get(POSITION);
+	public PetaOverlay getAnak(){
+		return petaOverlays.get(ANAK);
 	}
 	
 	public PetaOverlay getSeharusnya(){
@@ -114,48 +127,15 @@ public class MonitoringOverlayFactory {
 		return petaOverlays.get(PELANGGARAN);
 	}
 	
-	private GpsManager mGpsManager;
-	
-	private class PositionHandler extends Handler{
-
-
-		public PositionHandler (Anak anak){
-			this.anak = anak;
-		}
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-				case Status.SUCCESS :{
-				
-					double latitude 	= mGpsManager.getLokasi().getlatitude();
-					double longitude 	= mGpsManager.getLokasi().getLongitude();
-					
-					PetaOverlay petaOverlay	= 
-							new PetaOverlay(mContext.getResources().getDrawable(POSITION), mContext, mHandler);
-					GeoPoint point = new GeoPoint((int)(latitude*1E6),(int) (longitude*1E6));
-					OverlayItem overlayItem = 
-							new OverlayItem
-								(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
-
-					petaOverlay.addOverLay(overlayItem);
-					
-					petaOverlays.put(POSITION, petaOverlay);
-				}
-			}
-		}
-		
-		private Anak anak;
-		
-	}
 	
 	private Map<Integer,PetaOverlay> petaOverlays = new HashMap<Integer, PetaOverlay>();
 	
 	private final Context mContext;
 	private final Handler mHandler;
 	
-	public final static int POSITION	= 0;
-	public final static int SEHARUSNYA = 1;
+	public final static int ANAK		= 0;
+	public final static int SEHARUSNYA 	= 1;
 	public final static int TERLARANG	= 2;
-	public final static int PELANGGARAN= 3;
+	public final static int PELANGGARAN	= 3;
 
 }

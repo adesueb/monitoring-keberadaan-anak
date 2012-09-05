@@ -37,13 +37,15 @@ public class PetaOverlay extends ItemizedOverlay<OverlayItem>{
 	        return false;
 	    }else{
 	        if ( p!=null ){
-	        	Message message = new Message();
-	        	Bundle bundle = new Bundle();
-	        	bundle.putDouble("latitude", p.getLatitudeE6()/1E6);
-	        	bundle.putDouble("longitude", p.getLongitudeE6()/1E6);
-	        	message.setData(bundle);
-	            mHandler.sendMessage(message);
-	            return true;            // We handled the tap
+	        	if(mHandler!=null){
+	        		Message message = new Message();
+		        	Bundle bundle = new Bundle();
+		        	bundle.putDouble("latitude", p.getLatitudeE6()/1E6);
+		        	bundle.putDouble("longitude", p.getLongitudeE6()/1E6);
+		        	message.setData(bundle);
+		            mHandler.sendMessage(message);	
+	        	}
+	        	return true;            // We handled the tap
 	        }else{
 	            return false;           // Null GeoPoint
 	        }
