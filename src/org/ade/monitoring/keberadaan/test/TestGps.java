@@ -2,7 +2,7 @@ package org.ade.monitoring.keberadaan.test;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
-import org.ade.monitoring.keberadaan.service.Status;
+import org.ade.monitoring.keberadaan.util.Status;
 
 import android.app.Activity;
 import android.os.Bundle;

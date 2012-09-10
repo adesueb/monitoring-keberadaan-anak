@@ -1,7 +1,7 @@
 package org.ade.monitoring.keberadaan.lokasi;
 
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.service.Status;
+import org.ade.monitoring.keberadaan.util.Status;
 
 import android.content.Context;
 import android.location.Criteria;

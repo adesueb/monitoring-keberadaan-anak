@@ -22,4 +22,6 @@
     <string name="no_hp">no hp</string>
     <string name="filter">Filter</string>
     <string name="keterangan">Keterangan</string>
+    <string name="clear">CLEAR</string>
+    <string name="sampai_dengan">sampai dengan : </string>
 </resources>

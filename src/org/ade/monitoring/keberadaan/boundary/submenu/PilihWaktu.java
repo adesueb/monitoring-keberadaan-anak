@@ -9,6 +9,7 @@ import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
@@ -19,20 +20,28 @@ public class PilihWaktu extends Dialog{
 	public PilihWaktu(Context context, Handler handler) {
 		super(context);
 		mHandler = handler;
+		setTitle("Pilih Waktu : ");
+		
+	}
+	
+	
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.monitoring_waktu);
 		Button buttonOk = (Button) findViewById(R.id.monitoringWaktuBtnOk);
 		buttonOk.setOnClickListener( new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				List<Long> waktus = new ArrayList<Long>();
+				waktus = new ArrayList<Long>();
 				TimePicker time1 = (TimePicker) findViewById(R.id.monitoringTime1);
 				Calendar cal = Calendar.getInstance();
-				cal.set(Calendar.HOUR_OF_DAY, time1.getCurrentHour()+1);
+				cal.set(Calendar.HOUR_OF_DAY, time1.getCurrentHour());
 				cal.set(Calendar.MINUTE, time1.getCurrentMinute());
 				waktus.add(cal.getTimeInMillis());
 				TimePicker time2 = (TimePicker) findViewById(R.id.monitoringTime2);
 				Calendar cal2 = Calendar.getInstance();
-				cal2.set(Calendar.HOUR_OF_DAY, time2.getCurrentHour()+1);
+				cal2.set(Calendar.HOUR_OF_DAY, time2.getCurrentHour());
 				cal2.set(Calendar.MINUTE, time2.getCurrentMinute());
 				waktus.add(cal2.getTimeInMillis());
 				mHandler.sendEmptyMessage(PendaftaranMonitoring.WAKTU);
@@ -40,7 +49,9 @@ public class PilihWaktu extends Dialog{
 			}
 		});
 	}
-	
+
+
+
 	public List<Long> getWaktus(){
 		
 		return waktus;

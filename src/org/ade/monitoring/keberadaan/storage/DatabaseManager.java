@@ -448,7 +448,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 16;
+	    private static final int DATABASE_VERSION = 1;
 		
 	    
 	    private static final String CREATE_ANAK = 
@@ -482,7 +482,7 @@ public class DatabaseManager {
 	    		COLUMN_LATITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_LONGITUDE_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+	    		
-	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+
+	    		COLUMN_DATE_SELESAI_MONITORING+" INTEGER,"+
 	    		COLUMN_STATUS_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_TOLERANCY_MONITORING+" INTEGER,"+
 	    		"FOREIGN KEY("+COLUMN_ANAK_MONITORING+") REFERENCES "+
@@ -491,16 +491,18 @@ public class DatabaseManager {
 	    private static final String CREATE_DATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		DATE_MONITORING_TABLE_NAME+" ("+
-	    		COLUMN_DATE_DATE_MONITORING+" INTEGER PRIMARY KEY,"+	    	
-	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10) PRIMARY KEY,"+			
+	    		COLUMN_DATE_DATE_MONITORING+" INTEGER,"+	    	
+	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
+	    		"PRIMARY KEY("+COLUMN_DATE_DATE_MONITORING+", "+COLUMN_MONITORING_DATE_MONITORING+"),"+
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	    private static final String CREATE_DAY_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		DAY_MONITORING_TABLE_NAME+" ("+	
-	    		COLUMN_DAY_DAY_MONITORING+" INTEGER PRIMARY KEY,"+	    	
-	    		COLUMN_MONITORING_DAY_MONITORING+ " VARCHAR(10) PRIMARY KEY,"+		
+	    		COLUMN_DAY_DAY_MONITORING+" INTEGER,"+	    	
+	    		COLUMN_MONITORING_DAY_MONITORING+ " VARCHAR(10),"+
+	    		"PRIMARY KEY("+COLUMN_DAY_DAY_MONITORING+", "+COLUMN_MONITORING_DAY_MONITORING+"),"+
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
@@ -510,40 +512,41 @@ public class DatabaseManager {
 	
 	private static final String ANAK_TABLE_NAME 	= 
     		"anak";
-    private static final String COLUMN_ID_ANAK 		= "anak_id";
-    private static final String COLUMN_ORTU_ANAK		= "anak_ortu";
-    private static final String COLUMN_NAMA_ANAK	= "anak_nama";
-    private static final String COLUMN_NO_HP_ANAK	= "anak_no_hp";
+    private static final String COLUMN_ID_ANAK 		= "id";
+    private static final String COLUMN_ORTU_ANAK	= "ortu";
+    private static final String COLUMN_NAMA_ANAK	= "nama";
+    private static final String COLUMN_NO_HP_ANAK	= "no_hp";
     
     private static final String PELANGGARAN_TABLE_NAME			=
     		"pelanggaran";
-    private static final String COLUMN_ID_PELANGGARAN			= "pelanggaran_id";
-    private static final String COLUMN_ANAK_PELANGGARAN			= "pelanggaran_anak";
-    private static final String COLUMN_MONITORING_PELANGGARAN	= "pelanggaran_monitoring";
-    private static final String COLUMN_DATE_PELANGGARAN			= "pelanggaran_waktu";
-    private static final String COLUMN_LONGITUDE_PELANGGARAN	= "pelanggaran_longitude";
-    private static final String COLUMN_LATITUDE_PELANGGARAN		= "pelanggaran_latitude";
+    private static final String COLUMN_ID_PELANGGARAN			= "id";
+    private static final String COLUMN_ANAK_PELANGGARAN			= "anak";
+    private static final String COLUMN_MONITORING_PELANGGARAN	= "monitoring";
+    private static final String COLUMN_DATE_PELANGGARAN			= "waktu";
+    private static final String COLUMN_LONGITUDE_PELANGGARAN	= "longitude";
+    private static final String COLUMN_LATITUDE_PELANGGARAN		= "latitude";
 
     private static final String MONITORING_TABLE_NAME			= 
     		"monitoring";
-    private static final String COLUMN_ID_MONITORING			= "monitoring_id";
-    private static final String COLUMN_KET_MONITORING			= "monitoring_ket";
-    private static final String COLUMN_ANAK_MONITORING			= "monitoring_anak";
-    private static final String COLUMN_LONGITUDE_MONITORING 	= "monitoring_longitude";
-    private static final String COLUMN_LATITUDE_MONITORING		= "monitoring_latitude";
-    private static final String COLUMN_DATE_MULAI_MONITORING	= "monitoring_waktu_mulai";
-    private static final String COLUMN_DATE_SELESAI_MONITORING	= "monitoring_waktu_selesai";
-    private static final String COLUMN_STATUS_MONITORING		= "monitoring_status";
-    private static final String COLUMN_TOLERANCY_MONITORING		= "monitoring_tolerancy";
+    private static final String COLUMN_ID_MONITORING			= "id";
+    private static final String COLUMN_KET_MONITORING			= "ket";
+    private static final String COLUMN_ANAK_MONITORING			= "anak";
+    private static final String COLUMN_LONGITUDE_MONITORING 	= "longitude";
+    private static final String COLUMN_LATITUDE_MONITORING		= "latitude";
+    private static final String COLUMN_DATE_MULAI_MONITORING	= "mulai";
+    private static final String COLUMN_DATE_SELESAI_MONITORING	= "selesai";
+    private static final String COLUMN_STATUS_MONITORING		= "status";
+    private static final String COLUMN_TOLERANCY_MONITORING		= "tolerancy";
 
     private static final String DAY_MONITORING_TABLE_NAME		=
-    		"day_monitoring";
-    private static final String COLUMN_MONITORING_DAY_MONITORING	= "day_monitoring";
-    private static final String COLUMN_DAY_DAY_MONITORING			= "day_day";
+    		"day";
+    private static final String COLUMN_MONITORING_DAY_MONITORING	= "monitoring";
+    private static final String COLUMN_DAY_DAY_MONITORING			= "day";
+    
     
     private static final String DATE_MONITORING_TABLE_NAME			=
-    		"date_monitoring";
-    private static final String COLUMN_MONITORING_DATE_MONITORING	= "date_monitoring";
-    private static final String COLUMN_DATE_DATE_MONITORING			= "date_date";
+    		"date";
+    private static final String COLUMN_MONITORING_DATE_MONITORING	= "monitoring";
+    private static final String COLUMN_DATE_DATE_MONITORING			= "date";
       
 }

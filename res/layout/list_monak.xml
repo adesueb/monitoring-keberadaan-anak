@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@drawable/back_main" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -9,7 +10,7 @@
         android:paddingBottom="50dip" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/listMonakTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/kosong"
@@ -24,16 +25,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_gravity="bottom"
+        android:background="#aa000000"
         android:gravity="center" >
 
-        <ImageView
-            android:id="@+id/daftarBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/icon" />
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:gravity="center" 
+	        android:paddingTop = "5dip"
+	        android:paddingBottom = "5dip"
+	        
+	        android:paddingLeft = "30dip"
+	        android:paddingRight = "30dip"
+	        android:background="#aa000000">
+
+	        <ImageView
+	            android:id="@+id/listMonakIvAdd"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/add" />
+
+	    </LinearLayout>
 
     </LinearLayout>
 

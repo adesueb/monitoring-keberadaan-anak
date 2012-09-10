@@ -21,6 +21,7 @@
             	android:layout_width="match_parent" 
             	android:text="@string/seratus"
                 android:inputType="number"
+                android:maxLength="4"
             	android:id="@+id/monitoringToleransiTextNumber">
                 <requestFocus />
             </EditText>
