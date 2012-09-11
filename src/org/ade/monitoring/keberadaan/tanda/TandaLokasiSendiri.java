@@ -1,9 +1,9 @@
 package org.ade.monitoring.keberadaan.tanda;
 
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
-import org.ade.monitoring.keberadaan.util.Status;
 
 import android.content.Context;
 import android.os.Handler;

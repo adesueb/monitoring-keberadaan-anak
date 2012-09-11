@@ -24,4 +24,6 @@
     <string name="keterangan">Keterangan</string>
     <string name="clear">CLEAR</string>
     <string name="sampai_dengan">sampai dengan : </string>
+    <string name="selalu">SELALU</string>
+    <string name="pilih_status">Pilih Status</string>
 </resources>

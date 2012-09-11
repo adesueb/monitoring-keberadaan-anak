@@ -3,11 +3,12 @@ package org.ade.monitoring.keberadaan.boundary;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
+import org.ade.monitoring.keberadaan.Variable.Operation;
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.IFormOperation;
-import org.ade.monitoring.keberadaan.util.Operation;
-import org.ade.monitoring.keberadaan.util.Status;
 
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -31,6 +32,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		TextView tvTitle = (TextView) findViewById(R.id.listMonakTitle);
 		tvTitle.setText("Daftar Anak");
 		databaseManager = new DatabaseManager(this);
+		idGenerator 	= new IDGenerator(this, databaseManager);
 		getListView().setAdapter
 			(new AdapterDaftarAnak
 					(this, R.layout.daftar_anak_item, databaseManager.getAllAnak(true,false)));
@@ -52,9 +54,13 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	protected Dialog onCreateDialog(int id, Bundle bundle) {
 		switch (id){
 			case Operation.ADD:{
+				pendaftaranAnak.setId(idGenerator.getIdAnak());
 				pendaftaranAnak.setHandler(new HandlerAdd(this));
 				return pendaftaranAnak;
 			}case Operation.EDIT:{
+				pendaftaranAnak.setId(bundle.getString("id"));
+				pendaftaranAnak.setName(bundle.getString("nama"));
+				pendaftaranAnak.setPhone(bundle.getString("noHp"));
 				pendaftaranAnak.setHandler(new HandlerEdit(this));				
 				return pendaftaranAnak;
 			}case Operation.DELETE:{
@@ -68,19 +74,26 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	
 	public void add() {
 		Anak anak = new Anak();
+		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdOrtu	(idGenerator.getIdOrangTua());
 		anak.setNamaAnak(pendaftaranAnak.getName());
 		anak.setNoHpAnak(pendaftaranAnak.getPhone());
 		databaseManager.addAnak(anak);
 	}
 
 	public void edit() {
-		
+		Anak anak = new Anak();
+		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdOrtu	(idGenerator.getIdOrangTua());
+		anak.setNamaAnak(pendaftaranAnak.getName());
+		anak.setNoHpAnak(pendaftaranAnak.getPhone());
 	}
 
 	public void delete() {
 		
 	}
 
+	private IDGenerator		idGenerator;
 	private DatabaseManager databaseManager;
 	private PendaftaranAnak pendaftaranAnak;
 	
@@ -105,8 +118,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		public Anak getItem(int position) {
 			return super.getItem(position);
 		}
-
-
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {

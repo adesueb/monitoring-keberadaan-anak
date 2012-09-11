@@ -72,6 +72,35 @@
 	                    android:text="@string/kosong" />
 	            </LinearLayout>
 
+	            <LinearLayout
+	                android:id="@+id/monitoringButtonStatus"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/back_menu" >
+
+	                <TextView
+	                    android:id="@+id/TextView05"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:padding="10dip"
+	                    android:text="@string/pilih_status"
+	                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	                <ImageView
+	                    android:id="@+id/ImageView02"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:paddingTop="10dip"
+	                    android:src="@drawable/enter" />
+
+	                <TextView
+	                    android:id="@+id/monitoringTextStatus"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:paddingLeft="5dip"
+	                    android:text="@string/kosong" />
+	            </LinearLayout>
+
 		        <LinearLayout
 		            android:id="@+id/monitoringButtonKeterangan"
 		            android:layout_width="match_parent"

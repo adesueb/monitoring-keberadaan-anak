@@ -21,13 +21,29 @@
 	    <TimePicker 
 	    	android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/monitoringTime2">
 	    </TimePicker>
-	
-	    <Button
-	        android:id="@+id/monitoringWaktuBtnOk"
+
+	    <LinearLayout
 	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/ok"
-	        android:textSize="30dip" />
+	        android:layout_height="wrap_content" >
+
+	        <Button
+	            android:id="@+id/monitoringWaktuBtnSelalu"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/selalu"
+	        		android:textAppearance="?android:attr/textAppearanceLarge"  />
+	        
+	        <Button
+	            android:id="@+id/monitoringWaktuBtnOk"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/ok"
+	        		android:textAppearance="?android:attr/textAppearanceLarge"  />
+
+	        
+	    </LinearLayout>
 	    
 	</LinearLayout>
 </ScrollView>

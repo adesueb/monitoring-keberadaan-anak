@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.DateMonitoring;
+import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 
@@ -25,6 +27,22 @@ public class DatabaseManager {
 	  
 	
 	// get.................................................................
+	
+	// get last id.........................................................
+	public String getLasIdAnak(){
+		return getLastIdFromCursor(
+				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+	}
+	public String getLastIdMonitoring(){
+		return getLastIdFromCursor(
+				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+	}
+	public String getLastIdPelanggaran(){
+		return getLastIdFromCursor(
+				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+	}
+	//.....................................................................
+	
 	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
@@ -91,46 +109,164 @@ public class DatabaseManager {
 		}
 	}
 	
-	public List<Long> getTanggalMonitoringsByMonitoring(String idMonitoring){
+	public List<DateMonitoring> getTanggalMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"="+idMonitoring);
 		if(cursor!=null && cursor.getCount()>0){
-			return getTanggalsMonitoringsFromCursor(cursor);
+			return getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
 		}else{
 			return null;
 		}
 	}
 	
-	public List<Long> getAllTanggalMonitorings(){
+	public List<DateMonitoring> getAllTanggalMonitorings(boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getTanggalsMonitoringsFromCursor(cursor);
+			return getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
 		}else{
 			return null;
 		}
 	}
 	
-	public List<Integer> getHariMonitoringsByMonitoring(String idMonitoring){
+	public List<DayMonitoring> getHariMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"="+idMonitoring);
 		if(cursor!=null && cursor.getCount()>0){
-			return getHarisMonitoringsFromCursor(cursor);
+			return getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
 		}else{
 			return null;
 		}
 	}
 	
-	public List<Integer> getAllHariMonitorings(){
+	public List<DayMonitoring> getAllHariMonitorings(boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getHarisMonitoringsFromCursor(cursor);
+			return getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
 		}else{
 			return null;
 		}
 	}
 	
+	//...................................................................
+	
+	// delete............................................................
+	
+	public void deleteDateMonitoringByIdIdDate(String id){
+
+		getDb().delete
+			(DATE_MONITORING_TABLE_NAME, 
+					"_id='"+id+"'", null);
+	}
+	
+	public void deleteDayMonitoringByIdDay(String id){
+		getDb().delete
+			(DAY_MONITORING_TABLE_NAME, 
+					"_id='"+id+"'", null);
+	}
+	
+	public void deleteDateMonitoringByIdMonitoring(String idMonitoring){
+
+		getDb().delete
+			(DATE_MONITORING_TABLE_NAME, 
+					COLUMN_MONITORING_DATE_MONITORING+"='"+idMonitoring+"'", null);
+	}
+	
+	public void deleteDayMonitoringByIdMonitoring(String idMonitoring){
+		getDb().delete
+			(DAY_MONITORING_TABLE_NAME, 
+				COLUMN_MONITORING_DAY_MONITORING+"='"+idMonitoring+"'", null);
+	}
+	
+	public void deleteAllDataMonitoring(){
+		getDb().delete(MONITORING_TABLE_NAME, null, null);
+	}
+	
+	public void deleteAllAnak(){
+		getDb().delete(ANAK_TABLE_NAME, null, null);
+	}
+	
+	public void deletePelanggaran(){
+		getDb().delete(PELANGGARAN_TABLE_NAME, null, null);
+	}
+	
+	public void deleteDataMonitoring(DataMonitoring dataMonitoring){
+		getDb().delete
+			(MONITORING_TABLE_NAME, 
+					COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
+		List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
+		if(tanggals!=null){
+			deleteDateMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring());
+		}
+		
+		List<DayMonitoring> haris = dataMonitoring.getHaris();
+		if(haris!=null){
+			deleteDayMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring());
+		}
+	}
+	
+	public void deleteAnak(Anak anak){
+		getDb().delete
+		(ANAK_TABLE_NAME, 
+				COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+	}
+	
+	public void deletePelanggaran(Pelanggaran pelanggaran){
+		getDb().delete
+			(PELANGGARAN_TABLE_NAME, 
+				COLUMN_ID_PELANGGARAN+"='"+pelanggaran.getIdPelanggaran()+"'", null);
+	}
+	
+	//...................................................................
+	
+	// update............................................................
+	public void updateDateMonitoring(DateMonitoring tanggalMonitoring){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
+		getDb().update(DATE_MONITORING_TABLE_NAME, cv, "_id='"+tanggalMonitoring.getId()+"'", null);
+	}
+	
+	public void updateDayMonitoring(DayMonitoring hariMonitoring){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_DAY_DAY_MONITORING, hariMonitoring.getHari());
+		getDb().update(DAY_MONITORING_TABLE_NAME, cv, "_id='"+hariMonitoring.getId()+"'", null);
+	}
+	
+	public void updateDataMonitoring(DataMonitoring dataMonitoring){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
+		cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
+		cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
+		cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
+		cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());
+		cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
+		cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
+		long result = getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
+		if(result>0){
+			List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
+			if(tanggals!=null){
+				for(DateMonitoring tanggal : tanggals){
+					updateDateMonitoring(tanggal);
+				}
+			}
+			
+			List<DayMonitoring> haris = dataMonitoring.getHaris();
+			if(tanggals!=null){
+				for(DayMonitoring hari : haris){
+					updateDayMonitoring(hari);
+				}
+			}
+		}
+	}
+		
+	public void updateAnak(Anak anak){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
+		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
+		getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+	}
+
 	//...................................................................
 	
 	// add...............................................................
@@ -157,7 +293,10 @@ public class DatabaseManager {
 			}
 			long result = getDb().insert(MONITORING_TABLE_NAME, null, cv);	
 			if(result>0 && dataMonitoring.getTanggals()!=null){
-				addTanggalMonitorings(dataMonitoring.getTanggals(),dataMonitoring.getIdMonitoring());
+				addTanggalMonitorings(dataMonitoring.getTanggals());
+			}
+			if(result>0 && dataMonitoring.getHaris()!=null){
+				addHariMonitorings(dataMonitoring.getHaris());
 			}
 		}
 	}
@@ -207,28 +346,58 @@ public class DatabaseManager {
 		}
 	}
 	
-	public void addTanggalMonitorings(List<Long> waktuMonitorings, String idMonitoring){
-		if(waktuMonitorings!=null){
-			for(long waktuMonitoring:waktuMonitorings){
-				addTanggalMonitoring(waktuMonitoring, idMonitoring);
+	public void addTanggalMonitorings(List<DateMonitoring> tanggalMonitorings){
+		if(tanggalMonitorings!=null){
+			for(DateMonitoring tanggalMonitoring:tanggalMonitorings){
+				addTanggalMonitoring(tanggalMonitoring);
 			}
 		}
 		
 	}
 	
-	public void addTanggalMonitoring(long waktuMonitoring, String idMonitoring){
-		if(waktuMonitoring!=0){
+	public void addTanggalMonitoring(DateMonitoring tanggalMonitoring){
+		if(tanggalMonitoring!=null){
 			ContentValues cv = new ContentValues();
-			cv.put(COLUMN_DATE_DATE_MONITORING, waktuMonitoring);
-			cv.put(COLUMN_MONITORING_DATE_MONITORING, idMonitoring);
+			cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
+			cv.put(COLUMN_MONITORING_DATE_MONITORING, tanggalMonitoring.getId());
 			
-			getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);	
+			getDb().insert(DATE_MONITORING_TABLE_NAME, null, cv);	
 		}
 	}
+	
+	public void addHariMonitorings(List<DayMonitoring> hariMonitorings){
+		if(hariMonitorings!=null){
+			for(DayMonitoring hariMonitoring:hariMonitorings){
+				addHariMonitoring(hariMonitoring);
+			}
+		}
+		
+	}
+	
+	public void addHariMonitoring(DayMonitoring dayMonitoring){
+		if(dayMonitoring!=null){
+			ContentValues cv = new ContentValues();
+			cv.put(COLUMN_DAY_DAY_MONITORING, dayMonitoring.getHari());
+			cv.put(COLUMN_MONITORING_DAY_MONITORING, dayMonitoring.getId());
+			
+			getDb().insert(DAY_MONITORING_TABLE_NAME, null, cv);	
+		}
+	}
+	
+	
 	
 	//............................................................................
 	
 	//get from Cursor.............................................................
+	private String getLastIdFromCursor(Cursor cursor){
+		if(cursor.moveToFirst()){
+			String result = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+			cursor.close();
+			return result;
+		}
+		cursor.close();
+		return "";
+	}
 	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
 		List<Anak> anaks =  new ArrayList<Anak>();
 		if(cursor.moveToFirst()){
@@ -304,10 +473,10 @@ public class DatabaseManager {
 			if(withWaktuMonitoring){
 				dataMonitoring.setTanggals
 					(getTanggalMonitoringsByMonitoring
-							(dataMonitoring.getIdMonitoring()));
+							(dataMonitoring.getIdMonitoring(), false));
 				dataMonitoring.setHaris
 					(getHariMonitoringsByMonitoring
-							(dataMonitoring.getIdMonitoring()));
+							(dataMonitoring.getIdMonitoring(), false));
 			}
 			if(withAnak){			
 				int indexAnakMonitoring		= cursor.getColumnIndex(COLUMN_ANAK_MONITORING);
@@ -357,45 +526,64 @@ public class DatabaseManager {
 		
 	}
 	
-	public List<Long> getTanggalsMonitoringsFromCursor(Cursor cursor){
-		List<Long> waktuMonitorings = new ArrayList<Long>();
+	public List<DateMonitoring> getTanggalsMonitoringsFromCursor(Cursor cursor, boolean withDataMonitoring){
+		List<DateMonitoring> waktuMonitorings = new ArrayList<DateMonitoring>();
 		if(cursor.moveToFirst()){
 			do{
-				 waktuMonitorings.add(getTanggalMonitoringFromCursor(cursor));
+				 waktuMonitorings.add(getTanggalMonitoringFromCursor(cursor, withDataMonitoring));
 			}while(cursor.moveToNext());
 		}
 		return waktuMonitorings;
 	}
 	
-	public List<Integer> getHarisMonitoringsFromCursor(Cursor cursor){
-		List<Integer> hariMonitorings = new ArrayList<Integer>();
+	public List<DayMonitoring> getHarisMonitoringsFromCursor(Cursor cursor, boolean withDataMonitoring){
+		List<DayMonitoring> hariMonitorings = new ArrayList<DayMonitoring>();
 		if(cursor.moveToFirst()){
 			do{
-				 hariMonitorings.add(getHariMonitoringFromCursor(cursor));
+				 hariMonitorings.add(getHariMonitoringFromCursor(cursor, withDataMonitoring));
 			}while(cursor.moveToNext());
 		}
 		return hariMonitorings;
 	}
 	
-	public Long getTanggalMonitoringFromCursor(Cursor cursor){
+	public DateMonitoring getTanggalMonitoringFromCursor(Cursor cursor, boolean withDataMonitoring){
+		DateMonitoring dateMonitoring = new DateMonitoring();
 		if(cursor!=null && cursor.getCount()>0){
-			int indexDate 					= cursor.getColumnIndex(COLUMN_DATE_DATE_MONITORING);
+			int indexId		= cursor.getColumnIndex("_id");
+			int indexDate 	= cursor.getColumnIndex(COLUMN_DATE_DATE_MONITORING);
 			
+			String idDateMonitoring = cursor.getInt(indexId)+"";
 			long tanggalMonitoring = cursor.getInt(indexDate);
-		
-			return tanggalMonitoring;
+			dateMonitoring.setId(idDateMonitoring);
+			dateMonitoring.setDate(tanggalMonitoring);
+			
+			if(withDataMonitoring){
+				int indexMonitoring = cursor.getColumnIndex(COLUMN_MONITORING_DATE_MONITORING);
+				String idMonitoring = cursor.getString(indexMonitoring);
+				dateMonitoring.setDataMonitoring(getDataMonitoringByIdMonitoring(idMonitoring, false, false));
+			}
+			
+			return dateMonitoring;
 		}
 		return null;
 	}
-	public int getHariMonitoringFromCursor(Cursor cursor){
+	public DayMonitoring getHariMonitoringFromCursor(Cursor cursor, boolean withDataMonitoring){
+		DayMonitoring dayMonitoring = new DayMonitoring();
 		if(cursor!=null && cursor.getCount()>0){
-			int indexDate 					= cursor.getColumnIndex(COLUMN_DAY_DAY_MONITORING);
-			
-			int hariMonitoring = cursor.getInt(indexDate);
-		
-			return hariMonitoring;
+			int indexDay 		= cursor.getColumnIndex(COLUMN_DAY_DAY_MONITORING);
+			int indexId			= cursor.getColumnIndex("_id");
+			String idHari		= cursor.getInt(indexId)+"";
+			int hariMonitoring 	= cursor.getInt(indexDay);
+			dayMonitoring.setId(idHari);
+			dayMonitoring.setHari(hariMonitoring);
+			if(withDataMonitoring){
+				int indexMonitoring = cursor.getColumnIndex(COLUMN_MONITORING_DAY_MONITORING);
+				String idMonitoring = cursor.getString(indexMonitoring);
+				dayMonitoring.setDataMonitoring(getDataMonitoringByIdMonitoring(idMonitoring, false, false));
+			}
+			return dayMonitoring;
 		}
-		return 0;
+		return dayMonitoring;
 	}
 	//............................................................................
 	//method buat melakukan query.................................................
@@ -404,6 +592,14 @@ public class DatabaseManager {
 		SQLiteDatabase db 	= getDb();
 		final Cursor cursor = 
 				db.query(table, columns, selection, null, null, null, null, null);
+		db = null;
+		return cursor;
+	}
+	
+	private Cursor actionQuery(String query){
+		SQLiteDatabase db 	= getDb();
+		final Cursor cursor = 
+				db.rawQuery(query, null);
 		db = null;
 		return cursor;
 	}
@@ -455,7 +651,7 @@ public class DatabaseManager {
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		ANAK_TABLE_NAME+" ("+
 	    		COLUMN_ID_ANAK+" VARCHAR(10) PRIMARY KEY,"+
-	    		COLUMN_ORTU_ANAK+" VARCHAR(10),"+
+	    		COLUMN_ORTU_ANAK+" VARCHAR(40),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50))";
 	    
@@ -491,24 +687,26 @@ public class DatabaseManager {
 	    private static final String CREATE_DATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		DATE_MONITORING_TABLE_NAME+" ("+
+	    		"_id INTEGER PRIMARY KEY,"+
 	    		COLUMN_DATE_DATE_MONITORING+" INTEGER,"+	    	
 	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
-	    		"PRIMARY KEY("+COLUMN_DATE_DATE_MONITORING+", "+COLUMN_MONITORING_DATE_MONITORING+"),"+
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	    private static final String CREATE_DAY_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		DAY_MONITORING_TABLE_NAME+" ("+	
+	    		"_id INTEGER PRIMARY KEY,"+
 	    		COLUMN_DAY_DAY_MONITORING+" INTEGER,"+	    	
 	    		COLUMN_MONITORING_DAY_MONITORING+ " VARCHAR(10),"+
-	    		"PRIMARY KEY("+COLUMN_DAY_DAY_MONITORING+", "+COLUMN_MONITORING_DAY_MONITORING+"),"+
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	}
 	
 	private DatabaseHelper mDatabaseHelper = null;
+	
+	private static final String COLUMN_ID 		= "id";
 	
 	private static final String ANAK_TABLE_NAME 	= 
     		"anak";

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.DateMonitoring;
+import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
@@ -46,19 +48,19 @@ public class BackgroundService extends Service{
 					
 					boolean then = false;
 					
-					List<Long> tanggalMonitorings = dataMonitoring.getTanggals();
-					List<Integer> hariMonitorings = dataMonitoring.getHaris();
+					List<DateMonitoring> tanggalMonitorings = dataMonitoring.getTanggals();
+					List<DayMonitoring> hariMonitorings = dataMonitoring.getHaris();
 					if(tanggalMonitorings!=null){
-						for(int tanggalMonitoring:hariMonitorings){
-							if(tanggal == tanggalMonitoring){
+						for(DateMonitoring tanggalMonitoring:tanggalMonitorings){
+							if(tanggal == tanggalMonitoring.getDate()){
 								then=true;
 								break;
 							}
 						}
 					}
 					if(hariMonitorings!=null || !then){
-						for(int hariMonitoring:hariMonitorings){
-							if(hari == hariMonitoring){
+						for(DayMonitoring hariMonitoring:hariMonitorings){
+							if(hari == hariMonitoring.getHari()){
 								then = true;
 								break;
 							}
@@ -67,8 +69,10 @@ public class BackgroundService extends Service{
 					}
 					
 					if(then){
-						if(now.getHours()>mulai.getHours() && now.getHours()<selesai.getHours()){
-							if(now.getMinutes()>mulai.getMinutes() && now.getMinutes()<selesai.getMinutes()){
+						if((now.getHours()>mulai.getHours() && now.getHours()<selesai.getHours())
+								||now==null){
+							if((now.getMinutes()>mulai.getMinutes() && now.getMinutes()<selesai.getMinutes())
+									||now==null){
 								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
 								Lokasi 	lokasiHp 			= mTracker.getLokasi();
 								int		tolerancy			= dataMonitoring.getTolerancy();

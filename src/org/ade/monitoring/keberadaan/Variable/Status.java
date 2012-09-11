@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.util;
+package org.ade.monitoring.keberadaan.Variable;
 
 public class Status {
 	public static final int SUCCESS	= 1;

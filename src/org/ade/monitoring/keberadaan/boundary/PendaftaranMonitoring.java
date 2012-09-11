@@ -11,11 +11,14 @@ import org.ade.monitoring.keberadaan.boundary.submenu.PilihToleransi;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihWaktu;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.DateMonitoring;
+import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.tanda.ITandaLokasi;
 import org.ade.monitoring.keberadaan.tanda.TandaLokasiSendiri;
+import org.ade.monitoring.keberadaan.util.IDGenerator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +36,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PendaftaranMonitoring extends Activity{
 
@@ -41,9 +45,11 @@ public class PendaftaranMonitoring extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pendaftaran_monitoring);
 		databaseManager = new DatabaseManager(this);
+		mIDGenerator	= new IDGenerator(this,databaseManager);
 		initAllButton();
 		initSubMenu();
 		dataMonitoring = new DataMonitoring();
+		dataMonitoring.setIdMonitoring(mIDGenerator.getIdMonitoring());
 	}
 	
 	private void initSubMenu(){
@@ -63,6 +69,12 @@ public class PendaftaranMonitoring extends Activity{
 		buttonAnak.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {actionPilihAnak();}
+		});
+		
+		LinearLayout buttonStatus		= (LinearLayout) findViewById(R.id.monitoringButtonStatus);
+		buttonStatus.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {actionPilihStatus();}
 		});
 		
 		LinearLayout buttonKeterangan	= (LinearLayout) findViewById(R.id.monitoringButtonKeterangan);
@@ -120,6 +132,10 @@ public class PendaftaranMonitoring extends Activity{
 		showDialog(ANAK);
 	}
 	
+	private void actionPilihStatus() {
+		showDialog(STATUS_LOKASI);
+	}
+	
 	private void actionPilihKeterangan() {
 		showDialog(KETERANGAN);
 	}
@@ -137,7 +153,7 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionPilihLokasi(){
-		showDialog(STATUS_LOKASI);
+		showDialog(LOKASI);
 	}
 	
 	private void actionPilihToleransi(){
@@ -146,8 +162,15 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void actionOk(){
 		if(dataMonitoring!=null){
-			databaseManager.addDataMonitoring(dataMonitoring);
-			// TODO : kirim ke anak melalui sms....
+			Anak anak = dataMonitoring.getAnak();
+			if(anak!=null){
+				databaseManager.addDataMonitoring(dataMonitoring);
+				// TODO : kirim ke anak melalui sms....
+				finish();
+			}else{
+				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT);
+			}
+			
 		}
 	}
 	
@@ -160,10 +183,14 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void actionTandaSeharusnya(){
 		dataMonitoring.setStatus(DataMonitoring.SEHARUSNYA);
+		TextView textStatus= (TextView) findViewById(R.id.monitoringTextStatus);
+		textStatus.setText("Seharusnya");
 	}
 	
 	private void actionTandaTerlarang(){
 		dataMonitoring.setStatus(DataMonitoring.TERLARANG);
+		TextView textStatus= (TextView) findViewById(R.id.monitoringTextStatus);
+		textStatus.setText("terlarang");
 	}
 	
 	private void actionTandaiDariMap(){
@@ -257,7 +284,6 @@ public class PendaftaranMonitoring extends Activity{
 				    			break;
 				    		}
 				    	}
-				    	showDialog(LOKASI);
 				    	dialog.dismiss();
 				    }
 				});
@@ -319,16 +345,22 @@ public class PendaftaranMonitoring extends Activity{
 				break;
 			}case MINGGUAN:{
 				List<Integer> haris = pilihMingguan.getHaris();
-				dataMonitoring.setHaris(haris);
+				List<DayMonitoring> days = new ArrayList<DayMonitoring>();
 				TextView textHaris = (TextView) findViewById(R.id.monitoringTextMingguan);
 				String stringHari = "";
 				for(int hari:haris){
 					stringHari += hari+",";
+					DayMonitoring day = new DayMonitoring();
+					day.setHari(hari);
+					day.setDataMonitoring(dataMonitoring);
+					days.add(day);
 				}
 				if(!stringHari.equals("")){
 					stringHari = stringHari.substring(0, stringHari.length()-1);	
 				}
 				textHaris.setText(stringHari);
+				
+				dataMonitoring.setHaris(days);
 				break;
 			}case LOKASI:{
 				dataMonitoring.setLokasi(tandaLokasi.getLokasi());
@@ -361,6 +393,8 @@ public class PendaftaranMonitoring extends Activity{
 	private PilihMingguan 	pilihMingguan;
 	private PilihToleransi 	pilihToleransi;
 	private ITandaLokasi	tandaLokasi;
+	
+	private IDGenerator		mIDGenerator;
 	
 	private DataMonitoring dataMonitoring;
 	
@@ -402,8 +436,12 @@ public class PendaftaranMonitoring extends Activity{
 			cal.set(Calendar.YEAR, year);
 			cal.set(Calendar.MONTH, monthOfYear);
 			cal.set(Calendar.DATE, dayOfMonth);
-			List<Long> tanggals = new ArrayList<Long>();
-			tanggals.add(cal.getTimeInMillis());
+			List<DateMonitoring> tanggals = new ArrayList<DateMonitoring>();
+			DateMonitoring dateMonitoring =  new DateMonitoring();
+			dateMonitoring.setDate(cal.getTimeInMillis());
+			dateMonitoring.setDataMonitoring(mPendaftaranMonitoring.getDataMonitoring());
+			tanggals.add(dateMonitoring);
+			
 			mPendaftaranMonitoring.getDataMonitoring().setTanggals(tanggals);
 			TextView tv = (TextView) mPendaftaranMonitoring.findViewById(R.id.monitoringTextTanggal);
 			

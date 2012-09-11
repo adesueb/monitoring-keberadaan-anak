@@ -84,20 +84,20 @@ public class DataMonitoring {
 	public void setKeterangan(String keterangan) {
 		this.keterangan = keterangan;
 	}
-
-	public List<Integer> getHaris() {
+	
+	public List<DayMonitoring> getHaris() {
 		return haris;
 	}
 
-	public void setHaris(List<Integer> haris) {
+	public void setHaris(List<DayMonitoring> haris) {
 		this.haris = haris;
 	}
 
-	public List<Long> getTanggals() {
+	public List<DateMonitoring> getTanggals() {
 		return tanggals;
 	}
 
-	public void setTanggals(List<Long> tanggals) {
+	public void setTanggals(List<DateMonitoring> tanggals) {
 		this.tanggals = tanggals;
 	}
 
@@ -126,8 +126,8 @@ public class DataMonitoring {
     private int		tolerancy;
     private long 	waktuMulai;
     private long 	waktuSelesai;
-    private List<Integer> 	haris;
-    private List<Long>		tanggals;
+    private List<DayMonitoring> haris;
+    private List<DateMonitoring>tanggals;
     
     public final static int SEHARUSNYA = 0;
     public final static int TERLARANG	= 1;

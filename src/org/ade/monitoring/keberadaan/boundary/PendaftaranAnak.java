@@ -1,7 +1,7 @@
 package org.ade.monitoring.keberadaan.boundary;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.util.Status;
+import org.ade.monitoring.keberadaan.Variable.Status;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,7 +24,9 @@ public class PendaftaranAnak extends Dialog{
 		txtName 	= (EditText) findViewById(R.id.pendaftaranTxtName);
 		txtPhone 	= (EditText) findViewById(R.id.pendaftaranTxtPhone);
 
+		txtId 		= (EditText) findViewById(R.id.pendaftaranTxtPhone);
 		
+
 		Button btnOk 		= (Button) findViewById(R.id.pendaftaranBtnOk);
 		btnOk.setOnClickListener(new PendaftaranAnakClickListener(this));
 		
@@ -32,6 +34,16 @@ public class PendaftaranAnak extends Dialog{
 		btnCancel.setOnClickListener(new PendaftaranAnakClickListener(this));
 	}
 	
+	
+	
+	public String getId() {
+		return txtId.getText().toString();
+	}
+
+	public void setId(String txtId) {
+		this.txtId.setText( txtId);
+	}
+
 	public void setName(String name){
 		txtName.setText(name);
 	}
@@ -57,6 +69,7 @@ public class PendaftaranAnak extends Dialog{
 	}
 	private EditText 	txtName;
 	private EditText 	txtPhone;
+	private EditText	txtId;
 	private Handler		mHandler;
 	
 	private final static class PendaftaranAnakClickListener implements View.OnClickListener{
