@@ -43,15 +43,18 @@ public class IDGenerator {
 	}
 	
 	private String generateAngkaId(String id){
-		int idAngka = Integer.parseInt(id.substring(1));
+		int idAngka = 0;
+		if(id.equals("")){
+			idAngka = 0;
+		}else{
+			idAngka = Integer.parseInt(id.substring(1));	
+		}
 		
 		idAngka++;
 		
-		id = ""+idAngka;
+		String angka = ""+idAngka;
 		
-		String angka = id;
-		
-		for(int i=9;i>id.length();i--){
+		for(int i=8;i>id.length();i--){
 			angka = "0"+angka;
 		}
 		return angka;

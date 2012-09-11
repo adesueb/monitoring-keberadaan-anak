@@ -26,4 +26,6 @@
     <string name="sampai_dengan">sampai dengan : </string>
     <string name="selalu">SELALU</string>
     <string name="pilih_status">Pilih Status</string>
+    <string name="id_anak">ID Anak</string>
+    <string name="id_monitoring">ID Monitoring</string>
 </resources>

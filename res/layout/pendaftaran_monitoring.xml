@@ -44,6 +44,35 @@
 		        android:orientation="vertical" >
 
 	            <LinearLayout
+	                android:id="@+id/LinearLayout01"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/back_menu" >
+
+	                <TextView
+	                    android:id="@+id/TextView07"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:padding="10dip"
+	                    android:text="@string/id_monitoring"
+	                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	                <ImageView
+	                    android:id="@+id/ImageView03"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:paddingTop="10dip"
+	                    android:src="@drawable/enter" />
+
+	                <TextView
+	                    android:id="@+id/monitoringTextId"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:paddingLeft="5dip"
+	                    android:text="@string/kosong" />
+	            </LinearLayout>
+
+	            <LinearLayout
 	                android:id="@+id/monitoringButtonAnak"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"

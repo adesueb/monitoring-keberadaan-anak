@@ -49,7 +49,11 @@ public class PendaftaranMonitoring extends Activity{
 		initAllButton();
 		initSubMenu();
 		dataMonitoring = new DataMonitoring();
-		dataMonitoring.setIdMonitoring(mIDGenerator.getIdMonitoring());
+		String idAnak = mIDGenerator.getIdMonitoring();
+
+		TextView textId= (TextView) findViewById(R.id.monitoringTextId);
+		textId.setText(idAnak);
+		dataMonitoring.setIdMonitoring(idAnak);
 	}
 	
 	private void initSubMenu(){
