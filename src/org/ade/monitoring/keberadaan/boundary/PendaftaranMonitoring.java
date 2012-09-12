@@ -172,7 +172,7 @@ public class PendaftaranMonitoring extends Activity{
 				// TODO : kirim ke anak melalui sms....
 				finish();
 			}else{
-				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT);
+				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT).show();
 			}
 			
 		}
@@ -367,7 +367,11 @@ public class PendaftaranMonitoring extends Activity{
 				dataMonitoring.setHaris(days);
 				break;
 			}case LOKASI:{
-				dataMonitoring.setLokasi(tandaLokasi.getLokasi());
+				Lokasi lokasi = tandaLokasi.getLokasi();
+				dataMonitoring.setLokasi(lokasi);
+
+				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
+				textLokasi.setText(lokasi.getlatitude()+", "+lokasi.getLongitude());
 				break;
 			}case TOLERANSI:{
 				dataMonitoring.setTolerancy(pilihToleransi.getToleransi());
