@@ -5,14 +5,19 @@ import java.util.List;
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoice;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.util.HandlerAdd;
+import org.ade.monitoring.keberadaan.util.HandlerEdit;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.IFormOperation;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,9 +70,36 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				pendaftaranAnak.setHandler(new HandlerEdit(this));				
 				return pendaftaranAnak;
 			}case Operation.DELETE:{
-				return null;
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+				alert.setTitle("Perhatian !!!");  
+				alert.setMessage("Anda mau menghapus anak : "+bundle.getString("nama")+"?");                
+
+				final EditText input = new EditText(this); 
+				input.setSingleLine(false);
+			    input.setLines(3);
+				alert.setView(input);
+
+				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {  
+						delete();
+						dialog.dismiss();
+						return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+
+						dialog.dismiss();
+						return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				return alertDialog;
 			}case Operation.MULTIPLE_CHOICE:{
-				return null;
+				return new MultipleChoice(this, bundle, true);
 			}
 		}
 		return super.onCreateDialog(id);
@@ -87,10 +120,16 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		anak.setIdOrtu	(idGenerator.getIdOrangTua());
 		anak.setNamaAnak(pendaftaranAnak.getName());
 		anak.setNoHpAnak(pendaftaranAnak.getPhone());
+		databaseManager.updateAnak(anak);
 	}
 
 	public void delete() {
-		
+		Anak anak = new Anak();
+		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdOrtu	(idGenerator.getIdOrangTua());
+		anak.setNamaAnak(pendaftaranAnak.getName());
+		anak.setNoHpAnak(pendaftaranAnak.getPhone());
+		databaseManager.deleteAnak(anak);
 	}
 
 	private IDGenerator		idGenerator;
@@ -131,6 +170,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				if(anak == null) return null;
 				
 				LayoutInflater inflater = (LayoutInflater) daftarAnak
+						
 				        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				
 				View rowView = inflater.inflate(resource, parent, false);
@@ -155,36 +195,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		private final int resource;
 		private List<Anak> anaks;
 		
-	}
-	
-	private final static class HandlerAdd extends Handler{
-		public HandlerAdd(IFormOperation daftarAnak){
-			mDaftarAnak = daftarAnak;
-		}
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-				case Status.SUCCESS:{
-					mDaftarAnak.add();
-				}
-			}
-		}
-		private IFormOperation mDaftarAnak;
-	}
-	
-	private final static class HandlerEdit extends Handler{
-		public HandlerEdit(IFormOperation daftarAnak){
-			mDaftarAnak = daftarAnak;
-		}
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-				case Status.SUCCESS:{
-					mDaftarAnak.edit();
-				}
-			}
-		}
-		private IFormOperation mDaftarAnak;
 	}
 	
 	private final static class DaftarAnakLongClick implements View.OnLongClickListener{

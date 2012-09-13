@@ -28,4 +28,7 @@
     <string name="pilih_status">Pilih Status</string>
     <string name="id_anak">ID Anak</string>
     <string name="id_monitoring">ID Monitoring</string>
+    <string name="detail">detail</string>
+    <string name="edit">edit</string>
+    <string name="delete">delete</string>
 </resources>
