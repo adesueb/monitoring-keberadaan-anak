@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
+import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoice;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
@@ -43,13 +44,21 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				(this, R.layout.daftar_anak_item, anaks);
 		getListView().setAdapter
 			(daftarAnakAdapter);
-		ImageView iv = (ImageView) findViewById(R.id.listMonakIvAdd);
-		iv.setOnClickListener(new View.OnClickListener() {
+		ImageView ivAdd = (ImageView) findViewById(R.id.listMonakIvAdd);
+		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
 				showDialog(Operation.ADD);
 			}
 		});
+		
+		ImageView ivMap = (ImageView) findViewById(R.id.listMonakMap);
+		ivMap.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				//TODO : open map... 
+			}
+		});
+		
 		setPendaftaranAnak();
 	}
 	

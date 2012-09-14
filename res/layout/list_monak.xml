@@ -9,12 +9,26 @@
         android:orientation="vertical"
         android:paddingBottom="50dip" >
 
-        <TextView
-            android:id="@+id/listMonakTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/kosong"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/listMonakTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/kosong"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ImageView
+                android:id="@+id/listMonakMap"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:layout_gravity="right"
+                android:src="@drawable/map" />
+
+        </FrameLayout>
 
         <ListView
             android:id="@android:id/list"

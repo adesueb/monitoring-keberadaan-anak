@@ -5,6 +5,8 @@ import java.util.List;
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
+import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitoring;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
@@ -16,6 +18,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,32 +34,46 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
 		databaseManager = new DatabaseManager(this);
-		dataMonitorings	= databaseManager.getAllDataMonitorings(true, true);
+		dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
 		daftarMonitoringAdapter	= 
 				new AdapterDaftarMonitoring(this, R.layout.daftar_monitoring_item, dataMonitorings);
 		
-		ImageView iv = (ImageView) findViewById(R.id.listMonakIvAdd);
-		iv.setOnClickListener(new View.OnClickListener() {
+		ImageView ivAdd = (ImageView) findViewById(R.id.listMonakIvAdd);
+		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
 				showDialog(Operation.ADD);
 			}
 		});
+		
+		ImageView ivMap = (ImageView) findViewById(R.id.listMonakMap);
+		ivMap.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				//TODO : open map... 
+			}
+		});
+		
 		getListView().setAdapter(daftarMonitoringAdapter);
 		
 	}
 
 	public void add(Bundle bundle) {
-		
+		Intent intent = new Intent(this, PendaftaranMonitoring.class);
+		startActivityForResult(intent, Operation.ADD);
 	}
 
 	public void edit(Bundle bundle) {
-		
+		Intent intent = new Intent(this, PendaftaranMonitoring.class);
+		intent.putExtras(bundle);
+		startActivityForResult(intent, Operation.EDIT);
 	}
 
 	public void delete(Bundle bundle) {
-		
+		showDialog(Operation.DELETE, bundle);
 	}
 	
 	
@@ -65,7 +82,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	protected Dialog onCreateDialog(int id, final Bundle bundle) {
 		switch(id){
 			case Operation.MULTIPLE_CHOICE:{
-				return new MultipleChoiceAnak(this, bundle, true);
+				return new MultipleChoiceDataMonitoring(this, bundle, true);
 			}case Operation.DELETE:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
@@ -80,8 +97,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
-						databaseManager.deleteDataMonitoring
-							(dataMonitoring);
+						databaseManager.deleteDataMonitoring(dataMonitoring);
 						for(DataMonitoring dataMonitoringFor:dataMonitorings){
 							if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
 								dataMonitorings.remove(dataMonitoringFor);
