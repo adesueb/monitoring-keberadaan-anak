@@ -2,18 +2,16 @@ package org.ade.monitoring.keberadaan.boundary.submenu;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
-import org.ade.monitoring.keberadaan.util.IFormOperation;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class MultipleChoice extends Dialog{
+public class MultipleChoiceAnak extends Dialog{
 	
-	public MultipleChoice(Activity activity, Bundle bundle, boolean withDetail){
+	public MultipleChoiceAnak(Activity activity, Bundle bundle, boolean withDetail){
 		super(activity);
 		this.activity = activity;
 		this.bundle = bundle;

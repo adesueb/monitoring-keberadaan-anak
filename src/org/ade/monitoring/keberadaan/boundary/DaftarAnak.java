@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
-import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoice;
+import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
 import org.ade.monitoring.keberadaan.util.HandlerEdit;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -19,14 +19,13 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DaftarAnak extends ListActivity implements IFormOperation{
@@ -37,11 +36,13 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		setContentView(R.layout.list_monak);
 		TextView tvTitle = (TextView) findViewById(R.id.listMonakTitle);
 		tvTitle.setText("Daftar Anak");
-		databaseManager = new DatabaseManager(this);
-		idGenerator 	= new IDGenerator(this, databaseManager);
+		databaseManager 	= new DatabaseManager(this);
+		idGenerator 		= new IDGenerator(this, databaseManager);
+		anaks				= databaseManager.getAllAnak(true,false);
+		daftarAnakAdapter 	= new AdapterDaftarAnak
+				(this, R.layout.daftar_anak_item, anaks);
 		getListView().setAdapter
-			(new AdapterDaftarAnak
-					(this, R.layout.daftar_anak_item, databaseManager.getAllAnak(true,false)));
+			(daftarAnakAdapter);
 		ImageView iv = (ImageView) findViewById(R.id.listMonakIvAdd);
 		iv.setOnClickListener(new View.OnClickListener() {
 			
@@ -57,7 +58,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id, Bundle bundle) {
+	protected Dialog onCreateDialog(int id, final Bundle bundle) {
 		switch (id){
 			case Operation.ADD:{
 				pendaftaranAnak.setId(idGenerator.getIdAnak());
@@ -82,7 +83,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {  
-						delete();
+						delete(bundle);
 						dialog.dismiss();
 						return;                  
 			         }  
@@ -99,42 +100,60 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				AlertDialog alertDialog = alert.create();
 				return alertDialog;
 			}case Operation.MULTIPLE_CHOICE:{
-				return new MultipleChoice(this, bundle, true);
+				return new MultipleChoiceAnak(this, bundle, true);
 			}
 		}
 		return super.onCreateDialog(id);
 	}
 	
-	public void add() {
+	public void add(Bundle bundle) {
 		Anak anak = new Anak();
-		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdAnak	(bundle.getString("id"));
 		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(pendaftaranAnak.getName());
-		anak.setNoHpAnak(pendaftaranAnak.getPhone());
+		anak.setNamaAnak(bundle.getString("nama"));
+		anak.setNoHpAnak(bundle.getString("noHp"));
 		databaseManager.addAnak(anak);
+		anaks.add(anak);
+		daftarAnakAdapter.notifyDataSetChanged();
+		
 	}
 
-	public void edit() {
+	public void edit(Bundle bundle) {
 		Anak anak = new Anak();
-		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdAnak	(bundle.getString("id"));
 		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(pendaftaranAnak.getName());
-		anak.setNoHpAnak(pendaftaranAnak.getPhone());
+		anak.setNamaAnak(bundle.getString("nama"));
+		anak.setNoHpAnak(bundle.getString("noHp"));
 		databaseManager.updateAnak(anak);
+		for(Anak anakFor:anaks){
+			if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+				anakFor.setNamaAnak(bundle.getString("nama"));
+				anakFor.setNoHpAnak(bundle.getString("noHp"));
+			}
+		}
+		daftarAnakAdapter.notifyDataSetChanged();
 	}
 
-	public void delete() {
+	public void delete(Bundle bundle) {
 		Anak anak = new Anak();
-		anak.setIdAnak	(pendaftaranAnak.getId());
+		anak.setIdAnak	(bundle.getString("id"));
 		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(pendaftaranAnak.getName());
-		anak.setNoHpAnak(pendaftaranAnak.getPhone());
+		anak.setNamaAnak(bundle.getString("nama"));
+		anak.setNoHpAnak(bundle.getString("noHp"));
 		databaseManager.deleteAnak(anak);
+		for(Anak anakFor:anaks){
+			if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+				anaks.remove(anakFor);
+			}
+		}
+		daftarAnakAdapter.notifyDataSetChanged();
 	}
 
-	private IDGenerator		idGenerator;
-	private DatabaseManager databaseManager;
-	private PendaftaranAnak pendaftaranAnak;
+	private IDGenerator			idGenerator;
+	private DatabaseManager 	databaseManager;
+	private PendaftaranAnak 	pendaftaranAnak;
+	private ArrayAdapter<Anak>	daftarAnakAdapter;
+	private List<Anak> 			anaks;
 	
 	private final static class AdapterDaftarAnak extends ArrayAdapter<Anak>{
 
@@ -185,6 +204,15 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				
 				rowView.setOnLongClickListener(new DaftarAnakLongClick(daftarAnak, anak));
 				
+				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
+				if(position%2==0){
+
+					llBackground.setBackgroundResource(R.drawable.back_menu_green);
+				}else{
+
+					llBackground.setBackgroundResource(R.drawable.back_menu);
+				}
+				
 				return rowView;
 			}else{
 				return null;
@@ -204,12 +232,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			mAnak 		= anak;
 		}
 		public boolean onLongClick(View arg0) {
-			Bundle bundle = new Bundle();
-			bundle.putString("id", mAnak.getIdAnak());
-			bundle.putString("nama", mAnak.getNamaAnak());
-			bundle.putString("orangTua", mAnak.getIdOrtu());
-			bundle.putString("noHp", mAnak.getNoHpAnak());
-			mDaftarAnak.showDialog(Operation.MULTIPLE_CHOICE);
+			
+			mDaftarAnak.showDialog(Operation.MULTIPLE_CHOICE, BundleMaker.makeBundleFromAnak(mAnak));
 			return false;
 		}
 		private final Anak mAnak;

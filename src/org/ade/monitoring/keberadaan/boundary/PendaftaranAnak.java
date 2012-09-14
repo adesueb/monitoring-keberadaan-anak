@@ -1,11 +1,12 @@
 package org.ade.monitoring.keberadaan.boundary;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.Status;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -79,8 +80,16 @@ public class PendaftaranAnak extends Dialog{
 		}
 		public void onClick(View v) {
 			if(v.getId()==R.id.pendaftaranBtnOk){
-				if(mPendaftaranAnak.getHandler()!=null){
-					mPendaftaranAnak.getHandler().sendEmptyMessage(Status.SUCCESS);
+				Handler handler = mPendaftaranAnak.getHandler();
+				if(handler!=null){
+					Bundle bundle = new Bundle();
+					bundle.putString("id", mPendaftaranAnak.getId());
+					bundle.putString("nama", mPendaftaranAnak.getName());
+					bundle.putString("noHp", mPendaftaranAnak.getPhone());
+					Message message = new Message();
+					message.setData(bundle);
+					message.setTarget(handler);
+					handler.sendMessage(message);
 				}
 				
 			}else{
