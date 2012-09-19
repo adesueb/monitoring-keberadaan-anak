@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
@@ -40,6 +41,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		databaseManager 	= new DatabaseManager(this);
 		idGenerator 		= new IDGenerator(this, databaseManager);
 		anaks				= databaseManager.getAllAnak(true,false);
+		if(anaks==null){
+			anaks = new ArrayList<Anak>();
+		}
 		daftarAnakAdapter 	= new AdapterDaftarAnak
 				(this, R.layout.daftar_anak_item, anaks);
 		getListView().setAdapter

@@ -25,7 +25,7 @@ public class PendaftaranAnak extends Dialog{
 		txtName 	= (EditText) findViewById(R.id.pendaftaranTxtName);
 		txtPhone 	= (EditText) findViewById(R.id.pendaftaranTxtPhone);
 
-		txtId 		= (EditText) findViewById(R.id.pendaftaranTxtPhone);
+		txtId 		= (EditText) findViewById(R.id.pendaftaranTxtId);
 		
 
 		Button btnOk 		= (Button) findViewById(R.id.pendaftaranBtnOk);
@@ -58,7 +58,7 @@ public class PendaftaranAnak extends Dialog{
 	}
 	
 	public String getPhone(){
-		return txtName.getText().toString();
+		return txtPhone.getText().toString();
 	}
 	
 	public Handler getHandler() {
