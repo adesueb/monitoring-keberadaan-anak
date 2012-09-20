@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
-import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoice;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
@@ -213,7 +213,12 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				
 				name.setText(anak.getNamaAnak());
 				phone.setText(anak.getNoHpAnak());
-				pelanggaran.setText(anak.getPelanggarans().size()+"");
+				List<Pelanggaran> pelanggarans = anak.getPelanggarans();
+				if(pelanggarans!=null){
+					pelanggaran.setText(pelanggarans.size()+"");				
+				}else{
+					pelanggaran.setText("0");
+				}
 				
 				rowView.setOnLongClickListener(new DaftarAnakLongClick(daftarAnak, anak));
 				
