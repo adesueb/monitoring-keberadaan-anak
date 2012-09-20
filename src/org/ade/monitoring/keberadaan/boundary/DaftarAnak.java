@@ -21,12 +21,10 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,10 +52,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			
 			public void onClick(View arg0) {
 
-				pendaftaranAnak.setId(idGenerator.getIdAnak());
-				pendaftaranAnak.setHandler(new HandlerAdd(DaftarAnak.this));
-				
-				showDialog(Operation.ADD);
+				onAdd(null);
 			}
 		});
 		
@@ -76,89 +71,101 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id, final Bundle bundle) {
-		switch (id){
-
-			case Operation.ADD:{
-				return pendaftaranAnak;
-			}case Operation.EDIT:{
-				pendaftaranAnak.setId(bundle.getString("id"));
-				pendaftaranAnak.setName(bundle.getString("nama"));
-				pendaftaranAnak.setPhone(bundle.getString("noHp"));
-				pendaftaranAnak.setHandler(new HandlerEdit(this));				
-				return pendaftaranAnak;
-			}case Operation.DELETE:{
-				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
-				alert.setTitle("Perhatian !!!");  
-				alert.setMessage("Anda mau menghapus anak : "+bundle.getString("nama")+"?");                
-
-				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
-			      
-					public void onClick(DialogInterface dialog, int whichButton) {  
-						delete(bundle);
-						dialog.dismiss();
-						return;                  
-			         }  
-			     });  
-
-				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
-
-					public void onClick(DialogInterface dialog, int which) {
-
-						dialog.dismiss();
-						return;   
-					}
-				});
-				AlertDialog alertDialog = alert.create();
-				return alertDialog;
-			}case Operation.MULTIPLE_CHOICE:{
-				return new MultipleChoiceAnak(this, bundle, true);
-			}
-		}
-		return super.onCreateDialog(id);
+	protected Dialog onCreateDialog(int id) {
+		return pendaftaranAnak;
 	}
 	
-	public void add(Bundle bundle) {
-		Anak anak = new Anak();
-		anak.setIdAnak	(bundle.getString("id"));
-		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(bundle.getString("nama"));
-		anak.setNoHpAnak(bundle.getString("noHp"));
-		databaseManager.addAnak(anak);
-		anaks.add(anak);
-		daftarAnakAdapter.notifyDataSetChanged();
+	public void onAdd(Bundle bundle) {
 		
+		pendaftaranAnak.setId(idGenerator.getIdAnak());
+		pendaftaranAnak.setHandler(new HandlerAdd(DaftarAnak.this));
+
+		showDialog(Operation.ADD);
 	}
 
-	public void edit(Bundle bundle) {
-		Anak anak = new Anak();
-		anak.setIdAnak	(bundle.getString("id"));
-		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(bundle.getString("nama"));
-		anak.setNoHpAnak(bundle.getString("noHp"));
-		databaseManager.updateAnak(anak);
-		for(Anak anakFor:anaks){
-			if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-				anakFor.setNamaAnak(bundle.getString("nama"));
-				anakFor.setNoHpAnak(bundle.getString("noHp"));
-			}
-		}
-		daftarAnakAdapter.notifyDataSetChanged();
+	public void onEdit(Bundle bundle) {
+		
+		pendaftaranAnak.setId(bundle.getString("id"));
+		pendaftaranAnak.setName(bundle.getString("nama"));
+		pendaftaranAnak.setPhone(bundle.getString("noHp"));
+		pendaftaranAnak.setHandler(new HandlerEdit(this));			
+
+		showDialog(Operation.EDIT);
 	}
 
-	public void delete(Bundle bundle) {
-		Anak anak = new Anak();
-		anak.setIdAnak	(bundle.getString("id"));
-		anak.setIdOrtu	(idGenerator.getIdOrangTua());
-		anak.setNamaAnak(bundle.getString("nama"));
-		anak.setNoHpAnak(bundle.getString("noHp"));
-		databaseManager.deleteAnak(anak);
-		for(Anak anakFor:anaks){
-			if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-				anaks.remove(anakFor);
+	public void onDelete(final Bundle bundle) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+		alert.setTitle("Perhatian !!!");  
+		alert.setMessage("Anda mau menghapus anak : "+bundle.getString("nama")+"?");                
+
+		alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+	      
+			public void onClick(DialogInterface dialog, int whichButton) {  
+				onSave(bundle, Operation.DELETE);
+				dialog.dismiss();
+				return;                  
+	         }  
+	     });  
+
+		alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+
+				dialog.dismiss();
+				return;   
 			}
+		});
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+	}
+	
+	public void onSave(Bundle bundle, int status){
+		switch (status) {
+			case Operation.ADD:{
+				Anak anak = new Anak();
+				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdOrtu	(idGenerator.getIdOrangTua());
+				anak.setNamaAnak(bundle.getString("nama"));
+				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.addAnak(anak);
+				anaks.add(anak);
+				daftarAnakAdapter.notifyDataSetChanged();
+				
+				break;
+			}case Operation.EDIT:{
+				Anak anak = new Anak();
+				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdOrtu	(idGenerator.getIdOrangTua());
+				anak.setNamaAnak(bundle.getString("nama"));
+				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.updateAnak(anak);
+				for(Anak anakFor:anaks){
+					if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+						anakFor.setNamaAnak(bundle.getString("nama"));
+						anakFor.setNoHpAnak(bundle.getString("noHp"));
+					}
+				}
+				daftarAnakAdapter.notifyDataSetChanged();
+				
+				break;
+			}case Operation.DELETE:{
+				Anak anak = new Anak();
+				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdOrtu	(idGenerator.getIdOrangTua());
+				anak.setNamaAnak(bundle.getString("nama"));
+				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.deleteAnak(anak);
+				for(Anak anakFor:anaks){
+					if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+						anaks.remove(anakFor);
+					}
+				}
+				daftarAnakAdapter.notifyDataSetChanged();
+				break;
+			}
+			
 		}
-		daftarAnakAdapter.notifyDataSetChanged();
+		
 	}
 
 	private IDGenerator			idGenerator;
@@ -195,7 +202,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			
 			if(anaks!=null&&anaks.size()>0){
 				
-			
 				Anak anak = anaks.get(position);
 				
 				if(anak == null) return null;
@@ -249,8 +255,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			mAnak 		= anak;
 		}
 		public boolean onLongClick(View arg0) {
-			
-			mDaftarAnak.showDialog(Operation.MULTIPLE_CHOICE, BundleMaker.makeBundleFromAnak(mAnak));
+			(new MultipleChoiceAnak(mDaftarAnak, BundleMaker.makeBundleFromAnak(mAnak), true)).show();
 			return false;
 		}
 		private final Anak mAnak;

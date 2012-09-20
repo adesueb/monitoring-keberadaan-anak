@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
-import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
@@ -46,7 +45,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				showDialog(Operation.ADD);
+				onAdd(null);
 			}
 		});
 		
@@ -61,18 +60,18 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		
 	}
 
-	public void add(Bundle bundle) {
+	public void onAdd(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
 		startActivityForResult(intent, Operation.ADD);
 	}
 
-	public void edit(Bundle bundle) {
+	public void onEdit(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
 		intent.putExtras(bundle);
 		startActivityForResult(intent, Operation.EDIT);
 	}
 
-	public void delete(Bundle bundle) {
+	public void onDelete(Bundle bundle) {
 		showDialog(Operation.DELETE, bundle);
 	}
 	
@@ -202,6 +201,10 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		}
 		private final DataMonitoring mDataMonitoring;
 		private final DaftarMonitoring mDaftarMonitoring;
+	}
+
+	public void onSave(Bundle bundle, int status) {
+		
 	}
 	
 	

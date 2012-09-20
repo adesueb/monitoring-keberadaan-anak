@@ -4,7 +4,6 @@ import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 public class IDGenerator {
 

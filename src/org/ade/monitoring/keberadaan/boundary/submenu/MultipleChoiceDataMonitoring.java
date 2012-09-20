@@ -2,8 +2,6 @@ package org.ade.monitoring.keberadaan.boundary.submenu;
 
 import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 
 public class MultipleChoiceDataMonitoring extends MultipleChoice{
@@ -18,12 +16,12 @@ public class MultipleChoiceDataMonitoring extends MultipleChoice{
 
 	@Override
 	protected void onDelete(Bundle bundle) {
-		daftarMonitoring.delete(bundle);
+		daftarMonitoring.onDelete(bundle);
 	}
 
 	@Override
 	protected void onEdit(Bundle bundle) {
-		daftarMonitoring.edit(bundle);
+		daftarMonitoring.onEdit(bundle);
 	}
 
 	@Override
