@@ -10,21 +10,25 @@ public class MultipleChoiceAnak extends MultipleChoice{
 	public MultipleChoiceAnak(Activity activity, Bundle bundle,
 			boolean withDetail) {
 		super(activity, bundle, withDetail);
+		setTitle("Pilih Sub Menu : ");
 	}
 
 	@Override
 	protected void onDelete(Bundle bundle) {
 		getActivity().showDialog(Operation.DELETE, bundle);
+		this.dismiss();
 	}
 
 	@Override
 	protected void onEdit(Bundle bundle) {
 		getActivity().showDialog(Operation.EDIT, bundle);
+		this.dismiss();
 	}
 
 	@Override
 	protected void onDetail(Bundle bundle) {
 		getActivity().showDialog(Operation.DETAIL, bundle);
+		this.dismiss();
 	}
 
 

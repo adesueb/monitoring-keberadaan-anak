@@ -12,6 +12,8 @@ public class MultipleChoiceDataMonitoring extends MultipleChoice{
 			boolean withDetail) {
 		super(activity, bundle, withDetail);
 		daftarMonitoring = activity;
+
+		setTitle("Pilih Sub Menu : ");
 	}
 
 	@Override

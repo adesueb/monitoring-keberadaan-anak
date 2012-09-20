@@ -68,6 +68,12 @@ public class PendaftaranAnak extends Dialog{
 	public void setHandler(Handler mHandler) {
 		this.mHandler = mHandler;
 	}
+	
+	public void refresh(){
+		setId("");
+		setName("");
+		setPhone("");
+	}
 	private EditText 	txtName;
 	private EditText 	txtPhone;
 	private EditText	txtId;
@@ -83,9 +89,10 @@ public class PendaftaranAnak extends Dialog{
 				Handler handler = mPendaftaranAnak.getHandler();
 				if(handler!=null){
 					Bundle bundle = new Bundle();
-					bundle.putString("id", mPendaftaranAnak.getId());
-					bundle.putString("nama", mPendaftaranAnak.getName());
-					bundle.putString("noHp", mPendaftaranAnak.getPhone());
+					bundle.putString("id", 		mPendaftaranAnak.getId());
+					bundle.putString("nama", 	mPendaftaranAnak.getName());
+					bundle.putString("noHp", 	mPendaftaranAnak.getPhone());
+					mPendaftaranAnak.refresh();
 					Message message = new Message();
 					message.setData(bundle);
 					message.setTarget(handler);
@@ -93,8 +100,7 @@ public class PendaftaranAnak extends Dialog{
 				}
 				
 			}else{
-				mPendaftaranAnak.setName("");
-				mPendaftaranAnak.setPhone("");
+				mPendaftaranAnak.refresh();
 			}
 			mPendaftaranAnak.dismiss();
 		}

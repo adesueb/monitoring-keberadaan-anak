@@ -4,6 +4,7 @@ import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 public class IDGenerator {
 
@@ -19,7 +20,8 @@ public class IDGenerator {
 	}
 	
 	public String getIdAnak(){
-		String id = mDatabaseManager.getLasIdAnak();		
+		String id = mDatabaseManager.getLasIdAnak();
+
 		id = ID_ANAK+generateAngkaId(id);
 		return id;
 	}
@@ -53,10 +55,10 @@ public class IDGenerator {
 		idAngka++;
 		
 		String angka = ""+idAngka;
-		
-		for(int i=8;i>id.length();i--){
+		for(int i=8;i>0;i--){
 			angka = "0"+angka;
 		}
+
 		return angka;
 	}
 	

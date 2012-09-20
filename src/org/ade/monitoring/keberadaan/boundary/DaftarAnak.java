@@ -21,6 +21,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
+
+				pendaftaranAnak.setId(idGenerator.getIdAnak());
+				pendaftaranAnak.setHandler(new HandlerAdd(DaftarAnak.this));
+				
 				showDialog(Operation.ADD);
 			}
 		});
@@ -73,9 +78,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	@Override
 	protected Dialog onCreateDialog(int id, final Bundle bundle) {
 		switch (id){
+
 			case Operation.ADD:{
-				pendaftaranAnak.setId(idGenerator.getIdAnak());
-				pendaftaranAnak.setHandler(new HandlerAdd(this));
 				return pendaftaranAnak;
 			}case Operation.EDIT:{
 				pendaftaranAnak.setId(bundle.getString("id"));
@@ -87,11 +91,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
 				alert.setMessage("Anda mau menghapus anak : "+bundle.getString("nama")+"?");                
-
-				final EditText input = new EditText(this); 
-				input.setSingleLine(false);
-			    input.setLines(3);
-				alert.setView(input);
 
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      

@@ -30,23 +30,46 @@ public class DatabaseManager {
 	
 	// get last id.........................................................
 	public String getLasIdAnak(){
-		return getLastIdFromCursor(
-				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+		Cursor cursor = 
+				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
+		String id = getLastIdFromCursor(cursor);
+		if(cursor!=null){
+			cursor.close();
+		}
+		return id;
 	}
 	public String getLastIdMonitoring(){
-		return getLastIdFromCursor(
-				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+		Cursor cursor = 
+				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
+		String id = getLastIdFromCursor(cursor);
+		if(cursor!=null){
+			cursor.close();
+		}
+		
+		return id;
 	}
 	public String getLastIdPelanggaran(){
-		return getLastIdFromCursor(
-				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1"));
+		Cursor cursor = 
+				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
+		if(cursor!=null){
+			cursor.close();
+		}
+		String id = getLastIdFromCursor(cursor);
+		return id;
 	}
 	//.....................................................................
 	
 	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getAnaksFromCursor(cursor, withPelanggaran, withMonitoring);
+			List<Anak> anaks = getAnaksFromCursor(cursor, withPelanggaran, withMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return anaks;
+		}
+		if(cursor!=null){
+			cursor.close();
 		}
 		return null;
 	}
@@ -54,8 +77,15 @@ public class DatabaseManager {
 	public Anak getAnakById(String idAnak, boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null,COLUMN_ID_ANAK+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){			
-			return getAnakFromCursor(cursor, withPelanggaran, withMonitoring);
+			Anak anak = getAnakFromCursor(cursor, withPelanggaran, withMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return anak;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -65,8 +95,16 @@ public class DatabaseManager {
 		(boolean withAnak, boolean withWaktuMonitoring){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null,null);
 		if(cursor != null && cursor.getCount()>0){
-			return getDataMonitoringsFromCursor(cursor, withAnak, withWaktuMonitoring);
+			List<DataMonitoring> dataMonitorings = 
+					getDataMonitoringsFromCursor(cursor, withAnak, withWaktuMonitoring);;
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dataMonitorings;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 		
@@ -76,8 +114,16 @@ public class DatabaseManager {
 		(String idDataMonitoring, boolean withAnak, boolean withWaktuMonitoring){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ID_MONITORING+"='"+idDataMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
-			return getDataMonitoringFromCursor(cursor, withAnak, withWaktuMonitoring);
+			DataMonitoring dataMonitoring = 
+					getDataMonitoringFromCursor(cursor, withAnak, withWaktuMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dataMonitoring;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -85,8 +131,15 @@ public class DatabaseManager {
 	public List<DataMonitoring> getDataMonitoringsByAnak(String idAnak){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ANAK_MONITORING+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){
-			return getDataMonitoringsFromCursor(cursor, false, true);
+			List<DataMonitoring> dataMonitorings = getDataMonitoringsFromCursor(cursor, false, true);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dataMonitorings;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -94,8 +147,15 @@ public class DatabaseManager {
 	public List<Pelanggaran> getDataPelanggaransByAnak(String idAnak){
 		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, COLUMN_ANAK_PELANGGARAN+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){
-			return getPelanggaransFromCursor(cursor, false, false);
+			List<Pelanggaran> pelanggarans = getPelanggaransFromCursor(cursor, false, false);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return pelanggarans;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -103,8 +163,16 @@ public class DatabaseManager {
 	public List<Pelanggaran> getAllDataPelanggarans(boolean withAnak, boolean withMonitoring){
 		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getPelanggaransFromCursor(cursor, withAnak, withMonitoring);
+			List<Pelanggaran> pelanggarans = 
+					getPelanggaransFromCursor(cursor, withAnak, withMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return pelanggarans;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -113,8 +181,16 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"="+idMonitoring);
 		if(cursor!=null && cursor.getCount()>0){
-			return getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
+			List<DateMonitoring> dateMonitoring = 
+					getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dateMonitoring;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -123,8 +199,15 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
+			List<DateMonitoring> dateMonitorings = getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dateMonitorings;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -133,8 +216,15 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"="+idMonitoring);
 		if(cursor!=null && cursor.getCount()>0){
-			return getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
+			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dayMonitorings;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -143,8 +233,15 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
-			return getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
+			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return dayMonitorings;
 		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
 			return null;
 		}
 	}
@@ -264,7 +361,7 @@ public class DatabaseManager {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
-		getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
 	}
 
 	//...................................................................
@@ -395,7 +492,6 @@ public class DatabaseManager {
 			cursor.close();
 			return result;
 		}
-		cursor.close();
 		return "";
 	}
 	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
