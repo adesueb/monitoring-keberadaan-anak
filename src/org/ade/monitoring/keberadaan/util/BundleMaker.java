@@ -20,6 +20,7 @@ public class BundleMaker {
 		Bundle bundle = new Bundle();
 		bundle.putString("id", dataMonitoring.getIdMonitoring());
 		bundle.putString("anak", dataMonitoring.getAnak().getIdAnak());
+		// TODO : make bundle from monitoring......
 		return bundle;
 	}
 }
