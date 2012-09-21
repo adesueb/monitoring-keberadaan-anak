@@ -35,8 +35,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_monak);
-		TextView tvTitle = (TextView) findViewById(R.id.listMonakTitle);
-		tvTitle.setText("Daftar Anak");
+		setTitle("Daftar Anak");
 		databaseManager 	= new DatabaseManager(this);
 		idGenerator 		= new IDGenerator(this, databaseManager);
 		anaks				= databaseManager.getAllAnak(true,false);
@@ -158,8 +157,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				for(Anak anakFor:anaks){
 					if(anak.getIdAnak().equals(anakFor.getIdAnak())){
 						anaks.remove(anakFor);
+						break;
 					}
 				}
+								
 				daftarAnakAdapter.notifyDataSetChanged();
 				break;
 			}
