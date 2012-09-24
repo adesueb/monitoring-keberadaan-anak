@@ -11,5 +11,5 @@ public class StartUpService extends BroadcastReceiver{
 		Intent service = new Intent(context, BackgroundService.class);
 	    context.startService(service);
 	}
-
+ 
 }
