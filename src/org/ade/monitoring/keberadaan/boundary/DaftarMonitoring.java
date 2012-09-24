@@ -32,7 +32,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		setContentView(R.layout.list_monak);
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
@@ -167,12 +167,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				
 				View rowView = inflater.inflate(resource, parent, false);
 				
-				TextView name 			= (TextView) rowView.findViewById(R.id.daftarAnakItemName);
-				TextView phone 			= (TextView) rowView.findViewById(R.id.daftarAnakItemPhone);
-				TextView pelanggaran 	= (TextView) rowView.findViewById(R.id.daftarAnakItemPelanggaran);
-				
-				//TODO : inisialisasi item.....
-				
+				TextView keterangan	= (TextView) rowView.findViewById(R.id.daftarMonitoringText);
+				keterangan.setText(dataMonitoring.getKeterangan());
+						
 				rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));
 				
 				return rowView;

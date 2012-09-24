@@ -71,6 +71,36 @@
 	                    android:paddingLeft="5dip"
 	                    android:text="@string/kosong" />
 	            </LinearLayout>
+	             <LinearLayout
+		            android:id="@+id/monitoringButtonKeterangan"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:background="@drawable/back_menu" >
+		
+		            <TextView
+		                android:id="@+id/textView2"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="@string/keterangan"
+		                android:textAppearance="?android:attr/textAppearanceLarge" />
+		
+		            <ImageView
+		                android:id="@+id/imageView1"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/enter" 
+		                android:paddingTop="10dip" />
+
+		            <TextView
+		                android:id="@+id/monitoringTextKeterangan"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:paddingLeft="5dip"
+		                android:text="@string/kosong" >
+					</TextView>
+		
+		        </LinearLayout>
 
 	            <LinearLayout
 	                android:id="@+id/monitoringButtonAnak"
@@ -130,36 +160,7 @@
 	                    android:text="@string/kosong" />
 	            </LinearLayout>
 
-		        <LinearLayout
-		            android:id="@+id/monitoringButtonKeterangan"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:background="@drawable/back_menu" >
-		
-		            <TextView
-		                android:id="@+id/textView2"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="@string/keterangan"
-		                android:textAppearance="?android:attr/textAppearanceLarge" />
-		
-		            <ImageView
-		                android:id="@+id/imageView1"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:src="@drawable/enter" 
-		                android:paddingTop="10dip" />
-
-		            <TextView
-		                android:id="@+id/monitoringTextKeterangan"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:paddingLeft="5dip"
-		                android:text="@string/kosong" >
-</TextView>
-		
-		        </LinearLayout>
+		       
 		        <LinearLayout
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content" 

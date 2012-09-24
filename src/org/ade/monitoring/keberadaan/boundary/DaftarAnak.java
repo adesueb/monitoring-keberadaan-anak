@@ -21,10 +21,14 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,16 +40,23 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_monak);
 		setTitle("Daftar Anak");
+		
 		databaseManager 	= new DatabaseManager(this);
 		idGenerator 		= new IDGenerator(this, databaseManager);
+		
 		anaks				= databaseManager.getAllAnak(true,false);
 		if(anaks==null){
 			anaks = new ArrayList<Anak>();
 		}
+		
+		anaksFull = new ArrayList<Anak>();
+		anaksFull.addAll(anaks);
+
 		daftarAnakAdapter 	= new AdapterDaftarAnak
 				(this, R.layout.daftar_anak_item, anaks);
 		getListView().setAdapter
 			(daftarAnakAdapter);
+		
 		ImageView ivAdd = (ImageView) findViewById(R.id.listMonakIvAdd);
 		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
@@ -61,6 +72,27 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				//TODO : open map... 
 			}
 		});
+		
+		final EditText txtSearch = (EditText) findViewById(R.id.listMonakSearch);
+		txtSearch.addTextChangedListener(new TextWatcher() {
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+				anaks.clear();
+				String namaAnak = txtSearch.getText().toString().toUpperCase();
+				for(Anak anak:anaksFull){
+					if(anak.getNamaAnak().toUpperCase().contains(namaAnak)){
+						anaks.add(anak);
+					}
+				}
+				Log.d("searching", "masuk searching");
+				daftarAnakAdapter.notifyDataSetChanged();
+			}
+			
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {}
+			
+			public void afterTextChanged(Editable arg0) {}
+		});
+		
 		
 		setPendaftaranAnak();
 	}
@@ -174,6 +206,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private PendaftaranAnak 	pendaftaranAnak;
 	private ArrayAdapter<Anak>	daftarAnakAdapter;
 	private List<Anak> 			anaks;
+	private List<Anak> 			anaksFull;
+	
 	
 	private final static class AdapterDaftarAnak extends ArrayAdapter<Anak>{
 
