@@ -3,6 +3,7 @@ package org.ade.monitoring.keberadaan.map;
 import org.ade.monitoring.keberadaan.R;
 
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 
 import android.app.AlertDialog;
@@ -12,6 +13,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.ImageView;
 
 
 public class Peta extends MapActivity{
@@ -25,7 +28,26 @@ public class Peta extends MapActivity{
 		
 		setContentView(R.layout.monitoring_map);
 		
+		ImageView ivSetting = (ImageView) findViewById(R.id.monitoringMapSetting);
+		ivSetting.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+		ImageView ivSearch 	= (ImageView) findViewById(R.id.monitoringMapSearch);		
+		ivSearch.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
 		MapView mapView = (MapView) findViewById(R.id.mapview);
+		MapController mapController = mapView.getController();
+		mapController.setCenter(null);
+		mapController.setZoom(10);
 	    mapView.setBuiltInZoomControls(true);
 	    setOverlayFactory();
 	}
