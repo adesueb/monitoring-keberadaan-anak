@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
 public class Tracker implements LocationListener{
 	
@@ -68,8 +70,15 @@ public class Tracker implements LocationListener{
 	public void onLocationChanged(Location loc) {
 		mLokasi.setLatitude(loc.getLatitude());
 		mLokasi.setLongitude(loc.getLongitude());
+
 		if(mHandler != null){
-			mHandler.sendEmptyMessage(Status.SUCCESS);
+			Bundle bundle = new Bundle();
+			bundle.putDouble("latitude", loc.getLatitude());
+			bundle.putDouble("longitude", loc.getLongitude());
+			Message message = new Message();
+			message.what = Status.SUCCESS;
+			message.setData(bundle);
+			mHandler.sendMessage(message);
 		}	
 	}
 
