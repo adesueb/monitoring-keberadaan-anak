@@ -1,7 +1,12 @@
 package org.ade.monitoring.keberadaan.map;
 
 import org.ade.monitoring.keberadaan.R;
+import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.storage.PreferenceManager;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -44,10 +49,24 @@ public class Peta extends MapActivity{
 			}
 		});
 		
-		MapView mapView = (MapView) findViewById(R.id.mapview);
-		MapController mapController = mapView.getController();
-		mapController.setCenter(null);
-		mapController.setZoom(10);
+		gpsManager 		= new GpsManager(this, new PetaHandlerPosition(this));
+		
+		mapView	 		= (MapView) findViewById(R.id.mapview);
+		mapController 	= mapView.getController();
+		Lokasi lokasi 	= gpsManager.getLastLokasi();
+		
+		PreferenceManager prefrenceManager = new PreferenceManager(this);
+		if(lokasi !=null){
+			prefrenceManager.setMapLokasi(lokasi);
+		}else{
+			lokasi = prefrenceManager.getMapLokasi();
+		}
+		
+		setPetaCenter(lokasi);
+		
+		getLokasiOrangTua();
+		
+		mapController.setZoom(12);
 	    mapView.setBuiltInZoomControls(true);
 	    setOverlayFactory();
 	}
@@ -69,6 +88,18 @@ public class Peta extends MapActivity{
 	    }else{
 	    	overlayFactory = new MonitoringOverlayFactory(this, null);
 	    }
+  	}
+  	
+  	private void getLokasiOrangTua(){
+  		gpsManager.searchLokasi();
+  	}
+  	
+  	private void setPetaCenter(Lokasi lokasi){
+  		if(mapController!=null&&lokasi!=null){
+  			mapController.setCenter(new GeoPoint((int)(lokasi.getlatitude()*1E6), 
+  					(int)(lokasi.getLongitude()*1E6)));
+  		}
+		
   	}
 
   	//berhubungan dengan pengambilan lokasi dan close.....
@@ -125,7 +156,32 @@ public class Peta extends MapActivity{
   	}
 	//..........................................................................
   	
+  	// pengambilan lokasi orang tua.............................................
+  	private static final class PetaHandlerPosition extends Handler{
+  		public PetaHandlerPosition(Peta peta){
+  			mPeta = peta;
+  		}
+  		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle bundle = msg.getData();
+			
+				Lokasi lokasi = new Lokasi();
+				lokasi.setLatitude(bundle.getDouble("latitude"));
+				lokasi.setLongitude(bundle.getDouble("longitude"));
+				mPeta.setPetaCenter(lokasi);
+			}
+  			
+			
+		}
+  		private Peta mPeta;
+  	}
+  	//..........................................................................
+  	
 	private MonitoringOverlayFactory 	overlayFactory;
 	private boolean 					ambilLokasi; 
+	private MapController 				mapController;
+	private MapView 					mapView;
+	private GpsManager					gpsManager;
 	
 }

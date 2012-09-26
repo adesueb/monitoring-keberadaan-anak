@@ -8,17 +8,27 @@ import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Toast;
 
 public class TandaLokasiSendiri implements ITandaLokasi{
 
 	public TandaLokasiSendiri(Context context, Handler handler){
 		mHandler = handler;
-		
+		mContext = context;
 		mGps = new GpsManager(context, handlerSendiri);
 	}
 	public void actionTandaiLokasi() {
-
-		mGps.searchLokasi();
+		if(mGps.isGpsActif()){
+			mGps.searchLokasi();
+		}else{
+			mHandler.post(new Runnable(){
+				public void run() {
+					Toast.makeText(mContext, "mengambil lokasi gagal,\naktifkan GPS!!", 
+							Toast.LENGTH_SHORT).show();
+				}	
+			});
+		}
+		
 	}
 
 	public Lokasi getLokasi() {
@@ -38,15 +48,17 @@ public class TandaLokasiSendiri implements ITandaLokasi{
 						mLokasi.setLatitude(mGps.getLokasi().getlatitude());
 						mLokasi.setLongitude(mGps.getLokasi().getLongitude());
 						mHandler.sendEmptyMessage(PendaftaranMonitoring.LOKASI);
+						
 					}
-					
+					break;
 				}
 			}
 		}
 		
 	};
 
-	private GpsManager mGps;
+	private GpsManager 	mGps;
+	private Context 	mContext;
 	
 	private 		Lokasi 	mLokasi;
 	private 		Handler mHandler;

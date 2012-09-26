@@ -25,7 +25,7 @@ public class MonitoringOverlayFactory {
 		mHandler = handler;
 	}
 	
-	public boolean anyaAnak(){
+	public boolean anyAnak(){
 		return petaOverlays.get(ANAK)!=null;
 	}
 	
