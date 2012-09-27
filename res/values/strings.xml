@@ -31,4 +31,8 @@
     <string name="detail">detail</string>
     <string name="edit">edit</string>
     <string name="delete">delete</string>
+    <string name="pelanggaran">pelanggaran</string>
+    <string name="mulai_tanggal">mulai tanggal</string>
+    <string name="sampai_tanggal">sampai tanggal</string>
+    <string name="nama_anak">nama anak</string>
 </resources>

@@ -10,17 +10,36 @@
         android:layout_height="wrap_content" >
 
         <ImageView
-            android:id="@+id/monitoringMapSetting"
+            android:id="@+id/monitoringMapSearch"
             android:layout_width="50dip"
             android:layout_height="50dip"
             android:src="@drawable/setting" />
 
-        <ImageView
-            android:id="@+id/monitoringMapSearch"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:layout_gravity="right"
-            android:src="@drawable/search" />
+        <LinearLayout
+            android:id="@+id/monitoringMapMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
+
+            <ImageView
+                android:id="@+id/monitoringMapAnak"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:src="@drawable/anak" />
+
+            <ImageView
+                android:id="@+id/monitoringMapMonitoring"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:src="@drawable/monitor" />
+
+            <ImageView
+                android:id="@+id/monitoringMapLaporan"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:src="@drawable/laporan" />
+
+        </LinearLayout>
 
     </FrameLayout>
 

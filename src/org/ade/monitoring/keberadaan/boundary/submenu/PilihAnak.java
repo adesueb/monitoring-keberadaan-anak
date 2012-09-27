@@ -115,8 +115,7 @@ public class PilihAnak{
 				}
 				
 			});
-			TextView title = (TextView) findViewById(org.ade.monitoring.keberadaan.R.id.listGeneralTitle);
-			title.setText("Pilih Anak");
+			setTitle("Pilih Anak : ");
 		}
 		
 		private void initListAnak(){

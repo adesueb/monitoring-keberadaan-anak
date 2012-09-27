@@ -28,8 +28,6 @@ public class PilihMingguan extends Dialog{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.list_general);
-		TextView tvTitle =(TextView) findViewById(R.id.listGeneralTitle);
-		tvTitle.setVisibility(View.INVISIBLE);
 		
 		final ListView listView = (ListView) findViewById(R.id.listGeneral);
 		

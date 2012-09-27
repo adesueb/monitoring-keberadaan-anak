@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 public class Peta extends MapActivity{
@@ -33,13 +34,6 @@ public class Peta extends MapActivity{
 		
 		setContentView(R.layout.monitoring_map);
 		
-		ImageView ivSetting = (ImageView) findViewById(R.id.monitoringMapSetting);
-		ivSetting.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
 		
 		ImageView ivSearch 	= (ImageView) findViewById(R.id.monitoringMapSearch);		
 		ivSearch.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +42,32 @@ public class Peta extends MapActivity{
 				
 			}
 		});
+		
+		ImageView ivAnak 	= (ImageView) findViewById(R.id.monitoringMapAnak);		
+		ivAnak.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+		ImageView ivMonitor 	= (ImageView) findViewById(R.id.monitoringMapMonitoring);		
+		ivMonitor.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+		ImageView ivLaporan 	= (ImageView) findViewById(R.id.monitoringMapLaporan);		
+		ivLaporan.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+		
 		
 		gpsManager 		= new GpsManager(this, new PetaHandlerPosition(this));
 		
@@ -63,6 +83,7 @@ public class Peta extends MapActivity{
 		}
 		
 		setPetaCenter(lokasi);
+		setAmbilLokasi();
 		
 		getLokasiOrangTua();
 		
@@ -88,6 +109,13 @@ public class Peta extends MapActivity{
 	    }else{
 	    	overlayFactory = new MonitoringOverlayFactory(this, null);
 	    }
+  	}
+  	
+  	private void setAmbilLokasi(){
+  		if(ambilLokasi){
+  			LinearLayout ll = (LinearLayout) findViewById(R.id.monitoringMapMenu);
+  	  		ll.setVisibility(View.GONE);
+  		}
   	}
   	
   	private void getLokasiOrangTua(){
