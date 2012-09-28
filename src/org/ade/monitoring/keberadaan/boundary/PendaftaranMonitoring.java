@@ -210,13 +210,18 @@ public class PendaftaranMonitoring extends Activity{
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	
 		switch(requestCode){
 			case LOKASI:{
 				if(resultCode==RESULT_OK && data!=null){
+				
 					Lokasi lokasi = new Lokasi();
 					lokasi.setLatitude(data.getDoubleExtra("latitude", 0));
 					lokasi.setLongitude(data.getDoubleExtra("longitude", 0));
 					dataMonitoring.setLokasi(lokasi);
+					
+					TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
+					textLokasi.setText(lokasi.getlatitude()+", "+lokasi.getLongitude());
 				}
 				break;
 			}

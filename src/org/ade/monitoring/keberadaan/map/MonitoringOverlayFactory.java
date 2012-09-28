@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
@@ -25,26 +26,38 @@ public class MonitoringOverlayFactory {
 		mHandler = handler;
 	}
 	
+	private MonitoringOverlay createPetaOverlay(int status){
+		if(mHandler != null){
+			return new PetaAmbilLokasiOverlay(mContext.getResources().getDrawable(status), mContext, mHandler);
+			
+		}else{
+			return new PetaOverlay(mContext.getResources().getDrawable(status), mContext);
+			
+		}
+	}
+	
 	public boolean anyAnak(){
-		return petaOverlays.get(ANAK)!=null;
+		return monitoringOverlays.get(ANAK)!=null;
 	}
 	
 	public boolean anySeharusnya(){
-		return petaOverlays.get(SEHARUSNYA)!=null;
+		return monitoringOverlays.get(SEHARUSNYA)!=null;
 	}
 	
 	public boolean anyTerlarang(){
-		return petaOverlays.get(TERLARANG)!=null;
+		return monitoringOverlays.get(TERLARANG)!=null;
 	}
 	
 	public boolean anyPelanggaran(){
-		return petaOverlays.get(PELANGGARAN)!=null;
+		return monitoringOverlays.get(PELANGGARAN)!=null;
+	}
+	
+	public boolean anyOrangTua(){
+		return monitoringOverlays.get(ORANG_TUA)!=null;
 	}
 	
 	public void makeOverlayAnak(List<Anak> anaks, List<Lokasi> lokasis){
-		PetaOverlay petaOverlay	= 
-				new PetaOverlay(mContext.getResources().getDrawable(ANAK), 
-							mContext, mHandler);
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
 		
 		for(int i = 0 ;i<anaks.size();i++){
 			Lokasi 	lokasi 	= lokasis.get(i);
@@ -59,26 +72,41 @@ public class MonitoringOverlayFactory {
 			
 		}
 
-		petaOverlays.put(ANAK, petaOverlay);
+		monitoringOverlays.put(ANAK, petaOverlay);
 	}
 	
 	public void makeOverlayPelanggaran(List<Pelanggaran> pelanggarans){
-		PetaOverlay petaOverlay	= 
-				new PetaOverlay(mContext.getResources().getDrawable(PELANGGARAN), mContext, mHandler);
+		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);
+		
 		for(Pelanggaran pelanggaran:pelanggarans){
 			OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
-			petaOverlay.addOverLay(overlayItem);
+			monitoringOverlay.addOverLay(overlayItem);
 		}
-		petaOverlays.put(PELANGGARAN, petaOverlay);
+		
+		monitoringOverlays.put(PELANGGARAN, monitoringOverlay);
+	}
+	
+	public void makeOverlayOrtu(Lokasi lokasi){
+		
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ORANG_TUA);
+		
+		GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+		
+		OverlayItem overlayItem = 
+				new OverlayItem
+					(point, TITLE_ORANG_TUA, "anda berada di daerah ini");
+		
+		petaOverlay.addOverLay(overlayItem);
+		
+		monitoringOverlays.put(ORANG_TUA, petaOverlay);
 	}
 	
 	public void makeOverlayDataMonitoring(List<DataMonitoring> dataMonitorings){
 		
-		PetaOverlay petaOverlaySeharusnya 	= 
-				new PetaOverlay(mContext.getResources().getDrawable(SEHARUSNYA), mContext, mHandler);
+		MonitoringOverlay petaOverlaySeharusnya 	= createPetaOverlay(SEHARUSNYA);
 		
-		PetaOverlay petaOverlayTerlarang 	= 
-				new PetaOverlay(mContext.getResources().getDrawable(TERLARANG), mContext, mHandler);
+		MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(TERLARANG);
+		
 		for(DataMonitoring dataMonitoring: dataMonitorings){
 			OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
 			if(dataMonitoring.isSeharusnya()){
@@ -88,8 +116,9 @@ public class MonitoringOverlayFactory {
 			}
 			
 		}
-		petaOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);
-		petaOverlays.put(TERLARANG, petaOverlayTerlarang);
+		
+		monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);
+		monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);
 	}
 	
 	private OverlayItem makeOverlayItemSinggleDataMonitoring(DataMonitoring dataMonitoring){
@@ -111,24 +140,29 @@ public class MonitoringOverlayFactory {
 	}
 	
 	
-	public PetaOverlay getAnak(){
-		return petaOverlays.get(ANAK);
+	public MonitoringOverlay getAnak(){
+		return monitoringOverlays.get(ANAK);
 	}
 	
-	public PetaOverlay getSeharusnya(){
-		return petaOverlays.get(SEHARUSNYA);
+	public MonitoringOverlay getSeharusnya(){
+		return monitoringOverlays.get(SEHARUSNYA);
 	}
 	
-	public PetaOverlay getTerlarang(){
-		return petaOverlays.get(TERLARANG);
+	public MonitoringOverlay getTerlarang(){
+		return monitoringOverlays.get(TERLARANG);
 	}
 	
-	public PetaOverlay getPelanggaran(){
-		return petaOverlays.get(PELANGGARAN);
+	public MonitoringOverlay getPelanggaran(){
+		return monitoringOverlays.get(PELANGGARAN);
+	}
+	
+	public MonitoringOverlay getOrangTua(){
+		return monitoringOverlays.get(ORANG_TUA);
 	}
 	
 	
-	private Map<Integer,PetaOverlay> petaOverlays = new HashMap<Integer, PetaOverlay>();
+	private Map<Integer,MonitoringOverlay> monitoringOverlays = 
+			new HashMap<Integer, MonitoringOverlay>();
 	
 	private final Context mContext;
 	private final Handler mHandler;
@@ -137,5 +171,7 @@ public class MonitoringOverlayFactory {
 	public final static int SEHARUSNYA 	= 1;
 	public final static int TERLARANG	= 2;
 	public final static int PELANGGARAN	= 3;
+	public final static int ORANG_TUA	= R.drawable.parent;
+	public final static String TITLE_ORANG_TUA = "posisi anda";
 
 }

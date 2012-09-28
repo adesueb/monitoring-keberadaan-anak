@@ -1,5 +1,7 @@
 package org.ade.monitoring.keberadaan.map;
 
+import java.util.List;
+
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
@@ -10,6 +12,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,8 +36,6 @@ public class Peta extends MapActivity{
 		ambilLokasi = intent.getBooleanExtra("ambilLokasi", false);
 		
 		setContentView(R.layout.monitoring_map);
-		
-		
 		ImageView ivSearch 	= (ImageView) findViewById(R.id.monitoringMapSearch);		
 		ivSearch.setOnClickListener(new View.OnClickListener() {
 			
@@ -83,13 +84,17 @@ public class Peta extends MapActivity{
 		}
 		
 		setPetaCenter(lokasi);
+		
+
+	    setOverlayFactory();
+	    setOverlayOrangtua(lokasi);
+		
 		setAmbilLokasi();
 		
-		getLokasiOrangTua();
+		findLokasiOrangTua();
 		
 		mapController.setZoom(12);
 	    mapView.setBuiltInZoomControls(true);
-	    setOverlayFactory();
 	}
   	
   	@Override
@@ -102,6 +107,36 @@ public class Peta extends MapActivity{
 	protected Dialog onCreateDialog(int id) {
 		return super.onCreateDialog(id);
 	}
+  	
+  	private void setOverlayOrangtua(Lokasi lokasi){
+  		if(lokasi != null){
+  			overlayFactory.makeOverlayOrtu(lokasi);
+  			if(overlayFactory.anyOrangTua()){
+  				mapView.getOverlays().add(overlayFactory.getOrangTua());
+  			}
+  		}
+  	}
+  	
+  	private void changeOverlayOrangtua(Lokasi lokasi){
+  		if(lokasi!=null){
+  			List<Overlay> overlays= mapView.getOverlays();
+  			if(overlays!=null){
+  				for(Overlay overlay:overlays){
+  					if(overlay instanceof PetaOverlay){
+  						PetaOverlay petaOverlay = (PetaOverlay) overlay;
+  	  					if(petaOverlay.size()>0){
+	  	  					if(petaOverlay.getItem(0).getTitle().equals(MonitoringOverlayFactory.TITLE_ORANG_TUA)){
+	  	  						overlays.remove(overlay);
+	  	  						break;
+	  	  					}	
+  	  					}
+  					}
+  				}
+  				setOverlayOrangtua(lokasi);
+  				mapView.invalidate();
+  			}
+  		}
+  	}
   	
   	private void setOverlayFactory(){
   		if(ambilLokasi){
@@ -118,7 +153,7 @@ public class Peta extends MapActivity{
   		}
   	}
   	
-  	private void getLokasiOrangTua(){
+  	private void findLokasiOrangTua(){
   		gpsManager.searchLokasi();
   	}
   	
@@ -164,6 +199,7 @@ public class Peta extends MapActivity{
 			Intent intent = new Intent();
 			intent.putExtras(bundle);
 			setResult(RESULT_OK, intent);
+			
 			finish();
 		}
   	}
@@ -198,6 +234,7 @@ public class Peta extends MapActivity{
 				lokasi.setLatitude(bundle.getDouble("latitude"));
 				lokasi.setLongitude(bundle.getDouble("longitude"));
 				mPeta.setPetaCenter(lokasi);
+				mPeta.changeOverlayOrangtua(lokasi);
 			}
   			
 			
@@ -211,5 +248,7 @@ public class Peta extends MapActivity{
 	private MapController 				mapController;
 	private MapView 					mapView;
 	private GpsManager					gpsManager;
+
+	
 	
 }
