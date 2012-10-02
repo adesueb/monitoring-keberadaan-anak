@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -109,7 +111,15 @@ public class PilihAnak{
 			buttonOk.setOnClickListener(new View.OnClickListener() {
 				
 				public void onClick(View v) {
-					mPilihAnak.setAnak( mAnaks.get(listView.getSelectedItemPosition()));
+
+					int len = listView.getCount();
+					SparseBooleanArray checked = listView.getCheckedItemPositions();
+					for (int i = 0; i < len; i++){
+						 if (checked.get(i)) {
+							mPilihAnak.setAnak( mAnaks.get(i));
+							break;
+						 }
+					}
 					mPilihAnak.getHandler().sendEmptyMessage(PendaftaranMonitoring.ANAK);
 					PilihAnakDialog.this.dismiss();
 				}
@@ -131,6 +141,7 @@ public class PilihAnak{
 				
 				listView = (ListView) findViewById(org.ade.monitoring.keberadaan.R.id.listGeneral);
 				listView.setAdapter(listAdapter);
+				listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			}
 		}
 

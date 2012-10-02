@@ -3,7 +3,9 @@ package org.ade.monitoring.keberadaan.map;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
+import org.ade.monitoring.keberadaan.Variable.Entity;
 import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 import org.ade.monitoring.keberadaan.storage.PreferenceManager;
@@ -21,9 +23,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 
 public class Peta extends MapActivity{
@@ -68,8 +74,6 @@ public class Peta extends MapActivity{
 			}
 		});
 		
-		
-		
 		gpsManager 		= new GpsManager(this, new PetaHandlerPosition(this));
 		
 		mapView	 		= (MapView) findViewById(R.id.mapview);
@@ -100,12 +104,39 @@ public class Peta extends MapActivity{
   	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
-		
 	}
   	
   	@Override
 	protected Dialog onCreateDialog(int id) {
-		return super.onCreateDialog(id);
+  		super.onCreateDialog(id);
+  		final Dialog dialog = new Dialog(this);
+  		dialog.setContentView(R.layout.list_general);
+		
+		final ListView listView = (ListView) dialog.findViewById(R.id.listGeneral);
+		
+		
+		ArrayAdapter<String>listAdapter = 
+				new ArrayAdapter<String>
+					(this, android.R.layout.simple_list_item_multiple_choice, Entity.ARR_ENTITY);
+		listView.setAdapter(listAdapter);
+		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		Button buttonOk = (Button) findViewById(R.id.listGeneralButtonOk);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				int len = listView.getCount();
+				SparseBooleanArray checked = listView.getCheckedItemPositions();
+//				haris.clear();
+				// TODO : cek yang mw diperlihatkan
+				for (int i = 0; i < len; i++){
+					 if (checked.get(i)) {
+//						 haris.add(i+1);
+					 }
+				}
+				
+				dialog.dismiss();
+			}
+		});
+		return dialog;
 	}
   	
   	private void setOverlayOrangtua(Lokasi lokasi){
@@ -114,6 +145,10 @@ public class Peta extends MapActivity{
   			if(overlayFactory.anyOrangTua()){
   				mapView.getOverlays().add(overlayFactory.getOrangTua());
   			}
+  			// FIXME : test circle overlay...............................
+  			OrangTuaCircleOverlay orangTuaOverlay = new OrangTuaCircleOverlay(lokasi, 100);
+  			mapView.getOverlays().add(orangTuaOverlay);
+  			//...........................................................
   		}
   	}
   	
@@ -248,7 +283,6 @@ public class Peta extends MapActivity{
 	private MapController 				mapController;
 	private MapView 					mapView;
 	private GpsManager					gpsManager;
-
 	
 	
 }

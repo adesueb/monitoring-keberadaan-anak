@@ -167,10 +167,10 @@ public class MonitoringOverlayFactory {
 	private final Context mContext;
 	private final Handler mHandler;
 	
-	public final static int ANAK		= 0;
-	public final static int SEHARUSNYA 	= 1;
-	public final static int TERLARANG	= 2;
-	public final static int PELANGGARAN	= 3;
+	public final static int ANAK		= R.drawable.anak;
+	public final static int SEHARUSNYA 	= R.drawable.seharusnya;
+	public final static int TERLARANG	= R.drawable.terlarang;
+	public final static int PELANGGARAN	= R.drawable.pelanggaran;
 	public final static int ORANG_TUA	= R.drawable.parent;
 	public final static String TITLE_ORANG_TUA = "posisi anda";
 
