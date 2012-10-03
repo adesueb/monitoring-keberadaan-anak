@@ -36,7 +36,7 @@ public interface Koneksi {
   /**
    * @return       PesanData
    */
-  public PesanData menerimaPesanData(  );
+  public void menerimaPesanData( PesanData pesaData );
 
 
 }

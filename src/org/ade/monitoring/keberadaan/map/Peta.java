@@ -5,7 +5,6 @@ import java.util.List;
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Entity;
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 import org.ade.monitoring.keberadaan.storage.PreferenceManager;

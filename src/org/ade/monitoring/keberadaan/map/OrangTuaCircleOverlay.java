@@ -1,6 +1,5 @@
 package org.ade.monitoring.keberadaan.map;
 
-import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 
 import android.graphics.Canvas;

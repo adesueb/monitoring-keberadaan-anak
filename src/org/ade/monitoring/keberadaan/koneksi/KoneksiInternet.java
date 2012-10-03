@@ -7,46 +7,16 @@ import org.ade.monitoring.keberadaan.entity.PesanData;
 /**
  * Class KoneksiInternet
  */
-public class KoneksiInternet implements Koneksi {
+public abstract class KoneksiInternet implements Koneksi {
 
-  //
-  // Fields
-  //
+   	public void kirimPesanData( PesanData pesanData ){
+	  
+  	}
 
-  
-  //
-  // Constructors
-  //
-  public KoneksiInternet () { };
-  
-  //
-  // Methods
-  //
+	public abstract void menerimaPesanData(PesanData pesaData);
 
 
-  //
-  // Accessor methods
-  //
 
-  //
-  // Other methods
-  //
-
-  /**
-   * @param        pesanData
-   */
-  public void kirimPesanData( PesanData pesanData )
-  {
-  }
-
-
-  /**
-   * @return       PesanData
-   */
-  public PesanData menerimaPesanData(  )
-  {
-	  return null;
-  }
 
 
 }
