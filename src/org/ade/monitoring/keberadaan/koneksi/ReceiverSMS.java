@@ -22,6 +22,7 @@ import android.widget.Toast;
 public abstract class ReceiverSMS extends BroadcastReceiver implements ReceiverKoneksi {
 
 	public ReceiverSMS () {
+		
 	}
 
 	

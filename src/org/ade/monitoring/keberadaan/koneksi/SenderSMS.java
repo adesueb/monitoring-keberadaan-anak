@@ -1,5 +1,13 @@
 package org.ade.monitoring.keberadaan.koneksi;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.DateMonitoring;
+import org.ade.monitoring.keberadaan.entity.DayMonitoring;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.PesanData;
 
 import android.app.Activity;
@@ -19,17 +27,19 @@ public class SenderSMS {
 	}
 
 	public void kirimPesanData( PesanData pesanData ){
-//		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
-//		Lokasi lokasi 		= dataMonitoring.getLokasi();
-//		double latitude		= lokasi.getlatitude();
-//		double longitude 	= lokasi.getLongitude();
-//		long date = dataMonitoring.getWaktuMulaiLong();
-//		Calendar cal = Calendar.getInstance();
-//		cal.setTimeInMillis(date);
-//		String teksData = latitude+","+longitude+","+cal.getTimeInMillis();
-//		SmsManager sms = SmsManager.getDefault();
-//		sms.sendTextMessage("000", null, teksData, null, null);
-		
+		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
+		Lokasi lokasi 		= dataMonitoring.getLokasi();
+		double latitude		= lokasi.getlatitude();
+		double longitude 	= lokasi.getLongitude();
+		long 	mulai 		= dataMonitoring.getWaktuMulai();
+		long 	selesai 	= dataMonitoring.getWaktuSelesai();
+		int 	status 		= dataMonitoring.getStatus();
+		List<DayMonitoring> 	haris 		= dataMonitoring.getHaris();
+		List<DateMonitoring> 	tanggals 	= dataMonitoring.getTanggals();
+		int toleransi = dataMonitoring.getTolerancy();
+		String idOrtu = dataMonitoring.getAnak().getIdOrtu();
+		String phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
+		// TODO : create json dulu....
 	}
 
 
@@ -90,10 +100,23 @@ public class SenderSMS {
 	                    break;                        
 	            }
 	        }
-	    }, new IntentFilter(DELIVERED));        
+	    }, new IntentFilter(DELIVERED));   
+	    
+	    
 
 	    SmsManager sms = SmsManager.getDefault();
-	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
+	    ArrayList<String> parts = sms.divideMessage(message);
+	    
+	    ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
+	    ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
+
+	    for (int i = 0; i < parts.size(); i++) {
+		    sentIntents.add(sentPI);
+		    deliveryIntents.add(deliveredPI);
+	    }
+	    
+	    sms.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, deliveryIntents);
+//	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
 	}
   	
 
