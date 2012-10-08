@@ -18,6 +18,7 @@ public class MonakJsonConverter {
 			JSONObject object = new JSONObject(json);
 			dataMonitoring.setKeterangan(object.getString(KETERANGAN));
 			dataMonitoring.setStatus(object.getInt(STATUS));
+			
 			// set data monitoring.......................
 		} catch (JSONException e) {
 			e.printStackTrace();
