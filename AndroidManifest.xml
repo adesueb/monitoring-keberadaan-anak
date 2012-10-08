@@ -85,7 +85,7 @@
         </activity>
         
         <receiver 
-            android:name=".koneksi.KoneksiSMS" 
+            android:name=".koneksi.ReceiverSMS" 
             android:exported="false"> 
             <intent-filter> 
                 <action android:name=

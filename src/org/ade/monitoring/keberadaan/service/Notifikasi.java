@@ -1,7 +1,7 @@
 package org.ade.monitoring.keberadaan.service;
 
 
-import org.ade.monitoring.keberadaan.entity.Peringatan;
+import org.ade.monitoring.keberadaan.entity.PesanData;
 
 
 public class Notifikasi {
@@ -14,7 +14,7 @@ public class Notifikasi {
 	}
   
   
-	public Peringatan getPeringatan(  ){
+	public PesanData getPesanData(  ){
 		return null;
 	}
 
