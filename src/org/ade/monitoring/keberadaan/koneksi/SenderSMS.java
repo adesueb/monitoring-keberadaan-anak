@@ -28,23 +28,13 @@ public class SenderSMS {
 
 	public void kirimPesanData( PesanData pesanData ){
 		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
-		Lokasi lokasi 		= dataMonitoring.getLokasi();
-		double latitude		= lokasi.getlatitude();
-		double longitude 	= lokasi.getLongitude();
-		long 	mulai 		= dataMonitoring.getWaktuMulai();
-		long 	selesai 	= dataMonitoring.getWaktuSelesai();
-		int 	status 		= dataMonitoring.getStatus();
-		List<DayMonitoring> 	haris 		= dataMonitoring.getHaris();
-		List<DateMonitoring> 	tanggals 	= dataMonitoring.getTanggals();
-		int toleransi = dataMonitoring.getTolerancy();
-		String idOrtu = dataMonitoring.getAnak().getIdOrtu();
+		
 		String phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
-		// TODO : create json dulu....
+		sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 
 
-  	public void sendSMS(final String phoneNumber, final String message)
-	{        
+  	public void sendSMS(final String phoneNumber, final String message){        
 	    String SENT = "SMS_SENT";
 	    String DELIVERED = "SMS_DELIVERED";
 
