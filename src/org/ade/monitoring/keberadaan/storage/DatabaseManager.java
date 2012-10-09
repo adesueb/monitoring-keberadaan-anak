@@ -460,6 +460,18 @@ public class DatabaseManager {
 		}
 	}
 	
+	public void addLokasi(Lokasi lokasi){
+		if(lokasi!=null){
+			ContentValues cv = new ContentValues();
+			cv.put(COLUMN_ID_PELANGGARAN, lokasi);
+			cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
+			cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
+			cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
+			
+			getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);	
+		}
+	}
+	
 	public void addTanggalMonitorings(List<DateMonitoring> tanggalMonitorings){
 		if(tanggalMonitorings!=null){
 			for(DateMonitoring tanggalMonitoring:tanggalMonitorings){
