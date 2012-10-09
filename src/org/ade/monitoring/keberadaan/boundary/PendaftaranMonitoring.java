@@ -14,6 +14,7 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.koneksi.SenderMonitoringOrtu;
 import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.tanda.ITandaLokasi;
@@ -168,8 +169,10 @@ public class PendaftaranMonitoring extends Activity{
 		if(dataMonitoring!=null){
 			Anak anak = dataMonitoring.getAnak();
 			if(anak!=null){
+				SenderMonitoringOrtu sender = new SenderMonitoringOrtu(this);
+				sender.sendDataMonitoringBaru(dataMonitoring);
+				// FIXME : test pengiriman datamonitoring melalui sms......
 				databaseManager.addDataMonitoring(dataMonitoring);
-				// TODO : kirim ke anak melalui sms....
 				finish();
 			}else{
 				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT).show();

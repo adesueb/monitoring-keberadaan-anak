@@ -1,11 +1,15 @@
 package org.ade.monitoring.keberadaan.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.PesanData;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,10 +20,43 @@ public class MonakJsonConverter {
 		DataMonitoring dataMonitoring = new DataMonitoring();
 		try {
 			JSONObject object = new JSONObject(json);
+			dataMonitoring.setIdMonitoring(object.getString(ID_MONITORING));
 			dataMonitoring.setKeterangan(object.getString(KETERANGAN));
 			dataMonitoring.setStatus(object.getInt(STATUS));
 			
-			// set data monitoring.......................
+			Lokasi lokasi = new Lokasi();
+			lokasi.setLatitude(object.getDouble(LATITUDE));
+			lokasi.setLongitude(object.getDouble(LONGITUDE));
+			dataMonitoring.setLokasi(lokasi);
+			
+			Anak anak = new Anak();
+			anak.setNoHpAnak(object.getString(NO_HP_ANAK));
+			anak.setIdOrtu(object.getString(ID_ORTU));
+			dataMonitoring.setAnak(anak);
+			
+			dataMonitoring.setTolerancy(object.getInt(TOLERANSI));
+			dataMonitoring.setWaktuMulai(object.getLong(MULAI));
+			dataMonitoring.setWaktuSelesai(object.getLong(SELESAI));
+			
+			List<DayMonitoring> haris = new ArrayList<DayMonitoring>();
+			JSONArray arrHaris = object.getJSONArray(HARIS);
+			for(int i=0;i<arrHaris.length();i++){
+				DayMonitoring hari = new DayMonitoring();
+				hari.setHari(arrHaris.getInt(i));
+				hari.setDataMonitoring(dataMonitoring);
+				haris.add(hari);
+			}
+			dataMonitoring.setHaris(haris);
+			
+			List<DateMonitoring> tanggals = new ArrayList<DateMonitoring>();
+			JSONArray arrTanggals = object.getJSONArray(TANGGALS);
+			for(int i=0;i<arrTanggals.length();i++){
+				DateMonitoring tanggal = new DateMonitoring();
+				tanggal.setDataMonitoring(dataMonitoring);
+				tanggals.add(tanggal);
+			}
+			dataMonitoring.setTanggals(tanggals);
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -28,17 +65,39 @@ public class MonakJsonConverter {
 	}
 	
 	public static String convertPesanDataToJson(PesanData pesanData){
-		String jsonTextDataMonitoring = MonakJsonConverter.convertDataMonitoringToJson(pesanData.getDataMonitoring());
 		String jsonTextResult = "";
 		try {
 			JSONObject jsonPesanData = new JSONObject();
-			jsonPesanData.put(DATAMONITORING, jsonTextDataMonitoring);
 			jsonPesanData.put(TIPE, pesanData.getTipe());
+			if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){				
+				jsonPesanData.put(DATAMONITORING, 
+						MonakJsonConverter.convertDataMonitoringToJson(pesanData.getDataMonitoring()));	
+			}else{
+				jsonPesanData.put(PERINGATAN, convertPeringatanToJson(pesanData.getPeringatan()));
+			}
 			jsonTextResult = jsonPesanData.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonTextResult;
+	}
+	
+	public static String  convertPeringatanToJson(Peringatan peringatan){
+
+		if(peringatan!=null){
+			JSONObject object = new JSONObject();
+			try {
+				object.put(ID_MONITORING, peringatan.getIdMonitoring());
+				Lokasi lokasi = new Lokasi();
+				object.put(LATITUDE, lokasi.getlatitude());
+				object.put(LONGITUDE, lokasi.getLongitude());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return object.toString();
+		}
+		return "";
+	
 	}
 	
 	public static  String convertDataMonitoringToJson(DataMonitoring dataMonitoring){
@@ -49,6 +108,7 @@ public class MonakJsonConverter {
 			long 	mulai 		= dataMonitoring.getWaktuMulai();
 			long 	selesai 	= dataMonitoring.getWaktuSelesai();
 			int 	status 		= dataMonitoring.getStatus();
+			String idMonitoring	= dataMonitoring.getIdMonitoring();
 			List<DayMonitoring> 	haris 		= dataMonitoring.getHaris();
 			List<DateMonitoring> 	tanggals 	= dataMonitoring.getTanggals();
 			int toleransi = dataMonitoring.getTolerancy();
@@ -58,6 +118,7 @@ public class MonakJsonConverter {
 			
 			JSONObject object = new JSONObject();
 			try {
+				object.put(ID_MONITORING, idMonitoring);
 				object.put(LATITUDE, latitude);
 				object.put(LONGITUDE, longitude);
 				object.put(MULAI, mulai);
@@ -84,13 +145,15 @@ public class MonakJsonConverter {
 				e.printStackTrace();
 			}
 			return object.toString();
-		}else{
-			return "";
 		}
+		return "";
+		
 	}
 	
 	private final static String TIPE			= "tipe";
+	private final static String PERINGATAN		= "peringatan";
 	private final static String DATAMONITORING	= "dataMonitoring";
+	private final static String ID_MONITORING	= "idMonitoring";
 	private final static String KETERANGAN 		= "keterangan";
 	private final static String LATITUDE		= "latitude";
 	private final static String LONGITUDE		= "longitude";

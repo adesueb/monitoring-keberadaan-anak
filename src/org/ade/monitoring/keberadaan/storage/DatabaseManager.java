@@ -177,9 +177,26 @@ public class DatabaseManager {
 		}
 	}
 	
+	public Lokasi getLokasiByIdLokasi(String idLokasi){
+		Cursor cursor = 
+				actionQuery(LOCATION_TABLE_NAME, null, COLUMN_ID_LOCATION+"='"+idLokasi+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			Lokasi lokasi = 
+					getLokasiFromCursor(cursor);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return lokasi;
+		}else{
+			if(cursor!=null){
+				cursor.close();
+			}
+			return null;
+		}
+	}
 	public List<DateMonitoring> getTanggalMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 
-				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"="+idMonitoring);
+				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"='"+idMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<DateMonitoring> dateMonitoring = 
 					getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
@@ -214,7 +231,7 @@ public class DatabaseManager {
 	
 	public List<DayMonitoring> getHariMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 
-				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"="+idMonitoring);
+				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"='"+idMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
 			if(cursor!=null){
@@ -549,19 +566,15 @@ public class DatabaseManager {
 			 
 			int indexIdMonitoring 			= cursor.getColumnIndex(COLUMN_ID_MONITORING);
 			int indexKetMonitoring			= cursor.getColumnIndex(COLUMN_KET_MONITORING);
-			int indexLatitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LATITUDE_MONITORING);
-			int indexLongitudeMonitoring 	= cursor.getColumnIndex(COLUMN_LONGITUDE_MONITORING);
+			int indexLocationMonitoring 	= cursor.getColumnIndex(COLUMN_LOCATION_MONITORING);
 			int indexDateMulaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_MULAI_MONITORING);
 			int indexDateSelesaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
 			int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
 			int indexTolerancy				= cursor.getColumnIndex(COLUMN_TOLERANCY_MONITORING);
-			 
-		 
+			
+			dataMonitoring.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationMonitoring)));
 			dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
 			dataMonitoring.setKeterangan(cursor.getString(indexKetMonitoring));
-			dataMonitoring.setLokasi(
-				new Lokasi(cursor.getDouble(indexLatitudeMonitoring), 
-						 cursor.getDouble(indexLongitudeMonitoring)));
 			dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
 			dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
 			dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
@@ -598,15 +611,11 @@ public class DatabaseManager {
 		if(cursor!=null && cursor.getCount()>0){
 			Pelanggaran pelanggaran = new Pelanggaran();
 			int indexIdPelanggaran 			= cursor.getColumnIndex(COLUMN_ID_PELANGGARAN);
-			int indexLatitudePelanggaran 	= cursor.getColumnIndex(COLUMN_LATITUDE_PELANGGARAN);
-			int indexLongitudePelanggaran 	= cursor.getColumnIndex(COLUMN_LONGITUDE_PELANGGARAN);
+			int indexLocationPelanggaran 	= cursor.getColumnIndex(COLUMN_LOCATION_PELANGGARAN);
 			int indexDatePelanggaran 		= cursor.getColumnIndex(COLUMN_DATE_PELANGGARAN);
 				pelanggaran.setIdPelanggaran(cursor.getString(indexIdPelanggaran));
 			pelanggaran.setWaktuPelanggaran(cursor.getLong(indexDatePelanggaran));
-			Lokasi lokasi = new Lokasi();
-			lokasi.setLatitude(cursor.getDouble(indexLatitudePelanggaran));
-			lokasi.setLongitude(cursor.getDouble(indexLongitudePelanggaran));
-			pelanggaran.setLokasi(lokasi);
+			pelanggaran.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationPelanggaran)));
 			if(withAnak){
 				int indexAnakPelanggaran		= cursor.getColumnIndex(COLUMN_ANAK_PELANGGARAN);
 				pelanggaran.setAnak(getAnakById(cursor.getString(indexAnakPelanggaran), false, false));
@@ -640,6 +649,22 @@ public class DatabaseManager {
 			}while(cursor.moveToNext());
 		}
 		return hariMonitorings;
+	}
+	
+	public Lokasi getLokasiFromCursor(Cursor cursor){
+		if(cursor!=null && cursor.getCount()>0){
+			Lokasi lokasi = new Lokasi();
+			int indexIdLokasi	= cursor.getColumnIndex(COLUMN_ID_LOCATION);
+			int indexLatitude 	= cursor.getColumnIndex(COLUMN_LATITUDE);
+			int indexLongitude 	= cursor.getColumnIndex(COLUMN_LONGITUDE);
+			
+			lokasi.setId(cursor.getString(indexIdLokasi));
+			lokasi.setLatitude(cursor.getDouble(indexLatitude));
+			lokasi.setLongitude(cursor.getDouble(indexLongitude));
+			
+			return lokasi;
+		}
+		return null;
 	}
 	
 	public DateMonitoring getTanggalMonitoringFromCursor(Cursor cursor, boolean withDataMonitoring){
@@ -758,8 +783,7 @@ public class DatabaseManager {
 	    		COLUMN_ANAK_PELANGGARAN+" VARCHAR(10),"+
 	    		COLUMN_MONITORING_PELANGGARAN+ " VARCHAR(10)," +
 	    		COLUMN_DATE_PELANGGARAN+" INTEGER,"+
-	    		COLUMN_LATITUDE_PELANGGARAN+" VARCHAR(50),"+
-	    		COLUMN_LONGITUDE_PELANGGARAN+" VARCHAR(50),"+
+	    		COLUMN_LOCATION_PELANGGARAN+" VARCHAR(10),"+
 	    		"FOREIGN KEY("+COLUMN_ANAK_PELANGGARAN+") REFERENCES "+
 	    		ANAK_TABLE_NAME+"("+COLUMN_ID_ANAK+"),"+
 	    		"FOREIGN KEY("+COLUMN_MONITORING_PELANGGARAN+") REFERENCES "+
@@ -771,14 +795,21 @@ public class DatabaseManager {
 	    		COLUMN_ID_MONITORING+" VARCHAR(10) PRIMARY KEY,"+
 	    		COLUMN_KET_MONITORING+" VARCHAR(50),"+
 	    		COLUMN_ANAK_MONITORING+ " VARCHAR(10),"+
-	    		COLUMN_LATITUDE_MONITORING+" VARCHAR(50),"+
-	    		COLUMN_LONGITUDE_MONITORING+" VARCHAR(50),"+
+	    		COLUMN_LOCATION_MONITORING+" VARCHAR(10),"+
 	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_DATE_SELESAI_MONITORING+" INTEGER,"+
 	    		COLUMN_STATUS_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_TOLERANCY_MONITORING+" INTEGER,"+
 	    		"FOREIGN KEY("+COLUMN_ANAK_MONITORING+") REFERENCES "+
 	    		ANAK_TABLE_NAME+"("+COLUMN_ID_ANAK+"))";
+	    
+	    private static final String CREATE_LOCATION = 
+	    		"CREATE TABLE IF NOT EXISTS "+
+	    		LOCATION_TABLE_NAME+" ("+
+	    		COLUMN_ID_LOCATION+" VARCHAR(10) PRIMARY KEY,"+	    	
+	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
+	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
+	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	    private static final String CREATE_DATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -816,17 +847,15 @@ public class DatabaseManager {
     private static final String COLUMN_ID_PELANGGARAN			= "id";
     private static final String COLUMN_ANAK_PELANGGARAN			= "anak";
     private static final String COLUMN_MONITORING_PELANGGARAN	= "monitoring";
+    private static final String COLUMN_LOCATION_PELANGGARAN		= "pelanggaran";
     private static final String COLUMN_DATE_PELANGGARAN			= "waktu";
-    private static final String COLUMN_LONGITUDE_PELANGGARAN	= "longitude";
-    private static final String COLUMN_LATITUDE_PELANGGARAN		= "latitude";
 
     private static final String MONITORING_TABLE_NAME			= 
     		"monitoring";
     private static final String COLUMN_ID_MONITORING			= "id";
     private static final String COLUMN_KET_MONITORING			= "ket";
     private static final String COLUMN_ANAK_MONITORING			= "anak";
-    private static final String COLUMN_LONGITUDE_MONITORING 	= "longitude";
-    private static final String COLUMN_LATITUDE_MONITORING		= "latitude";
+    private static final String COLUMN_LOCATION_MONITORING		= "lokasi";
     private static final String COLUMN_DATE_MULAI_MONITORING	= "mulai";
     private static final String COLUMN_DATE_SELESAI_MONITORING	= "selesai";
     private static final String COLUMN_STATUS_MONITORING		= "status";
@@ -836,6 +865,12 @@ public class DatabaseManager {
     		"day";
     private static final String COLUMN_MONITORING_DAY_MONITORING	= "monitoring";
     private static final String COLUMN_DAY_DAY_MONITORING			= "day";
+    
+    private static final String LOCATION_TABLE_NAME				=
+    		"lokasi";
+    private static final String COLUMN_ID_LOCATION	= "id";
+    private static final String COLUMN_LONGITUDE 	= "longitude";
+    private static final String COLUMN_LATITUDE		= "latitude";
     
     
     private static final String DATE_MONITORING_TABLE_NAME			=

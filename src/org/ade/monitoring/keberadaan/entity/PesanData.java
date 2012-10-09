@@ -37,7 +37,14 @@ public class PesanData {
 	public String getJsonPesanData(){
 		return MonakJsonConverter.convertPesanDataToJson(this);
 	}
-  
+	public Peringatan getPeringatan() {
+		return peringatan;
+	}
+	public void setPeringatan(Peringatan peringatan) {
+		this.peringatan = peringatan;
+	}
+
+	private Peringatan		peringatan;
 	private DataMonitoring 	dataMonitoring;
 	private int tipe;
 	
