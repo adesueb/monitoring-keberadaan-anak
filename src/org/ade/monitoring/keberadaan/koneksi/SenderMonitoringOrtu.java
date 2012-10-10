@@ -42,6 +42,10 @@ public class SenderMonitoringOrtu {
 		return pesanData;
 	}
 	
+	private void success(){
+		handler.sendEmptyMessage(Status.SUCCESS);
+	}
+	
 	private final SenderSMS			senderSMS;
 	private final SenderInternet	senderInternet;
 	private final PesanData 		pesanData;
@@ -60,7 +64,7 @@ public class SenderMonitoringOrtu {
 					senderMonitoring.sendInternet();
 					break;
 				}case Status.SUCCESS:{
-					senderMonitoring.handler.sendEmptyMessage(Status.SUCCESS);
+					senderMonitoring.success();
 				}
 			}
 		}
