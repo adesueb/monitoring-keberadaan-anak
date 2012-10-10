@@ -45,11 +45,19 @@ public class Anak {
 	public void setDataMonitorings(List<DataMonitoring> dataMonitorings) {
 		this.dataMonitorings = dataMonitorings;
 	}
-
+	public Lokasi getLokasi() {
+		return lokasi;
+	}
+	public void setLokasi(Lokasi lokasi) {
+		this.lokasi = lokasi;
+	}
+	
 	private String idAnak;
 	private String idOrtu;
     private String namaAnak;
     private String noHpAnak;
+    
+    private Lokasi lokasi;
     
     private List<Pelanggaran> 		pelanggarans;
     private List<DataMonitoring> 	dataMonitorings;

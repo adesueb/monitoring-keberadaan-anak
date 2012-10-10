@@ -16,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.SyncStateContract.Columns;
 
 
 public class DatabaseManager {
@@ -36,6 +37,16 @@ public class DatabaseManager {
 		if(cursor!=null){
 			cursor.close();
 		}
+		return id;
+	}
+	public String getLastIDLokasi(){
+		Cursor cursor = 
+				actionQuery("SELECT "+COLUMN_ID+" from "+LOCATION_TABLE_NAME+" order by "+COLUMN_ID_LOCATION+" DESC limit 1");
+		String id = getLastIdFromCursor(cursor);
+		if(cursor!=null){
+			cursor.close();
+		}
+		
 		return id;
 	}
 	public String getLastIdMonitoring(){
@@ -267,6 +278,11 @@ public class DatabaseManager {
 	
 	// delete............................................................
 	
+	public void deleteLokasi(Lokasi lokasi){
+		getDb().delete
+			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+	}
+	
 	public void deleteDateMonitoringByIdIdDate(String id){
 
 		getDb().delete
@@ -318,18 +334,31 @@ public class DatabaseManager {
 		if(haris!=null){
 			deleteDayMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring());
 		}
+		
+		Lokasi lokasi = dataMonitoring.getLokasi();
+		if(lokasi!=null){
+			deleteLokasi(lokasi);
+		}
 	}
 	
 	public void deleteAnak(Anak anak){
 		getDb().delete
 		(ANAK_TABLE_NAME, 
 				COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		Lokasi lokasi = anak.getLokasi();
+		if(lokasi!=null){
+			deleteLokasi(lokasi);
+		}
 	}
 	
 	public void deletePelanggaran(Pelanggaran pelanggaran){
 		getDb().delete
 			(PELANGGARAN_TABLE_NAME, 
 				COLUMN_ID_PELANGGARAN+"='"+pelanggaran.getIdPelanggaran()+"'", null);
+		Lokasi lokasi = pelanggaran.getLokasi();
+		if(lokasi!=null){
+			deleteLokasi(lokasi);
+		}
 	}
 	
 	//...................................................................
@@ -347,6 +376,13 @@ public class DatabaseManager {
 		getDb().update(DAY_MONITORING_TABLE_NAME, cv, "_id='"+hariMonitoring.getId()+"'", null);
 	}
 	
+	public void updateLokasi(Lokasi lokasi){
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
+		cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
+		getDb().update(LOCATION_TABLE_NAME, cv, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+	}
+	
 	public void updateDataMonitoring(DataMonitoring dataMonitoring){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
@@ -354,8 +390,6 @@ public class DatabaseManager {
 		cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
 		cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
 		cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());
-		cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
-		cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
 		long result = getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
 		if(result>0){
 			List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
@@ -371,6 +405,10 @@ public class DatabaseManager {
 					updateDayMonitoring(hari);
 				}
 			}
+			if(dataMonitoring.getLokasi()!=null){
+				updateLokasi(dataMonitoring.getLokasi());
+			}
+			
 		}
 	}
 		
@@ -378,7 +416,10 @@ public class DatabaseManager {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
-		getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		if(result>0 && anak.getLokasi()!=null){
+			updateLokasi(anak.getLokasi());
+		}
 	}
 
 	//...................................................................
@@ -397,8 +438,6 @@ public class DatabaseManager {
 		if(dataMonitoring!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_ID_MONITORING, dataMonitoring.getIdMonitoring());
-			cv.put(COLUMN_LATITUDE_MONITORING, dataMonitoring.getLokasi().getlatitude());
-			cv.put(COLUMN_LONGITUDE_MONITORING, dataMonitoring.getLokasi().getLongitude());
 			cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
 			cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());			
 			cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
@@ -411,6 +450,11 @@ public class DatabaseManager {
 			}
 			if(result>0 && dataMonitoring.getHaris()!=null){
 				addHariMonitorings(dataMonitoring.getHaris());
+			}
+			if(result>0){
+				if(dataMonitoring.getLokasi()!=null){
+					addLokasi(dataMonitoring.getLokasi());
+				}
 			}
 		}
 	}
@@ -426,6 +470,11 @@ public class DatabaseManager {
 			
 		}else{
 			addPelanggarans(anak.getPelanggarans());
+		}
+		if(result <=0 || anak.getLokasi()==null){
+			
+		}else{
+			addLokasi(anak.getLokasi());
 		}
 		if(result <=0 || anak.getDataMonitorings()==null){
 			
@@ -448,27 +497,30 @@ public class DatabaseManager {
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_ID_PELANGGARAN, pelanggaran.getIdPelanggaran());
 			cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
-			cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
-			cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
+			
 			if(pelanggaran.getDataMonitoring()!=null){
 				cv.put(COLUMN_MONITORING_PELANGGARAN, pelanggaran.getDataMonitoring().getIdMonitoring());
 			}
 			if(pelanggaran.getAnak()!=null){
 				cv.put(COLUMN_ANAK_PELANGGARAN, pelanggaran.getAnak().getIdAnak());
 			}
-			getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);	
+			long result = getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);
+			if(result>0){
+				if(pelanggaran.getLokasi()!=null){
+					addLokasi(pelanggaran.getLokasi());
+				}
+			}
 		}
 	}
 	
 	public void addLokasi(Lokasi lokasi){
 		if(lokasi!=null){
 			ContentValues cv = new ContentValues();
-			cv.put(COLUMN_ID_PELANGGARAN, lokasi);
-			cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
-			cv.put(COLUMN_LATITUDE_PELANGGARAN, pelanggaran.getLokasi().getlatitude());
-			cv.put(COLUMN_LONGITUDE_PELANGGARAN, pelanggaran.getLokasi().getLongitude());
+			cv.put(COLUMN_ID_LOCATION, lokasi.getId());
+			cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
+			cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
 			
-			getDb().insert(PELANGGARAN_TABLE_NAME, null, cv);	
+			getDb().insert(LOCATION_TABLE_NAME, null, cv);	
 		}
 	}
 	
@@ -539,14 +591,15 @@ public class DatabaseManager {
 			int indexOrtuAnak	= cursor.getColumnIndex(COLUMN_ORTU_ANAK);
 			int indexNamaAnak	= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
+			int indexLocationAnak 	= cursor.getColumnIndex(COLUMN_LAST_LOCATION_ANAK);
 			
 			anak.setIdAnak(cursor.getString(indexIdAnak));
 			anak.setIdOrtu(cursor.getString(indexOrtuAnak));
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
+			anak.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
 			if(withPelanggaran){
 				getDataPelanggaransByAnak(cursor.getString(indexIdAnak));
-				
 			}
 			if(withMonitoring){
 				anak.setDataMonitorings(getDataMonitoringsByAnak(cursor.getString(indexIdAnak)));
@@ -750,6 +803,7 @@ public class DatabaseManager {
 	
 	    private void createTables(SQLiteDatabase db){
 	    	db.execSQL(CREATE_ANAK);
+	    	db.execSQL(CREATE_LOCATION);
 			db.execSQL(CREATE_PELANGGARAN);
 			db.execSQL(CREATE_MONITORING);
 			db.execSQL(CREATE_DATE_MONITORING);
@@ -758,6 +812,7 @@ public class DatabaseManager {
 	    
 	    private void dropTables(SQLiteDatabase db){
 	    	db.execSQL("DROP TABLE IF EXISTS " + ANAK_TABLE_NAME);
+	    	db.execSQL("DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + PELANGGARAN_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + MONITORING_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + DATE_MONITORING_TABLE_NAME);
@@ -777,13 +832,14 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 1;
+	    private static final int DATABASE_VERSION = 2;
 		
 	    
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		ANAK_TABLE_NAME+" ("+
 	    		COLUMN_ID_ANAK+" VARCHAR(10) PRIMARY KEY,"+
+	    		COLUMN_LAST_LOCATION_ANAK+" VARCHAR(10),"+
 	    		COLUMN_ORTU_ANAK+" VARCHAR(40),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50))";
@@ -847,12 +903,13 @@ public class DatabaseManager {
 	
 	private static final String COLUMN_ID 		= "id";
 	
-	private static final String ANAK_TABLE_NAME 	= 
+	private static final String ANAK_TABLE_NAME 			= 
     		"anak";
-    private static final String COLUMN_ID_ANAK 		= "id";
-    private static final String COLUMN_ORTU_ANAK	= "ortu";
-    private static final String COLUMN_NAMA_ANAK	= "nama";
-    private static final String COLUMN_NO_HP_ANAK	= "no_hp";
+    private static final String COLUMN_ID_ANAK 				= "id";
+    private static final String COLUMN_ORTU_ANAK			= "ortu";
+    private static final String COLUMN_NAMA_ANAK			= "nama";
+    private static final String COLUMN_NO_HP_ANAK			= "no_hp";
+    private static final String COLUMN_LAST_LOCATION_ANAK 	= "lokasi";
     
     private static final String PELANGGARAN_TABLE_NAME			=
     		"pelanggaran";

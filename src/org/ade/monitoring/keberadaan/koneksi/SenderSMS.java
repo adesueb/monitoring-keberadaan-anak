@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
@@ -16,14 +17,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
 public class SenderSMS {
 	
-	public SenderSMS (Context context) {
+	public SenderSMS (Context context, Handler handler) {
 		mContext = context;
+		mHandler = handler;	
 	}
 
 	public void kirimPesanData( PesanData pesanData ){
@@ -53,23 +56,19 @@ public class SenderSMS {
 	                case Activity.RESULT_OK:
 	                	Log.d("sent", "terkirim ke : "+phoneNumber+
 								"\n"+"pesan : "+message);
-	                     break;
+	                    break;
 	                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-	                    Toast.makeText(mContext, "Generic failure", 
-	                            Toast.LENGTH_SHORT).show();
+	                	mHandler.sendEmptyMessage(Status.FAILED);
 	                    break;
 	                case SmsManager.RESULT_ERROR_NO_SERVICE:
-	                    Toast.makeText(mContext, "No service", 
-	                            Toast.LENGTH_SHORT).show();
-	                    break;
+	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	break;
 	                case SmsManager.RESULT_ERROR_NULL_PDU:
-	                    Toast.makeText(mContext, "Null PDU", 
-	                            Toast.LENGTH_SHORT).show();
-	                    break;
+	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	break;
 	                case SmsManager.RESULT_ERROR_RADIO_OFF:
-	                    Toast.makeText(mContext, "Radio off", 
-	                            Toast.LENGTH_SHORT).show();
-	                    break;
+	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	break;
 	            }
 	        }
 	    }, new IntentFilter(SENT));
@@ -81,12 +80,10 @@ public class SenderSMS {
 	            switch (getResultCode())
 	            {
 	                case Activity.RESULT_OK:
-	                    Toast.makeText(mContext, "SMS delivered", 
-	                            Toast.LENGTH_SHORT).show();
+	                	mHandler.sendEmptyMessage(Status.SUCCESS);
 	                    break;
 	                case Activity.RESULT_CANCELED:
-	                    Toast.makeText(mContext, "SMS not delivered", 
-	                            Toast.LENGTH_SHORT).show();
+	                	mHandler.sendEmptyMessage(Status.FAILED);
 	                    break;                        
 	            }
 	        }
@@ -111,4 +108,5 @@ public class SenderSMS {
   	
 
 	private Context mContext;
+	private Handler mHandler;
 }

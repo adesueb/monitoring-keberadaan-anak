@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihAnak;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihMingguan;
 import org.ade.monitoring.keberadaan.boundary.submenu.PilihToleransi;
@@ -169,16 +170,19 @@ public class PendaftaranMonitoring extends Activity{
 		if(dataMonitoring!=null){
 			Anak anak = dataMonitoring.getAnak();
 			if(anak!=null){
-				SenderMonitoringOrtu sender = new SenderMonitoringOrtu(this);
-				sender.sendDataMonitoringBaru(dataMonitoring);
+				new SenderMonitoringOrtu(this,new HandlerSendermonitoring(this), dataMonitoring).sendDataMonitoringBaru();
 				// FIXME : test pengiriman datamonitoring melalui sms......
-				databaseManager.addDataMonitoring(dataMonitoring);
-				finish();
+				
 			}else{
 				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT).show();
 			}
 			
 		}
+	}
+	
+	private void save(){
+		databaseManager.addDataMonitoring(dataMonitoring);
+		finish();
 	}
 	
 	private void actionClear(){
@@ -219,6 +223,7 @@ public class PendaftaranMonitoring extends Activity{
 				if(resultCode==RESULT_OK && data!=null){
 				
 					Lokasi lokasi = new Lokasi();
+					lokasi.setId(mIDGenerator.getIdLocation());
 					lokasi.setLatitude(data.getDoubleExtra("latitude", 0));
 					lokasi.setLongitude(data.getDoubleExtra("longitude", 0));
 					dataMonitoring.setLokasi(lokasi);
@@ -376,6 +381,7 @@ public class PendaftaranMonitoring extends Activity{
 				break;
 			}case LOKASI:{
 				Lokasi lokasi = tandaLokasi.getLokasi();
+				lokasi.setId(mIDGenerator.getIdLocation());
 				dataMonitoring.setLokasi(lokasi);
 
 				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
@@ -423,6 +429,25 @@ public class PendaftaranMonitoring extends Activity{
 	public final static int TOLERANSI		= 6;
 	public final static int LOKASI			= 7;
 	public final static int KE_ANAK			= 8;
+	
+	private final static class HandlerSendermonitoring extends Handler{
+
+		public HandlerSendermonitoring(PendaftaranMonitoring pendaftaranMonitoring){
+			this.pendaftaranMonitoring = pendaftaranMonitoring;
+		}
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+				case Status.SUCCESS:{
+					pendaftaranMonitoring.save();
+					break;
+				}case Status.FAILED:{
+					break;
+				}
+			}
+		}
+		private PendaftaranMonitoring pendaftaranMonitoring;
+	}
 	
 	private final static class MonitoringHandler extends Handler{
 

@@ -16,6 +16,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MonakJsonConverter {
+	public static Peringatan convertJsonToPeringatan(String json){
+		Peringatan peringatan = new Peringatan();
+		try {
+			JSONObject object = new JSONObject(json);
+			peringatan.setIdMonitoring(object.getString(ID_MONITORING));
+			Lokasi lokasi = new Lokasi();
+			lokasi.setLatitude(object.getDouble(LATITUDE));
+			lokasi.setLongitude(object.getDouble(LONGITUDE));
+			peringatan.setLokasiAnak(lokasi);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return peringatan;
+	}
 	public static DataMonitoring convertJsonToDataMonitoring(String json){
 		DataMonitoring dataMonitoring = new DataMonitoring();
 		try {
@@ -62,6 +76,23 @@ public class MonakJsonConverter {
 		}
 		
 		return dataMonitoring;
+	}
+	
+	public static PesanData convertJSONPesanDataToJson(String json){
+		PesanData pesanData = new PesanData();
+		try {
+			JSONObject object = new JSONObject(json);
+			pesanData.setTipe(object.getInt(TIPE));
+			if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+				pesanData.setDataMonitoring(convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString()));
+			}else{
+				pesanData.setPeringatan(convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString()));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return pesanData;
 	}
 	
 	public static String convertPesanDataToJson(PesanData pesanData){

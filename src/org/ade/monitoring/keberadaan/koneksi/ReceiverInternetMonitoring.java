@@ -2,9 +2,11 @@ package org.ade.monitoring.keberadaan.koneksi;
 
 import org.ade.monitoring.keberadaan.entity.PesanData;
 
+import android.content.Context;
+
 public class ReceiverInternetMonitoring implements ReceiverKoneksi{
 
-	public void menerimaPesanData(PesanData pesaData) {
+	public void menerimaPesanData(Context context, PesanData pesaData) {
 		
 	}
 

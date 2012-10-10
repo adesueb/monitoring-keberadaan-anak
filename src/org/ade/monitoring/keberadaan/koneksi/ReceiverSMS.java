@@ -2,6 +2,7 @@ package org.ade.monitoring.keberadaan.koneksi;
 
 
 import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -25,12 +26,8 @@ public abstract class ReceiverSMS extends BroadcastReceiver implements ReceiverK
 		
 	}
 
-	
-	
-
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		   //---get the SMS message passed in---
         Bundle bundle = intent.getExtras();        
         SmsMessage[] msgs = null;
         String str = "";            
@@ -43,17 +40,15 @@ public abstract class ReceiverSMS extends BroadcastReceiver implements ReceiverK
             for (int i=0; i<msgs.length; i++){
                 msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]); 
                 noHP=msgs[i].getOriginatingAddress();
-                str += "SMS from " + msgs[i].getOriginatingAddress();                     
-                str += " :";
-                str += msgs[i].getMessageBody().toString();
-                str += "\n";        
+                str += msgs[i].getMessageBody().toString(); 
             }
-            //---display the new SMS message---
+            
+            PesanData pesanData = MonakJsonConverter.convertJSONPesanDataToJson(str);
+            menerimaPesanData(context, pesanData);
         }
-        menerimaPesanData(null);
 	}
 	
-	public abstract void menerimaPesanData(PesanData pesanData);
+	public abstract void menerimaPesanData(Context context, PesanData pesanData);
 
 
 }

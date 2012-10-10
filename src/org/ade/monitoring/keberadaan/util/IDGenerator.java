@@ -37,6 +37,12 @@ public class IDGenerator {
 		return id;
 	}
 	
+	public String getIdLocation(){
+		String id = mDatabaseManager.getLastIDLokasi();
+		id = ID_LOCATION+generateAngkaId(id);
+		return id;
+	}
+	
 	public String getIdOrangTua(){
 		TelephonyManager telephonyManager = (TelephonyManager)
 				mContext.getSystemService(Context.TELEPHONY_SERVICE);
@@ -61,9 +67,10 @@ public class IDGenerator {
 		return angka;
 	}
 	
-	private static final char ID_ANAK = 'A';
-	private static final char ID_MONITORING = 'M';
-	private static final char ID_PELANGGARAN = 'P';
+	private static final char ID_ANAK 			= 'A';
+	private static final char ID_MONITORING 	= 'M';
+	private static final char ID_PELANGGARAN 	= 'P';
+	private static final char ID_LOCATION		= 'L';
 	
 	private Context mContext;
 	

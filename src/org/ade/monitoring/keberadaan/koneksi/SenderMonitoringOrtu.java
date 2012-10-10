@@ -1,35 +1,37 @@
 package org.ade.monitoring.keberadaan.koneksi;
 
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.PesanData;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
 public class SenderMonitoringOrtu {
 	
-	public SenderMonitoringOrtu(Context context){
-		databaseManager	= new DatabaseManager(context);
-		senderSMS		= new SenderSMS(context);
+	public SenderMonitoringOrtu(Context context, Handler handler, DataMonitoring dataMonitoring){
+		senderSMS		= new SenderSMS(context, new HandlerSenderMonitoring(this));
 		senderInternet	= new SenderInternet(context);
+		this.handler	= handler;
+		pesanData 		= createPesanData(dataMonitoring, TipePesanData.DATAMONITORING_BARU);
 	}
 	
-	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
-		PesanData pesanData = createPesanData(dataMonitoring, TipePesanData.DATAMONITORING_BARU);
+	public void sendDataMonitoringBaru(){
 		senderSMS.kirimPesanData(pesanData);
-		senderInternet.kirimPesanData(pesanData);
 	}
 	
-	public void sendPeringatanTerlarang(DataMonitoring dataMonitoring){
-		PesanData pesanData = createPesanData(dataMonitoring, TipePesanData.PERINGATAN_TERLARANG);
+	public void sendPeringatanTerlarang(){
 		senderSMS.kirimPesanData(pesanData);
-		senderInternet.kirimPesanData(pesanData);
+	}
+
+	public void sendPeringatanSeharusnya(){
+		senderSMS.kirimPesanData(pesanData);
 	}
 	
-	public void sendPeringatanSeharusnya(DataMonitoring dataMonitoring){
-		PesanData pesanData = createPesanData(dataMonitoring, TipePesanData.PERINGATAN_SEHARUSNYA);
-		senderSMS.kirimPesanData(pesanData);
+	public void sendInternet(){
 		senderInternet.kirimPesanData(pesanData);
 	}
 	
@@ -40,9 +42,29 @@ public class SenderMonitoringOrtu {
 		return pesanData;
 	}
 	
-	
-	private final DatabaseManager	databaseManager;
 	private final SenderSMS			senderSMS;
 	private final SenderInternet	senderInternet;
+	private final PesanData 		pesanData;
+	private final Handler			handler;
+	
+	private static final class HandlerSenderMonitoring extends Handler{
+
+		public HandlerSenderMonitoring(SenderMonitoringOrtu senderMonitoring){
+			senderMonitoring = senderMonitoring;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case Status.FAILED:{
+					senderMonitoring.sendInternet();
+					break;
+				}case Status.SUCCESS:{
+					senderMonitoring.handler.sendEmptyMessage(Status.SUCCESS);
+				}
+			}
+		}
+		private SenderMonitoringOrtu senderMonitoring;
+	}
 	
 }
