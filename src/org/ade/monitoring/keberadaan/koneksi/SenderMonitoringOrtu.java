@@ -13,8 +13,8 @@ import android.os.Message;
 public class SenderMonitoringOrtu {
 	
 	public SenderMonitoringOrtu(Context context, Handler handler, DataMonitoring dataMonitoring){
-		senderSMS		= new SenderSMS(context, new HandlerSenderMonitoring(this));
-		senderInternet	= new SenderInternet(context);
+		senderSMS		= new SenderSMS(context, new HandlerSenderSMSMonitoring(this));
+		senderInternet	= new SenderInternet(context, new HandlerSenderInternetMonitoring(this));
 		this.handler	= handler;
 		pesanData 		= createPesanData(dataMonitoring, TipePesanData.DATAMONITORING_BARU);
 	}
@@ -51,9 +51,9 @@ public class SenderMonitoringOrtu {
 	private final PesanData 		pesanData;
 	private final Handler			handler;
 	
-	private static final class HandlerSenderMonitoring extends Handler{
+	private static final class HandlerSenderSMSMonitoring extends Handler{
 
-		public HandlerSenderMonitoring(SenderMonitoringOrtu senderMonitoring){
+		public HandlerSenderSMSMonitoring(SenderMonitoringOrtu senderMonitoring){
 			senderMonitoring = senderMonitoring;
 		}
 		
@@ -69,6 +69,26 @@ public class SenderMonitoringOrtu {
 			}
 		}
 		private SenderMonitoringOrtu senderMonitoring;
+	}
+
+	private static final class HandlerSenderInternetMonitoring extends Handler{
+
+		public HandlerSenderInternetMonitoring(SenderMonitoringOrtu senderMonitoring){
+			this.senderMonitoring = senderMonitoring;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+				case Status.SUCCESS:{
+					senderMonitoring.success();
+				}case Status.FAILED:{
+					//TODO : when failed... what will u do?
+				}
+			}
+		}
+		private SenderMonitoringOrtu senderMonitoring;
+		
 	}
 	
 }

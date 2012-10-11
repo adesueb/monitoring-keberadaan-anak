@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan.storage;
 
+import org.ade.monitoring.keberadaan.Variable.DaftarUrl;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 
 import android.app.Activity;
@@ -29,10 +30,24 @@ public class PreferenceManager {
 		editor.putFloat(LONGITUDE, (float)lokasi.getLongitude());
 		editor.commit();
 	}
+	
+	public String getUrl(){
+		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
+		return pref.getString(URL_SERVER, DaftarUrl.URL_SERVER_DEFAULT);
+	}
+	
+	public void setUrl(String url){
+		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putString(URL_SERVER, url);
+		editor.commit();
+	}
 
 	private final Context mContext;
     private static final String LOKASI_MAP 	= "map";
     private static final String LATITUDE	= "latitude";
     private static final String LONGITUDE	= "longitude";
+    private static final String URL			= "url";
+    private static final String URL_SERVER	= "url_server";
     
 }
