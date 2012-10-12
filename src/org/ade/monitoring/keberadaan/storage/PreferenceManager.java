@@ -31,15 +31,27 @@ public class PreferenceManager {
 		editor.commit();
 	}
 	
-	public String getUrl(){
+	public String getIp(){
 		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
-		return pref.getString(URL_SERVER, DaftarUrl.URL_SERVER_DEFAULT);
+		return pref.getString(URL_IP, DaftarUrl.URL_IP_DEFAULT);
 	}
 	
-	public void setUrl(String url){
+	public void setIp(String ip){
 		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE); 
 		Editor editor  = pref.edit();
-		editor.putString(URL_SERVER, url);
+		editor.putString(URL_IP, ip);
+		editor.commit();
+	}
+	
+	public int getPort(){
+		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
+		return pref.getInt(URL_PORT, DaftarUrl.URL_PORT_DEFAULT);
+	}
+	
+	public void setPort(int port){
+		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putInt(URL_PORT, port);
 		editor.commit();
 	}
 
@@ -48,6 +60,7 @@ public class PreferenceManager {
     private static final String LATITUDE	= "latitude";
     private static final String LONGITUDE	= "longitude";
     private static final String URL			= "url";
-    private static final String URL_SERVER	= "url_server";
+    private static final String URL_IP		= "url_ip";
+    private static final String	URL_PORT	= "url_port";
     
 }
