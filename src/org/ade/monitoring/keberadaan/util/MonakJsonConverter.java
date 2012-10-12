@@ -10,7 +10,7 @@ import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,16 +78,17 @@ public class MonakJsonConverter {
 		return dataMonitoring;
 	}
 	
-	public static PesanData convertJSONPesanDataToJson(String json){
-		PesanData pesanData = new PesanData();
+	public static IPesanData convertJsonToPesanData(String json){
+		IPesanData pesanData = null;
 		try {
 			JSONObject object = new JSONObject(json);
-			pesanData.setTipe(object.getInt(TIPE));
 			if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
-				pesanData.setDataMonitoring(convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString()));
+				pesanData=convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString());
 			}else{
-				pesanData.setPeringatan(convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString()));
+				pesanData=convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString());
 			}
+
+			pesanData.setTipe(object.getInt(TIPE));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -95,16 +96,16 @@ public class MonakJsonConverter {
 		return pesanData;
 	}
 	
-	public static String convertPesanDataToJson(PesanData pesanData){
+	public static String convertPesanDataToJson(IPesanData pesanData){
 		String jsonTextResult = "";
 		try {
 			JSONObject jsonPesanData = new JSONObject();
 			jsonPesanData.put(TIPE, pesanData.getTipe());
 			if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){				
 				jsonPesanData.put(DATAMONITORING, 
-						MonakJsonConverter.convertDataMonitoringToJson(pesanData.getDataMonitoring()));	
+						MonakJsonConverter.convertDataMonitoringToJson((DataMonitoring) pesanData));	
 			}else{
-				jsonPesanData.put(PERINGATAN, convertPeringatanToJson(pesanData.getPeringatan()));
+				jsonPesanData.put(PERINGATAN, convertPeringatanToJson((Peringatan) pesanData));
 			}
 			jsonTextResult = jsonPesanData.toString();
 		} catch (JSONException e) {

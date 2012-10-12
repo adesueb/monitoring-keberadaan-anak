@@ -1,6 +1,6 @@
 package org.ade.monitoring.keberadaan.koneksi;
 
-import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.storage.PreferenceManager;
 
 import android.content.Context;
@@ -13,7 +13,7 @@ public class SenderInternet {
 		this.handler = handler;
 	}
 	
-	public void kirimPesanData(PesanData pesanData){
+	public void kirimPesanData(IPesanData pesanData){
 		String text = pesanData.getJsonPesanData();
 		
 		PreferenceManager pref = new PreferenceManager(context);

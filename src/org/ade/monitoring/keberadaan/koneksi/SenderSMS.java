@@ -5,11 +5,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.entity.Peringatan;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -29,10 +31,16 @@ public class SenderSMS {
 		mHandler = handler;	
 	}
 
-	public void kirimPesanData( PesanData pesanData ){
-		DataMonitoring dataMonitoring = pesanData.getDataMonitoring();
-		
-		String phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
+	public void kirimPesanData( IPesanData pesanData ){
+		String phoneNumber;
+		if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+			DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
+			phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
+			
+		}else{
+			Peringatan peringatan = (Peringatan) pesanData;
+			phoneNumber = peringatan.getIdOrtu();
+		}
 		sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 

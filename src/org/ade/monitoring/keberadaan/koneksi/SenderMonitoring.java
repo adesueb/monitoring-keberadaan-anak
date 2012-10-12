@@ -3,43 +3,42 @@ package org.ade.monitoring.keberadaan.koneksi;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
-import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.entity.Peringatan;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-public class SenderMonitoringOrtu {
+public class SenderMonitoring {
 	
-	public SenderMonitoringOrtu(Context context, Handler handler, DataMonitoring dataMonitoring){
+	public SenderMonitoring(Context context, Handler handler){
 		senderSMS		= new SenderSMS(context, new HandlerSenderSMSMonitoring(this));
 		senderInternet	= new SenderInternet(context, new HandlerSenderInternetMonitoring(this));
 		this.handler	= handler;
-		pesanData 		= createPesanData(dataMonitoring, TipePesanData.DATAMONITORING_BARU);
 	}
 	
-	public void sendDataMonitoringBaru(){
+	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
+		dataMonitoring.setTipe(TipePesanData.DATAMONITORING_BARU);
+		pesanData 		= dataMonitoring;
 		senderSMS.kirimPesanData(pesanData);
 	}
 	
-	public void sendPeringatanTerlarang(){
+	public void sendPeringatanTerlarang(Peringatan peringatan){
+		peringatan.setTipe(TipePesanData.PERINGATAN_TERLARANG);
+		pesanData = peringatan;
 		senderSMS.kirimPesanData(pesanData);
 	}
 
-	public void sendPeringatanSeharusnya(){
+	public void sendPeringatanSeharusnya(Peringatan peringatan){
+		peringatan.setTipe(TipePesanData.PERINGATAN_SEHARUSNYA);
+		pesanData = peringatan;		
 		senderSMS.kirimPesanData(pesanData);
 	}
 	
 	public void sendInternet(){
 		senderInternet.kirimPesanData(pesanData);
-	}
-	
-	private PesanData createPesanData(DataMonitoring dataMonitoring, int tipe){
-		PesanData pesanData = new PesanData();
-		pesanData.setDataMonitoring(dataMonitoring);
-		pesanData.setTipe(tipe);
-		return pesanData;
 	}
 	
 	private void success(){
@@ -48,12 +47,12 @@ public class SenderMonitoringOrtu {
 	
 	private final SenderSMS			senderSMS;
 	private final SenderInternet	senderInternet;
-	private final PesanData 		pesanData;
+	private IPesanData 				pesanData;
 	private final Handler			handler;
 	
 	private static final class HandlerSenderSMSMonitoring extends Handler{
 
-		public HandlerSenderSMSMonitoring(SenderMonitoringOrtu senderMonitoring){
+		public HandlerSenderSMSMonitoring(SenderMonitoring senderMonitoring){
 			senderMonitoring = senderMonitoring;
 		}
 		
@@ -68,12 +67,12 @@ public class SenderMonitoringOrtu {
 				}
 			}
 		}
-		private SenderMonitoringOrtu senderMonitoring;
+		private SenderMonitoring senderMonitoring;
 	}
 
 	private static final class HandlerSenderInternetMonitoring extends Handler{
 
-		public HandlerSenderInternetMonitoring(SenderMonitoringOrtu senderMonitoring){
+		public HandlerSenderInternetMonitoring(SenderMonitoring senderMonitoring){
 			this.senderMonitoring = senderMonitoring;
 		}
 		
@@ -87,7 +86,7 @@ public class SenderMonitoringOrtu {
 				}
 			}
 		}
-		private SenderMonitoringOrtu senderMonitoring;
+		private SenderMonitoring senderMonitoring;
 		
 	}
 	

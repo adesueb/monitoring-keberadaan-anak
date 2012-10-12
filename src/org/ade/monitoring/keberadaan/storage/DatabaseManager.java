@@ -462,6 +462,7 @@ public class DatabaseManager {
 	public void addAnak(Anak anak){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID_ANAK, anak.getIdAnak());
+		cv.put(COLUMN_ORTU_ANAK, anak.getIdOrtu());
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
 		long result = getDb().insert(ANAK_TABLE_NAME, null, cv);

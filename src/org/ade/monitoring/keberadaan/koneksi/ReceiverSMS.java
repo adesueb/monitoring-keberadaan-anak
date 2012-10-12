@@ -1,7 +1,7 @@
 package org.ade.monitoring.keberadaan.koneksi;
 
 
-import org.ade.monitoring.keberadaan.entity.PesanData;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
 import android.app.Activity;
@@ -43,12 +43,12 @@ public abstract class ReceiverSMS extends BroadcastReceiver implements ReceiverK
                 str += msgs[i].getMessageBody().toString(); 
             }
             
-            PesanData pesanData = MonakJsonConverter.convertJSONPesanDataToJson(str);
+            IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
             menerimaPesanData(context, pesanData);
         }
 	}
 	
-	public abstract void menerimaPesanData(Context context, PesanData pesanData);
+	public abstract void menerimaPesanData(Context context, IPesanData pesanData);
 
 
 }

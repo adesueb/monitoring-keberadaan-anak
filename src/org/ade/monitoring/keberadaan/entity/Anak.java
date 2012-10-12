@@ -53,7 +53,9 @@ public class Anak {
 	}
 	
 	private String idAnak;
+	// id ortu is no hp ortu....
 	private String idOrtu;
+	//..........................
     private String namaAnak;
     private String noHpAnak;
     

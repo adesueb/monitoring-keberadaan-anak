@@ -3,8 +3,11 @@ package org.ade.monitoring.keberadaan.entity;
 
 import java.util.*;
 
+import org.ade.monitoring.keberadaan.map.MonitoringOverlay;
+import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
-public class DataMonitoring {
+
+public class DataMonitoring implements IPesanData{
 
   
 	public DataMonitoring () { };
@@ -116,7 +119,19 @@ public class DataMonitoring {
 			return false;
 		}
 	}
+	
+	public void setTipe(int tipe) {
+		this.tipe = tipe;
+	}
 
+	public int getTipe() {
+		return tipe;
+	}
+
+	public String getJsonPesanData() {
+		return MonakJsonConverter.convertPesanDataToJson(this);
+	}
+	
 
 	private String	keterangan;
 	private String 	idMonitoring;
@@ -126,10 +141,13 @@ public class DataMonitoring {
     private int		tolerancy;
     private long 	waktuMulai;
     private long 	waktuSelesai;
+    private int 	tipe;
     private List<DayMonitoring> haris;
     private List<DateMonitoring>tanggals;
     
     public final static int SEHARUSNYA = 0;
     public final static int TERLARANG	= 1;
+	
+
 
 }

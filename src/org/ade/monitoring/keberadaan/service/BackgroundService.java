@@ -74,7 +74,10 @@ public class BackgroundService extends Service{
 							if((now.getMinutes()>mulai.getMinutes() && now.getMinutes()<selesai.getMinutes())
 									||now==null){
 								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
+								
 								Lokasi 	lokasiHp 			= mTracker.getLokasi();
+								if(lokasiHp==null)return START_STICKY;
+								
 								int		tolerancy			= dataMonitoring.getTolerancy();
 								locationMonitorUtil.setCurrentLocation(lokasiHp);
 								locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
