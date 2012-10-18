@@ -1,12 +1,21 @@
 package org.ade.monitoring.keberadaan.map;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Entity;
 import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
+import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
+import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.entity.Pelanggaran;
+import org.ade.monitoring.keberadaan.koneksi.SenderRequestLokasiAnak;
+import org.ade.monitoring.keberadaan.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.storage.PreferenceManager;
 
 import com.google.android.maps.GeoPoint;
@@ -30,10 +39,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-
 public class Peta extends MapActivity{
 
-  
   	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,39 +48,12 @@ public class Peta extends MapActivity{
 		ambilLokasi = intent.getBooleanExtra("ambilLokasi", false);
 		
 		setContentView(R.layout.monitoring_map);
-		ImageView ivSearch 	= (ImageView) findViewById(R.id.monitoringMapSearch);		
-		ivSearch.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
 		
-		ImageView ivAnak 	= (ImageView) findViewById(R.id.monitoringMapAnak);		
-		ivAnak.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
+		setToolbarMenu();
 		
-		ImageView ivMonitor 	= (ImageView) findViewById(R.id.monitoringMapMonitoring);		
-		ivMonitor.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
+		databaseManager = new DatabaseManager(this);
 		
-		ImageView ivLaporan 	= (ImageView) findViewById(R.id.monitoringMapLaporan);		
-		ivLaporan.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
-		
-		gpsManager 		= new GpsManager(this, new PetaHandlerPosition(this));
+		gpsManager 		= new GpsManager(this, new PetaHandlerLocationOrangTua(this));
 		
 		mapView	 		= (MapView) findViewById(R.id.mapview);
 		mapController 	= mapView.getController();
@@ -90,15 +70,54 @@ public class Peta extends MapActivity{
 		
 
 	    setOverlayFactory();
-	    setOverlayOrangtua(lokasi);
-		
+	    		
 		setAmbilLokasi();
 		
 		findLokasiOrangTua();
 		
+		
 		mapController.setZoom(12);
 	    mapView.setBuiltInZoomControls(true);
 	}
+  	
+  	private void setToolbarMenu(){
+  		ImageView ivSearch 	= (ImageView) findViewById(R.id.monitoringMapSearch);		
+		ivSearch.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				showDialog(DIALOG_SEARCH);
+			}
+		});
+		
+		ImageView ivAnak 	= (ImageView) findViewById(R.id.monitoringMapAnak);		
+		ivAnak.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				Intent intent = new Intent(Peta.this, DaftarAnak.class);
+				startActivity(intent);
+				finish();
+			}
+		});
+		
+		ImageView ivMonitor 	= (ImageView) findViewById(R.id.monitoringMapMonitoring);		
+		ivMonitor.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				Intent intent = new Intent(Peta.this, DaftarMonitoring.class);
+				startActivity(intent);
+				finish();
+			}
+		});
+		
+		ImageView ivLaporan 	= (ImageView) findViewById(R.id.monitoringMapLaporan);		
+		ivLaporan.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+  	}
   	
   	@Override
 	protected boolean isRouteDisplayed() {
@@ -123,20 +142,113 @@ public class Peta extends MapActivity{
 		buttonOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				int len = listView.getCount();
+				List<Integer> pilihanOverlay = new ArrayList<Integer>();
 				SparseBooleanArray checked = listView.getCheckedItemPositions();
-//				haris.clear();
-				// TODO : cek yang mw diperlihatkan
 				for (int i = 0; i < len; i++){
 					 if (checked.get(i)) {
-//						 haris.add(i+1);
+						 pilihanOverlay.add(i);
 					 }
 				}
+				refreshOverlay(pilihanOverlay);
 				
 				dialog.dismiss();
 			}
 		});
 		return dialog;
 	}
+  	
+  	private void refreshOverlay(List<Integer> pilihanOverlay){
+  		for(int i:pilihanOverlay){
+  			switch(i){
+  				case Entity.ORANG_TUA:{
+  					setFirstOverlayOrangTua();
+  					break;
+  				}case Entity.DATA_MONITORING:{
+  					setOverlayDataMonitoring();
+  					break;
+  				}case Entity.ANAK:{
+  					setOverlayAnak();
+  					break;
+  				}case Entity.PELANGGARAN:{
+  					setOverlayPelanggaran();
+  					break;
+  				}
+  			}
+  		}
+  	}
+  	
+  	private void setOverlayDataMonitoring(){
+  		List<DataMonitoring> dataMonitorings = databaseManager.getAllDataMonitorings(false, true);
+  		overlayFactory.makeOverlayDataMonitoring(dataMonitorings);
+  		for(DataMonitoring dataMonitoring:dataMonitorings){
+  			int color = 0;
+  			if(dataMonitoring.getStatus()==DataMonitoring.SEHARUSNYA){
+  				RadiusOverlay dataMonitoringOverlay = 
+  						new RadiusOverlay(ID_SEHARUSNYA, dataMonitoring.getLokasi(), 100, COLOR_SEHARUSNYA);
+  	  			mapView.getOverlays().add(dataMonitoringOverlay);
+  			}else{
+  				RadiusOverlay dataMonitoringOverlay = 
+  						new RadiusOverlay(ID_TERLARANG, dataMonitoring.getLokasi(), 100, COLOR_TERLARANG);
+  	  			mapView.getOverlays().add(dataMonitoringOverlay);
+  			}
+  		}
+  	}
+  	  	
+  	private void updateOverlaySingleAnak(Anak anak){
+  		if(anaks!=null){
+  			for(Anak anakFor:anaks){
+  				if(anakFor.getIdAnak().equals(anak.getIdAnak())){
+  					anakFor.setLokasi(anak.getLokasi());
+  				}
+  			}
+  			removeOverlayAnaks();
+  			setOverlayAnak();
+  		}
+  	}
+  	
+  	private void RequestAllAnakLocations(List<Anak> anaks){
+  		for(Anak anak:anaks){
+  			SenderRequestLokasiAnak sender = 
+  					new SenderRequestLokasiAnak(this, new PetaHandlerLocationAnak(this, anak));
+  			sender.send();
+  		}
+  	}
+  	private void setOverlayAnak(){
+  		anaks = databaseManager.getAllAnak(false, false);
+  		List<Lokasi> lokasis = new ArrayList<Lokasi>();
+  		for(Anak anak:anaks){
+  			lokasis.add(anak.getLokasi());
+  		}
+  		
+  		overlayFactory.makeOverlayAnak(anaks, lokasis);
+  		for(Lokasi lokasi:lokasis){
+  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
+  			mapView.getOverlays().add(anakOverlay);
+  		}
+  	}
+  	
+  	private void setOverlayPelanggaran(){
+  		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
+  		overlayFactory.makeOverlayPelanggaran(pelanggarans);
+  		for(Pelanggaran pelanggaran : pelanggarans){
+  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
+  			mapView.getOverlays().add(pelanggaranOverlay);
+  		}
+  	}
+  	
+  	private void setFirstOverlayOrangTua(){
+  		if(gpsManager!=null){
+  			Lokasi lokasi 	= gpsManager.getLastLokasi();
+  			
+  			PreferenceManager prefrenceManager = new PreferenceManager(this);
+  			if(lokasi !=null){
+  				prefrenceManager.setMapLokasi(lokasi);
+  			}else{
+  				lokasi = prefrenceManager.getMapLokasi();
+  			}
+  			setOverlayOrangtua(lokasi);
+  		}
+  	}
   	
   	private void setOverlayOrangtua(Lokasi lokasi){
   		if(lokasi != null){
@@ -145,25 +257,55 @@ public class Peta extends MapActivity{
   				mapView.getOverlays().add(overlayFactory.getOrangTua());
   			}
   			// FIXME : test circle overlay...............................
-  			OrangTuaCircleOverlay orangTuaOverlay = new OrangTuaCircleOverlay(lokasi, 100);
+  			RadiusOverlay orangTuaOverlay = new RadiusOverlay(ID_ORANGTUA,lokasi, 100, COLOR_ORTU);
   			mapView.getOverlays().add(orangTuaOverlay);
   			//...........................................................
   		}
   	}
   	
-  	private void changeOverlayOrangtua(Lokasi lokasi){
+  	private void removeOverlayAnaks(){
+		List<Overlay> overlays= mapView.getOverlays();
+		if(overlays!=null){
+			for(int i=0;i<overlays.size();i++){
+  				Overlay overlay = overlays.get(i);
+  				if(overlay instanceof PetaOverlay){
+  					PetaOverlay petaOverlay = (PetaOverlay) overlay;
+  					if(petaOverlay.size()>0){
+  						if(petaOverlay.getItem(0).getTitle().equals(MonitoringOverlayFactory.ANAK)){
+  							overlays.remove(i);
+  						}
+  					}
+  				}else if(overlay instanceof RadiusOverlay){
+  					RadiusOverlay radius = (RadiusOverlay) overlay;
+					String id = radius.getId();
+					if(id.equals(COLOR_ANAK)){
+						overlays.remove(i);
+					}
+  				}
+  			}
+			mapView.invalidate();
+		}
+  	}
+  	
+  	private void changeLocationOverlayOrangtua(Lokasi lokasi){
   		if(lokasi!=null){
   			List<Overlay> overlays= mapView.getOverlays();
   			if(overlays!=null){
-  				for(Overlay overlay:overlays){
+  				for(int i=0;i<overlays.size();i++){
+  					Overlay overlay = overlays.get(i);
   					if(overlay instanceof PetaOverlay){
   						PetaOverlay petaOverlay = (PetaOverlay) overlay;
   	  					if(petaOverlay.size()>0){
 	  	  					if(petaOverlay.getItem(0).getTitle().equals(MonitoringOverlayFactory.TITLE_ORANG_TUA)){
-	  	  						overlays.remove(overlay);
-	  	  						break;
+	  	  						overlays.remove(i);
 	  	  					}	
   	  					}
+  					}else if(overlay instanceof RadiusOverlay){
+  						RadiusOverlay radius = (RadiusOverlay) overlay;
+  						String id = radius.getId();
+  						if(id.equals(COLOR_ORTU)){
+  							overlays.remove(i);
+  						}
   					}
   				}
   				setOverlayOrangtua(lokasi);
@@ -238,7 +380,6 @@ public class Peta extends MapActivity{
 		}
   	}
 
-
   	private static final class PetaHandlerPositionNClose extends Handler{
 
 		public PetaHandlerPositionNClose(Peta peta){
@@ -255,8 +396,8 @@ public class Peta extends MapActivity{
 	//..........................................................................
   	
   	// pengambilan lokasi orang tua.............................................
-  	private static final class PetaHandlerPosition extends Handler{
-  		public PetaHandlerPosition(Peta peta){
+  	private static final class PetaHandlerLocationOrangTua extends Handler{
+  		public PetaHandlerLocationOrangTua(Peta peta){
   			mPeta = peta;
   		}
   		@Override
@@ -268,7 +409,7 @@ public class Peta extends MapActivity{
 				lokasi.setLatitude(bundle.getDouble("latitude"));
 				lokasi.setLongitude(bundle.getDouble("longitude"));
 				mPeta.setPetaCenter(lokasi);
-				mPeta.changeOverlayOrangtua(lokasi);
+				mPeta.changeLocationOverlayOrangtua(lokasi);
 			}
   			
 			
@@ -277,11 +418,57 @@ public class Peta extends MapActivity{
   	}
   	//..........................................................................
   	
+  	private final static class PetaHandlerLocationAnak extends Handler{
+
+  		public PetaHandlerLocationAnak(Peta peta, Anak anak){
+  			this.peta = peta;
+  			this.anak = anak;
+  		}
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch(msg.what){
+				case Status.SUCCESS:{
+					Bundle bundle = msg.getData();
+					Lokasi lokasi = new Lokasi();
+					lokasi.setLatitude(bundle.getDouble("latitude"));
+					lokasi.setLongitude(bundle.getDouble("longitude"));
+					anak.setLokasi(lokasi);
+					peta.updateOverlaySingleAnak(anak);
+					break;
+				}case Status.FAILED:{
+					
+					break;
+				}
+			}
+		}
+		
+		private Peta peta;
+		private Anak anak;
+  		 
+  	}
+  	
 	private MonitoringOverlayFactory 	overlayFactory;
 	private boolean 					ambilLokasi; 
 	private MapController 				mapController;
 	private MapView 					mapView;
 	private GpsManager					gpsManager;
+	private DatabaseManager				databaseManager;
+	private SenderSMS					senderSms;
 	
+	private List<Anak> 					anaks;
 	
+	private final static String ID_ORANGTUA		= "orang_tua";
+	private final static String ID_ANAK			= "anak";
+	private final static String ID_PELANGGARAN 	= "pelanggaran";
+	private final static String ID_SEHARUSNYA	= "seharusnya";
+	private final static String ID_TERLARANG	= "terlarang";
+	
+	private final static int DIALOG_SEARCH		= 0;
+	
+	private final static int COLOR_PELANGGARAN 	= 0x99AA0000;
+	private final static int COLOR_ANAK			= 0x9900AA00;
+	private final static int COLOR_SEHARUSNYA	= 0x999966FF;
+	private final static int COLOR_TERLARANG	= 0x99FFFF00;
+	private final static int COLOR_ORTU			= 0x990000AA;
 }

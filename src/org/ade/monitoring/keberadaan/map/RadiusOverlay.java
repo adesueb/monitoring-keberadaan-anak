@@ -10,20 +10,22 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class OrangTuaCircleOverlay extends Overlay {
+public class RadiusOverlay extends Overlay {
 	
-	public OrangTuaCircleOverlay(Lokasi lokasi, int radius) {
+	public RadiusOverlay(String id, Lokasi lokasi, int radius, int color) {
 		
 		GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),
 				(int)(lokasi.getLongitude()*1E6));
 		this.radius =radius;
 		
-		this.lokasi= lokasi;
+		this.lokasi	= lokasi;
 		
-	    this.point = point;
+	    this.point 	= point;
+	    
+	    this.id		= id;
 	
 	    paint1 = new Paint();
-	    paint1.setARGB(128, 0, 0, 255);
+	    paint1.setColor(color);
 	    paint1.setStrokeWidth(2);
 	    paint1.setStrokeCap(Paint.Cap.ROUND);
 	    paint1.setAntiAlias(true);
@@ -50,6 +52,10 @@ public class OrangTuaCircleOverlay extends Overlay {
 	
 	}
 	
+	public String getId(){
+		return this.id;
+	}
+	
 	public static int metersToRadius(float meters, MapView map, double latitude) {
 	    return (int) (map.getProjection().metersToEquatorPixels(meters) * (1/ Math.cos(Math.toRadians(latitude))));         
 	}
@@ -59,5 +65,6 @@ public class OrangTuaCircleOverlay extends Overlay {
 	private Paint paint1, paint2;
 	private Lokasi lokasi;
 	private int radius;
+	private String id;
 
 }

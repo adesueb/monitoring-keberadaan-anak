@@ -7,6 +7,7 @@ import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
@@ -52,7 +53,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		ImageView ivMap = (ImageView) findViewById(R.id.listMonakMap);
 		ivMap.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//TODO : open map... 
+				Intent intent = new Intent(DaftarMonitoring.this, Peta.class);
+				startActivity(intent);
+				finish();
 			}
 		});
 		

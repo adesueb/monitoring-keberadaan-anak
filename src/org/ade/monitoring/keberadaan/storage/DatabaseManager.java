@@ -189,21 +189,26 @@ public class DatabaseManager {
 	}
 	
 	public Lokasi getLokasiByIdLokasi(String idLokasi){
-		Cursor cursor = 
-				actionQuery(LOCATION_TABLE_NAME, null, COLUMN_ID_LOCATION+"='"+idLokasi+"'");
-		if(cursor!=null && cursor.getCount()>0){
-			Lokasi lokasi = 
-					getLokasiFromCursor(cursor);
-			if(cursor!=null){
-				cursor.close();
+		if(idLokasi!=null&&!idLokasi.equals("")){
+			Cursor cursor = 
+					actionQuery(LOCATION_TABLE_NAME, null, COLUMN_ID_LOCATION+"='"+idLokasi+"'");
+			if(cursor!=null && cursor.getCount()>0){
+				Lokasi lokasi = 
+						getLokasiFromCursor(cursor);
+				if(cursor!=null){
+					cursor.close();
+				}
+				return lokasi;
+			}else{
+				if(cursor!=null){
+					cursor.close();
+				}
+				return null;
 			}
-			return lokasi;
-		}else{
-			if(cursor!=null){
-				cursor.close();
-			}
-			return null;
 		}
+		return null;
+		
+		
 	}
 	public List<DateMonitoring> getTanggalMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 

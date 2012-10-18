@@ -8,6 +8,7 @@ import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
+import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
@@ -20,6 +21,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -69,7 +71,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		ImageView ivMap = (ImageView) findViewById(R.id.listMonakMap);
 		ivMap.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//TODO : open map... 
+				Intent intent = new Intent(DaftarAnak.this, Peta.class);
+				startActivity(intent);
+				finish();
 			}
 		});
 		

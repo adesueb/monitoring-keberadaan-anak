@@ -2,6 +2,7 @@ package org.ade.monitoring.keberadaan.koneksi;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
@@ -18,7 +19,6 @@ public class SenderMonitoring {
 		senderInternet	= new SenderInternet(context, new HandlerSenderInternetMonitoring(this));
 		this.handler	= handler;
 	}
-	
 	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
 		dataMonitoring.setTipe(TipePesanData.DATAMONITORING_BARU);
 		pesanData 		= dataMonitoring;
