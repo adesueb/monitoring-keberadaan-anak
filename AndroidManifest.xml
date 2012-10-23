@@ -83,7 +83,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        
+<!--  
         <receiver 
             android:name=".koneksi.ReceiverSMS" 
             android:exported="false"> 
@@ -92,6 +92,7 @@
                     "android.provider.Telephony.SMS_RECEIVED" /> 
             </intent-filter> 
         </receiver>
+-->
         <receiver android:name=".service.StartUpService"> 
             <intent-filter> 
                 <action android:name=

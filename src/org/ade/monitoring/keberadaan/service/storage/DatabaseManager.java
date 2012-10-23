@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.storage;
+package org.ade.monitoring.keberadaan.service.storage;
 
 
 import java.util.ArrayList;

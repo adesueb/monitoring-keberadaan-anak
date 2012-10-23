@@ -2,18 +2,25 @@ package org.ade.monitoring.keberadaan.service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
 
 public class BackgroundService extends Service{
@@ -28,6 +35,7 @@ public class BackgroundService extends Service{
 		mTracker = new Tracker(this, null);
 		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
+		daftarSmsReceiver();
 	}
 
 	@Override
@@ -111,8 +119,35 @@ public class BackgroundService extends Service{
 		return null;
 	}
 	
-	private Tracker mTracker = null;
-	private List<DataMonitoring> dataMonitorings = null;
-	private LocationMonitorUtil locationMonitorUtil = null;
+	public void addHandlerWaiting(String key, Handler handler){
+		if(mapHandler==null)mapHandler = new HashMap<String, Handler>();
+		mapHandler.put(key, handler);
+	}
+	
+	public void removeHandleWaiting(String key){
+		if(mapHandler==null)return;
+		mapHandler.remove(key);
+	}
+	
+	public Handler getSingleHandler(String key){
+		if(mapHandler==null)return null;
+		return mapHandler.get(key);
+	}
+	
+	private void daftarSmsReceiver(){
+		ReceiverSMS receiver = new ReceiverSMS(this);
+		IntentFilter intentfilter= new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+		registerReceiver(receiver, intentfilter);
+		intentfilter = null;
+	}
+	
+	private Map<String, Handler> 	mapHandler 			= new HashMap<String, Handler>();
+	
+	private Tracker 				mTracker 			= null;
+	private List<DataMonitoring> 	dataMonitorings 	= null;
+	private LocationMonitorUtil 	locationMonitorUtil = null;
+	
+
+	public final static String WAITING_LOCATION = "waiting_location";
 
 }

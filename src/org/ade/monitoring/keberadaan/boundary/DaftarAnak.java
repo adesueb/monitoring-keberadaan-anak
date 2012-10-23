@@ -9,7 +9,7 @@ import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
 import org.ade.monitoring.keberadaan.util.HandlerEdit;
@@ -162,6 +162,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				// TODO : send location to Anak before save it...
 				databaseManager.addAnak(anak);
 				anaks.add(anak);
 				daftarAnakAdapter.notifyDataSetChanged();
@@ -173,6 +174,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				// TODO : send location to Anak before save it...
 				databaseManager.updateAnak(anak);
 				for(Anak anakFor:anaks){
 					if(anak.getIdAnak().equals(anakFor.getIdAnak())){

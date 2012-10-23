@@ -1,0 +1,89 @@
+package org.ade.monitoring.keberadaan.service.koneksi;
+
+
+import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.entity.DataMonitoring;
+import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.entity.Peringatan;
+import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.Notifikasi;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
+
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
+import android.util.Log;
+import android.widget.Toast;
+
+
+/**
+ * Class KoneksiSMS
+ */
+public class ReceiverSMS extends BroadcastReceiver {
+
+	public ReceiverSMS (BackgroundService backgroundService) {
+		this.backgroundService = backgroundService;
+	}
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+        Bundle bundle = intent.getExtras();        
+        SmsMessage[] msgs = null;
+        String str = "";            
+        if (bundle != null)
+        {
+            //---retrieve the SMS message received---
+            Object[] pdus = (Object[]) bundle.get("pdus");
+            msgs = new SmsMessage[pdus.length];
+            String noHP="";
+            for (int i=0; i<msgs.length; i++){
+                msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]); 
+                noHP=msgs[i].getOriginatingAddress();
+                str += msgs[i].getMessageBody().toString(); 
+            }
+            String[] cvs = str.split(",");
+            if(cvs[0].equals("location")){
+            	menerimaLokasi(cvs);
+            	return;
+            }
+            IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
+            menerimaPesanData(context, pesanData);
+        }
+	}
+	
+	private void menerimaPesanData(Context context, IPesanData pesanData){
+		if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+			new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
+		}else{
+			new Notifikasi(context).tampilkanNotifikasiPeringatan((Peringatan) pesanData);
+			
+		}
+	}
+	
+	private void menerimaLokasi(String[] cvs){
+		if(backgroundService==null)return;
+    	Handler handler = backgroundService.getSingleHandler(BackgroundService.WAITING_LOCATION);
+    	if(handler==null)return;
+    	Message message = new Message();
+    	Bundle data = new Bundle();
+    	data.putString("latitude", cvs[1]);
+    	data.putString("longitude", cvs[2]);
+    	message.setData(data);
+    	message.what = Status.SUCCESS;
+    	handler.sendMessage(message);
+    	backgroundService.removeHandleWaiting(BackgroundService.WAITING_LOCATION);
+	}
+	
+	private BackgroundService backgroundService;
+
+}

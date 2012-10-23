@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.koneksi;
+package org.ade.monitoring.keberadaan.service.koneksi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
@@ -24,7 +25,7 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SenderSMS {
+public class SenderSMS implements ISender{
 	
 	public SenderSMS (Context context, Handler handler) {
 		mContext = context;
@@ -113,8 +114,14 @@ public class SenderSMS {
 	    sms.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, deliveryIntents);
 //	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
 	}
-  	
+
+	public void kirimRequestLokasiAnak(Anak anak) {
+		this.sendSMS(anak.getNoHpAnak(), REQUEST_LOCATION_ANAK);
+	}
 
 	private Context mContext;
 	private Handler mHandler;
+	
+
+	private final static String REQUEST_LOCATION_ANAK = "REQUEST_LOCATION";
 }

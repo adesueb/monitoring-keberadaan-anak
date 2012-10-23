@@ -1,16 +1,15 @@
-package org.ade.monitoring.keberadaan.tanda;
+package org.ade.monitoring.keberadaan.lokasi;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-public class TandaLokasiSendiri implements ITandaLokasi{
+public class TandaLokasiSendiri{
 
 	public TandaLokasiSendiri(Context context, Handler handler){
 		mHandler = handler;

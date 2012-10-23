@@ -8,7 +8,7 @@ import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitori
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.map.Peta;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IFormOperation;

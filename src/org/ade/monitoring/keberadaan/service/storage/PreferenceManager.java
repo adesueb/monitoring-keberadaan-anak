@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.storage;
+package org.ade.monitoring.keberadaan.service.storage;
 
 import org.ade.monitoring.keberadaan.Variable.DaftarUrl;
 import org.ade.monitoring.keberadaan.entity.Lokasi;

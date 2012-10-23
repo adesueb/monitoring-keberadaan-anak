@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

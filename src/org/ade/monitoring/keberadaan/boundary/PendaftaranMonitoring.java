@@ -15,11 +15,10 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.koneksi.SenderMonitoring;
+import org.ade.monitoring.keberadaan.lokasi.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.Peta;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.tanda.ITandaLokasi;
-import org.ade.monitoring.keberadaan.tanda.TandaLokasiSendiri;
+import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
 import android.app.Activity;
@@ -414,7 +413,7 @@ public class PendaftaranMonitoring extends Activity{
 	private PilihWaktu 		pilihWaktu;
 	private PilihMingguan 	pilihMingguan;
 	private PilihToleransi 	pilihToleransi;
-	private ITandaLokasi	tandaLokasi;
+	private TandaLokasiSendiri	tandaLokasi;
 	
 	private IDGenerator		mIDGenerator;
 	

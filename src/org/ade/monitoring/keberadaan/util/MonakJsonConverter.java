@@ -82,7 +82,8 @@ public class MonakJsonConverter {
 		IPesanData pesanData = null;
 		try {
 			JSONObject object = new JSONObject(json);
-			if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+			int tipe = object.getInt(TIPE);
+			if(tipe==TipePesanData.DATAMONITORING_BARU){
 				pesanData=convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString());
 			}else{
 				pesanData=convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString());

@@ -4,7 +4,7 @@ import java.io.FileDescriptor;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.ade.monitoring.keberadaan.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
 
 import com.codegero.internet.SocketClientGero;
 

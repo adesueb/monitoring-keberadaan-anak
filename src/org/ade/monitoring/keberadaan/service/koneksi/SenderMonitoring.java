@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.koneksi;
+package org.ade.monitoring.keberadaan.service.koneksi;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
@@ -6,7 +6,7 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.content.Context;
 import android.os.Handler;
@@ -45,6 +45,10 @@ public class SenderMonitoring {
 		handler.sendEmptyMessage(Status.SUCCESS);
 	}
 	
+	private void failed(){
+		handler.sendEmptyMessage(Status.FAILED);
+	}
+	
 	private final SenderSMS			senderSMS;
 	private final SenderInternet	senderInternet;
 	private IPesanData 				pesanData;
@@ -81,8 +85,10 @@ public class SenderMonitoring {
 			switch(msg.what){
 				case Status.SUCCESS:{
 					senderMonitoring.success();
+					break;
 				}case Status.FAILED:{
-					//TODO : when failed... what will u do?
+					senderMonitoring.failed();
+					break;
 				}
 			}
 		}

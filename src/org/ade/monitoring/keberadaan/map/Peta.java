@@ -12,11 +12,11 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
-import org.ade.monitoring.keberadaan.koneksi.SenderRequestLokasiAnak;
-import org.ade.monitoring.keberadaan.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;
+import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -209,7 +209,7 @@ public class Peta extends MapActivity{
   	private void RequestAllAnakLocations(List<Anak> anaks){
   		for(Anak anak:anaks){
   			SenderRequestLokasiAnak sender = 
-  					new SenderRequestLokasiAnak(this, new PetaHandlerLocationAnak(this, anak));
+  					new SenderRequestLokasiAnak(this, new PetaHandlerLocationAnak(this, anak), anak);
   			sender.send();
   		}
   	}

@@ -1,6 +1,6 @@
 package org.ade.monitoring.keberadaan.util;
 
-import org.ade.monitoring.keberadaan.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
