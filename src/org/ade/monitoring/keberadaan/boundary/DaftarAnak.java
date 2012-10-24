@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
+import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
@@ -19,10 +24,15 @@ import org.ade.monitoring.keberadaan.util.IFormOperation;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -97,9 +107,13 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			public void afterTextChanged(Editable arg0) {}
 		});
 		
-		
+		bindService(new Intent(this, BackgroundService.class), 
+													serviceConnection, 
+													Context.BIND_AUTO_CREATE);
 		setPendaftaranAnak();
 	}
+	
+	
 	
 	private void setPendaftaranAnak(){
 		pendaftaranAnak = new PendaftaranAnak(this, null);
@@ -162,11 +176,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-				// TODO : send location to Anak before save it...
-				databaseManager.addAnak(anak);
-				anaks.add(anak);
-				daftarAnakAdapter.notifyDataSetChanged();
-				
+				senderSms = new SenderSMS(this, new SendingLocationHandler(this));
+				senderSms.kirimRequestLokasiAnak(anak);				
+				handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));
 				break;
 			}case Operation.EDIT:{
 				Anak anak = new Anak();
@@ -174,15 +186,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-				// TODO : send location to Anak before save it...
-				databaseManager.updateAnak(anak);
-				for(Anak anakFor:anaks){
-					if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-						anakFor.setNamaAnak(bundle.getString("nama"));
-						anakFor.setNoHpAnak(bundle.getString("noHp"));
-					}
-				}
-				daftarAnakAdapter.notifyDataSetChanged();
+				senderSms = new SenderSMS(this, new SendingLocationHandler(this));
+				senderSms.kirimRequestLokasiAnak(anak);				
+				handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));
+				
 				
 				break;
 			}case Operation.DELETE:{
@@ -206,14 +213,31 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		}
 		
 	}
+	
+	
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if(bound){
+			handlerBinder.unbindWaitingLocation();
+			unbindService(serviceConnection);
+		}
+		bound = false;
+	}
 
+
+	private ServiceConnectionDaftarAnak serviceConnection;
 	private IDGenerator			idGenerator;
 	private DatabaseManager 	databaseManager;
 	private PendaftaranAnak 	pendaftaranAnak;
 	private ArrayAdapter<Anak>	daftarAnakAdapter;
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
+	private HandlerMonakBinder	handlerBinder;
+	private SenderSMS 			senderSms;
 	
+	private boolean				bound;
 	
 	private final static class AdapterDaftarAnak extends ArrayAdapter<Anak>{
 
@@ -302,5 +326,84 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		private final Anak mAnak;
 		private final DaftarAnak mDaftarAnak;
 	}
+	
+	private final static class SendingLocationHandler extends Handler{
+		public SendingLocationHandler(DaftarAnak daftarAnak){
+			this.daftarAnak = daftarAnak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				//TODO : what're u gonna do?
+			}else if(msg.what==Status.FAILED){
+				//TODO : what's then?
+			}
+		}
+
+		private DaftarAnak daftarAnak;
+	}
+	
+	private final static class WaitingLocationHandler extends Handler{
+
+		public WaitingLocationHandler(DaftarAnak daftarAnak, Anak anak){
+			this.daftarAnak = daftarAnak;
+			this.anak		= anak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle data = msg.getData();
+
+				Lokasi lokasi = new Lokasi();
+				lokasi.setLatitude(data.getDouble("latitude"));
+				lokasi.setLongitude(data.getDouble("longitude"));
+				Lokasi lokasiAnak = anak.getLokasi();
+				
+				if(lokasiAnak!=null){
+					lokasi.setId(lokasiAnak.getId());
+					anak.setLokasi(lokasi);
+					daftarAnak.databaseManager.updateAnak(anak);
+					for(Anak anakFor:daftarAnak.anaks){
+						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+							anakFor.setNamaAnak(anak.getNamaAnak());
+							anakFor.setNoHpAnak(anak.getNoHpAnak());
+						}
+					}
+					daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+				}else{
+					IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
+					lokasi.setId(id.getIdLocation());
+				}
+				
+				daftarAnak.databaseManager.addAnak(anak);
+				daftarAnak.anaks.add(anak);
+				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+			}
+		}
+		
+		private final DaftarAnak daftarAnak;
+		private final Anak anak;
+		
+	}
+	
+	private final static class ServiceConnectionDaftarAnak implements ServiceConnection{
+
+		public ServiceConnectionDaftarAnak(DaftarAnak daftarAnak){
+			this.daftarAnak = daftarAnak;
+		}
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			daftarAnak.handlerBinder = (HandlerMonakBinder) service;
+			daftarAnak.bound = true;
+		}
+
+		public void onServiceDisconnected(ComponentName name) {
+			daftarAnak.bound = false;
+		}
+		
+		private final DaftarAnak daftarAnak;
+	}
+	
 	
 }
