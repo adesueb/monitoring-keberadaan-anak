@@ -11,7 +11,6 @@ public class SenderRequestLokasiAnak{
 
 	public SenderRequestLokasiAnak(Context context, Handler handler, Anak anak){
 		senderSMS		= new SenderSMS(context, new HandlerSenderSMSRequestLocation(this));
-		senderInternet	= new SenderInternet(context, new HandlerSenderInternetRequestLocation(this));
 		this.handler	= handler;
 		this.anak		= anak;
 	}
@@ -20,9 +19,6 @@ public class SenderRequestLokasiAnak{
 		senderSMS.kirimRequestLokasiAnak(anak);
 	}
 	
-	public void sendInternet(){
-		senderInternet.kirimRequestLokasiAnak(anak);
-	}
 	
 	public void success(){
 		handler.sendEmptyMessage(Status.SUCCESS);
@@ -33,7 +29,6 @@ public class SenderRequestLokasiAnak{
 	}
 	
 	private final SenderSMS			senderSMS;
-	private final SenderInternet	senderInternet;
 	private final Handler			handler;
 	private final Anak				anak;
 	
@@ -48,7 +43,6 @@ public class SenderRequestLokasiAnak{
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case Status.FAILED:{
-					senderMonitoring.sendInternet();
 					break;
 				}case Status.SUCCESS:{
 					senderMonitoring.success();
@@ -59,24 +53,5 @@ public class SenderRequestLokasiAnak{
 		private SenderRequestLokasiAnak senderMonitoring;
 	}
 	
-	private static final class HandlerSenderInternetRequestLocation extends Handler{
 
-		public HandlerSenderInternetRequestLocation(SenderRequestLokasiAnak senderMonitoring){
-			senderMonitoring = senderMonitoring;
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case Status.FAILED:{
-					senderMonitoring.failed();
-					break;
-				}case Status.SUCCESS:{
-					senderMonitoring.success();
-					break;
-				}
-			}
-		}
-		private SenderRequestLokasiAnak senderMonitoring;
-	}
 }

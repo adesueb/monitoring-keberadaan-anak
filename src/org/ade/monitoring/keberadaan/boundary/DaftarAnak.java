@@ -107,6 +107,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			public void afterTextChanged(Editable arg0) {}
 		});
 		
+		serviceConnection = new ServiceConnectionDaftarAnak(this);
 		bindService(new Intent(this, BackgroundService.class), 
 													serviceConnection, 
 													Context.BIND_AUTO_CREATE);
@@ -331,7 +332,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			this.anak 		= anak;
 		}
 		
-		@Override
 		public void handleMessage(Message msg) {
 			if(msg.what==Status.SUCCESS){
 				//TODO : what're u gonna do?

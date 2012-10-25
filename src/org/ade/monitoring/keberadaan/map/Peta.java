@@ -13,6 +13,8 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -26,10 +28,14 @@ import com.google.android.maps.Overlay;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -65,6 +71,11 @@ public class Peta extends MapActivity{
 		}else{
 			lokasi = prefrenceManager.getMapLokasi();
 		}
+		
+		serviceConnection = new ServiceConnectionPeta(this);
+		bindService(new Intent(this, BackgroundService.class), 
+				serviceConnection, 
+				Context.BIND_AUTO_CREATE);
 		
 		setPetaCenter(lokasi);
 		
@@ -150,7 +161,7 @@ public class Peta extends MapActivity{
 					 }
 				}
 				refreshOverlay(pilihanOverlay);
-				
+					
 				dialog.dismiss();
 			}
 		});
@@ -207,11 +218,16 @@ public class Peta extends MapActivity{
   	}
   	
   	private void RequestAllAnakLocations(List<Anak> anaks){
+  		// FIXME : bind sender waiting harus satu2.... disini lgsg di looping.... seharusnya g boleh....
   		for(Anak anak:anaks){
   			SenderRequestLokasiAnak sender = 
-  					new SenderRequestLokasiAnak(this, new PetaHandlerLocationAnak(this, anak), anak);
+  					new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak), anak);
   			sender.send();
+  			if(handlerBinder!=null){
+  				handlerBinder.bindWaitingLocation(new WaitingLocationAnakHandler(this, anak));
+  			}
   		}
+  		//.......................................................................
   	}
   	private void setOverlayAnak(){
   		anaks = databaseManager.getAllAnak(false, false);
@@ -379,7 +395,55 @@ public class Peta extends MapActivity{
 			finish();
 		}
   	}
+  	
+  	private boolean						bound;
+  	
+  	private MonitoringOverlayFactory 	overlayFactory;
+	private boolean 					ambilLokasi; 
+	private MapController 				mapController;
+	private MapView 					mapView;
+	private GpsManager					gpsManager;
+	private DatabaseManager				databaseManager;
+	private SenderSMS					senderSms;
+	
+	private List<Anak> 					anaks;
+	
+	private HandlerMonakBinder			handlerBinder;
+	
+	private ServiceConnectionPeta		serviceConnection;
+	
+	private final static String ID_ORANGTUA		= "orang_tua";
+	private final static String ID_ANAK			= "anak";
+	private final static String ID_PELANGGARAN 	= "pelanggaran";
+	private final static String ID_SEHARUSNYA	= "seharusnya";
+	private final static String ID_TERLARANG	= "terlarang";
+	
+	private final static int DIALOG_SEARCH		= 0;
+	
+	private final static int COLOR_PELANGGARAN 	= 0x99AA0000;
+	private final static int COLOR_ANAK			= 0x9900AA00;
+	private final static int COLOR_SEHARUSNYA	= 0x999966FF;
+	private final static int COLOR_TERLARANG	= 0x99FFFF00;
+	private final static int COLOR_ORTU			= 0x990000AA;
+	
 
+	private static final class ServiceConnectionPeta implements ServiceConnection{
+
+		public ServiceConnectionPeta(Peta peta){
+			this.peta = peta;
+		}
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			peta.handlerBinder = (HandlerMonakBinder) service;
+			peta.bound = true;
+		}
+
+		public void onServiceDisconnected(ComponentName name) {
+			peta.bound = false;
+		}
+		private final Peta peta;
+		
+	}
+	
   	private static final class PetaHandlerPositionNClose extends Handler{
 
 		public PetaHandlerPositionNClose(Peta peta){
@@ -418,9 +482,28 @@ public class Peta extends MapActivity{
   	}
   	//..........................................................................
   	
-  	private final static class PetaHandlerLocationAnak extends Handler{
+  	private final static class SendingLocationHandler extends Handler{
+		public SendingLocationHandler(Peta peta, Anak anak){
+			this.peta = peta;
+			this.anak = anak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				//TODO : what're u gonna do?
+			}else if(msg.what==Status.FAILED){
+				//TODO : 
+			}
+		}
 
-  		public PetaHandlerLocationAnak(Peta peta, Anak anak){
+		private final Peta peta;
+		private final Anak anak;
+	}
+  	
+  	private final static class WaitingLocationAnakHandler extends Handler{
+
+  		public WaitingLocationAnakHandler(Peta peta, Anak anak){
   			this.peta = peta;
   			this.anak = anak;
   		}
@@ -435,6 +518,7 @@ public class Peta extends MapActivity{
 					lokasi.setLongitude(bundle.getDouble("longitude"));
 					anak.setLokasi(lokasi);
 					peta.updateOverlaySingleAnak(anak);
+					
 					break;
 				}case Status.FAILED:{
 					
@@ -443,32 +527,10 @@ public class Peta extends MapActivity{
 			}
 		}
 		
-		private Peta peta;
-		private Anak anak;
+		private final Peta peta;
+		private final Anak anak;
   		 
   	}
   	
-	private MonitoringOverlayFactory 	overlayFactory;
-	private boolean 					ambilLokasi; 
-	private MapController 				mapController;
-	private MapView 					mapView;
-	private GpsManager					gpsManager;
-	private DatabaseManager				databaseManager;
-	private SenderSMS					senderSms;
 	
-	private List<Anak> 					anaks;
-	
-	private final static String ID_ORANGTUA		= "orang_tua";
-	private final static String ID_ANAK			= "anak";
-	private final static String ID_PELANGGARAN 	= "pelanggaran";
-	private final static String ID_SEHARUSNYA	= "seharusnya";
-	private final static String ID_TERLARANG	= "terlarang";
-	
-	private final static int DIALOG_SEARCH		= 0;
-	
-	private final static int COLOR_PELANGGARAN 	= 0x99AA0000;
-	private final static int COLOR_ANAK			= 0x9900AA00;
-	private final static int COLOR_SEHARUSNYA	= 0x999966FF;
-	private final static int COLOR_TERLARANG	= 0x99FFFF00;
-	private final static int COLOR_ORTU			= 0x990000AA;
 }
