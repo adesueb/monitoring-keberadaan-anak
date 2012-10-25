@@ -176,9 +176,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-				senderSms = new SenderSMS(this, new SendingLocationHandler(this));
-				senderSms.kirimRequestLokasiAnak(anak);				
-				handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));
+				sendRequestLocationAnak(anak);
 				break;
 			}case Operation.EDIT:{
 				Anak anak = new Anak();
@@ -186,11 +184,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-				senderSms = new SenderSMS(this, new SendingLocationHandler(this));
-				senderSms.kirimRequestLokasiAnak(anak);				
-				handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));
-				
-				
+				sendRequestLocationAnak(anak);
 				break;
 			}case Operation.DELETE:{
 				Anak anak = new Anak();
@@ -214,7 +208,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 	}
 	
-	
+	private void sendRequestLocationAnak(Anak anak){	
+		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
+		senderSms.kirimRequestLokasiAnak(anak);				
+		handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));		
+	}
 	
 	@Override
 	protected void onStop() {
@@ -328,8 +326,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	}
 	
 	private final static class SendingLocationHandler extends Handler{
-		public SendingLocationHandler(DaftarAnak daftarAnak){
+		public SendingLocationHandler(DaftarAnak daftarAnak, Anak anak){
 			this.daftarAnak = daftarAnak;
+			this.anak 		= anak;
 		}
 		
 		@Override
@@ -337,11 +336,35 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			if(msg.what==Status.SUCCESS){
 				//TODO : what're u gonna do?
 			}else if(msg.what==Status.FAILED){
-				//TODO : what's then?
+				AlertDialog.Builder alert = new AlertDialog.Builder(daftarAnak);                 
+				alert.setTitle("Perhatian !!!");  
+				alert.setMessage("gagal memverifikasi no HP anak... \ncoba lagi?");                
+
+				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {  
+						daftarAnak.sendRequestLocationAnak(anak);
+						dialog.dismiss();
+						return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+
+						daftarAnak.handlerBinder.unbindWaitingLocation();
+						dialog.dismiss();
+						return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				alertDialog.show();
 			}
 		}
 
-		private DaftarAnak daftarAnak;
+		private final DaftarAnak daftarAnak;
+		private final Anak anak;
 	}
 	
 	private final static class WaitingLocationHandler extends Handler{

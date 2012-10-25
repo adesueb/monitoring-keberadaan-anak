@@ -14,9 +14,9 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-public class InternetKoneksiMonakBinder extends Binder{
+public class InternetPushMonak{
 
-	private InternetKoneksiMonakBinder(Context context){
+	private InternetPushMonak(Context context){
 		
 		PreferenceManager pref = new PreferenceManager(context);
 		String ip	= pref.getIp();

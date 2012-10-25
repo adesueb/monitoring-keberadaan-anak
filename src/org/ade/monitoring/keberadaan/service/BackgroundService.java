@@ -147,7 +147,7 @@ public class BackgroundService extends Service{
 	private Tracker 				mTracker 			= null;
 	private List<DataMonitoring> 	dataMonitorings 	= null;
 	private LocationMonitorUtil 	locationMonitorUtil = null;
-	
+	private InternetPushMonak		internetPush		= null;
 
 	public final static String WAITING_LOCATION = "waiting_location";
 
