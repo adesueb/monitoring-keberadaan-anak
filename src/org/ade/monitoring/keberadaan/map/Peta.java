@@ -208,7 +208,7 @@ public class Peta extends MapActivity{
   	private void updateOverlaySingleAnak(Anak anak){
   		if(anaks!=null){
   			for(Anak anakFor:anaks){
-  				if(anakFor.getIdAnak().equals(anak.getIdAnak())){
+  				if(anakFor.getNoHpAnak().equals(anak.getNoHpAnak())){
   					anakFor.setLokasi(anak.getLokasi());
   				}
   			}
@@ -224,7 +224,7 @@ public class Peta extends MapActivity{
   					new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak), anak);
   			sender.send();
   			if(handlerBinder!=null){
-  				handlerBinder.bindWaitingLocation(new WaitingLocationAnakHandler(this, anak));
+  				handlerBinder.bindWaitingLocation(new WaitingLocationAnakHandler(this));
   			}
   		}
   		//.......................................................................
@@ -396,7 +396,21 @@ public class Peta extends MapActivity{
 		}
   	}
   	
-  	private boolean						bound;
+  	
+  	
+  	@Override
+	protected void onStop() {
+		super.onStop();
+		if(bound){
+			handlerBinder.unbindWaitingLocation();
+			unbindService(serviceConnection);
+		}
+		bound = false;
+	}
+
+
+
+	private boolean						bound;
   	
   	private MonitoringOverlayFactory 	overlayFactory;
 	private boolean 					ambilLokasi; 
@@ -503,9 +517,8 @@ public class Peta extends MapActivity{
   	
   	private final static class WaitingLocationAnakHandler extends Handler{
 
-  		public WaitingLocationAnakHandler(Peta peta, Anak anak){
+  		public WaitingLocationAnakHandler(Peta peta){
   			this.peta = peta;
-  			this.anak = anak;
   		}
 		@Override
 		public void handleMessage(Message msg) {
@@ -513,10 +526,12 @@ public class Peta extends MapActivity{
 			switch(msg.what){
 				case Status.SUCCESS:{
 					Bundle bundle = msg.getData();
+					Anak anak = new Anak();
 					Lokasi lokasi = new Lokasi();
 					lokasi.setLatitude(bundle.getDouble("latitude"));
 					lokasi.setLongitude(bundle.getDouble("longitude"));
 					anak.setLokasi(lokasi);
+					anak.setNoHpAnak(bundle.getString("noHp"));
 					peta.updateOverlaySingleAnak(anak);
 					
 					break;
@@ -528,7 +543,6 @@ public class Peta extends MapActivity{
 		}
 		
 		private final Peta peta;
-		private final Anak anak;
   		 
   	}
   	

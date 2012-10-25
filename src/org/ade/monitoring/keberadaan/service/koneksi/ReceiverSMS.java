@@ -53,7 +53,7 @@ public class ReceiverSMS extends BroadcastReceiver {
             }
             String[] cvs = str.split(",");
             if(cvs[0].equals("location")){
-            	menerimaLokasi(cvs);
+            	menerimaLokasi(noHP,cvs);
             	return;
             }
             IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
@@ -70,7 +70,7 @@ public class ReceiverSMS extends BroadcastReceiver {
 		}
 	}
 	
-	private void menerimaLokasi(String[] cvs){
+	private void menerimaLokasi(String noHp, String[] cvs){
 		if(backgroundService==null)return;
     	Handler handler = backgroundService.getSingleHandler(BackgroundService.WAITING_LOCATION);
     	if(handler==null)return;
@@ -78,6 +78,7 @@ public class ReceiverSMS extends BroadcastReceiver {
     	Bundle data = new Bundle();
     	data.putString("latitude", cvs[1]);
     	data.putString("longitude", cvs[2]);
+    	data.putString("noHp", noHp);
     	message.setData(data);
     	message.what = Status.SUCCESS;
     	handler.sendMessage(message);
