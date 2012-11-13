@@ -62,7 +62,9 @@ public class ReceiverSMS extends BroadcastReceiver {
 	}
 	
 	private void menerimaPesanData(Context context, IPesanData pesanData){
-		if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+		if(pesanData!=null){
+			
+		}else if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
 			new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
 		}else{
 			new Notifikasi(context).tampilkanNotifikasiPeringatan((Peringatan) pesanData);

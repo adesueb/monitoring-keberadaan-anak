@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, MonitoringKeberadaan!</string>
-    <string name="app_name"></string>
+    <string name="app_name">Monak</string>
     <string name="pilih_date">Pilih Tanggal</string>
     <string name="tandai_lokasi">Tandai Lokasi</string>
     <string name="pilih_mingguan">Pilih Mingguan</string>

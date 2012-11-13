@@ -15,6 +15,7 @@ import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
 import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
 
 import android.app.Service;
 import android.content.Context;
@@ -22,24 +23,34 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 public class BackgroundService extends Service{
 
-
-    public BackgroundService () {
-    	
-    }
     
 	@Override
 	public void onCreate() {
+        Log.d("background service", "creating service");
+		pref = new PreferenceManager(this);
+		pref.setActiveService();
 		mTracker = new Tracker(this, null);
 		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
 		daftarSmsReceiver();
 	}
 
+	
+	
+	@Override
+	public void onDestroy() {
+		pref.setInActiveService();
+		super.onDestroy();
+	}
+	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("background service", "service started");
 		if(mTracker !=null){
 			if(dataMonitorings != null && locationMonitorUtil != null){
 				for(DataMonitoring dataMonitoring:dataMonitorings){
@@ -148,6 +159,9 @@ public class BackgroundService extends Service{
 	private List<DataMonitoring> 	dataMonitorings 	= null;
 	private LocationMonitorUtil 	locationMonitorUtil = null;
 	private InternetPushMonak		internetPush		= null;
+	
+	private PreferenceManager 		pref;
+
 
 	public final static String WAITING_LOCATION = "waiting_location";
 

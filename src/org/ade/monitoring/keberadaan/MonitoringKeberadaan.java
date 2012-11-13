@@ -2,11 +2,13 @@ package org.ade.monitoring.keberadaan;
 
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
+import org.ade.monitoring.keberadaan.service.BackgroundService;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -28,6 +30,9 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
         
         ImageView menuHelp 				= (ImageView) findViewById(R.id.menuHelp);
         menuHelp.setOnClickListener(this);
+        
+        startService(new Intent(this,BackgroundService.class));
+        Log.d("Monitoring keberadaan", "starting service");
     }
     
     private static void goToDaftarAnak(Context context){

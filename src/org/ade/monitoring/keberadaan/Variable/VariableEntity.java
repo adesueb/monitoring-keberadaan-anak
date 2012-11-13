@@ -1,6 +1,6 @@
 package org.ade.monitoring.keberadaan.Variable;
 
-public class Entity {
+public class VariableEntity {
 
 	public static final String [] ARR_ENTITY = {"Orang Tua", "Anak", "Data Monitoring", "Pelanggaran"};
 	public static final int ORANG_TUA = 0;

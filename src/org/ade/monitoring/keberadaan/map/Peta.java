@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.Entity;
+import org.ade.monitoring.keberadaan.Variable.VariableEntity;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
@@ -104,7 +104,7 @@ public class Peta extends MapActivity{
 		ivAnak.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Peta.this, DaftarAnak.class);
+				Intent intent = new Intent(Peta.this, DaftarAnak.class); 
 				startActivity(intent);
 				finish();
 			}
@@ -146,7 +146,7 @@ public class Peta extends MapActivity{
 		
 		ArrayAdapter<String>listAdapter = 
 				new ArrayAdapter<String>
-					(this, android.R.layout.simple_list_item_multiple_choice, Entity.ARR_ENTITY);
+					(this, android.R.layout.simple_list_item_multiple_choice, VariableEntity.ARR_ENTITY);
 		listView.setAdapter(listAdapter);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		Button buttonOk = (Button) findViewById(R.id.listGeneralButtonOk);
@@ -171,16 +171,16 @@ public class Peta extends MapActivity{
   	private void refreshOverlay(List<Integer> pilihanOverlay){
   		for(int i:pilihanOverlay){
   			switch(i){
-  				case Entity.ORANG_TUA:{
+  				case VariableEntity.ORANG_TUA:{
   					setFirstOverlayOrangTua();
   					break;
-  				}case Entity.DATA_MONITORING:{
+  				}case VariableEntity.DATA_MONITORING:{
   					setOverlayDataMonitoring();
   					break;
-  				}case Entity.ANAK:{
+  				}case VariableEntity.ANAK:{
   					setOverlayAnak();
   					break;
-  				}case Entity.PELANGGARAN:{
+  				}case VariableEntity.PELANGGARAN:{
   					setOverlayPelanggaran();
   					break;
   				}
@@ -210,6 +210,7 @@ public class Peta extends MapActivity{
   			for(Anak anakFor:anaks){
   				if(anakFor.getNoHpAnak().equals(anak.getNoHpAnak())){
   					anakFor.setLokasi(anak.getLokasi());
+  					databaseManager.updateAnak(anakFor);
   				}
   			}
   			removeOverlayAnaks();
@@ -272,10 +273,8 @@ public class Peta extends MapActivity{
   			if(overlayFactory.anyOrangTua()){
   				mapView.getOverlays().add(overlayFactory.getOrangTua());
   			}
-  			// FIXME : test circle overlay...............................
   			RadiusOverlay orangTuaOverlay = new RadiusOverlay(ID_ORANGTUA,lokasi, 100, COLOR_ORTU);
   			mapView.getOverlays().add(orangTuaOverlay);
-  			//...........................................................
   		}
   	}
   	

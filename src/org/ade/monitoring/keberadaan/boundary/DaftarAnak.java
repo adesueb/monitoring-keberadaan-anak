@@ -107,15 +107,29 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			public void afterTextChanged(Editable arg0) {}
 		});
 		
-		serviceConnection = new ServiceConnectionDaftarAnak(this);
-		bindService(new Intent(this, BackgroundService.class), 
-													serviceConnection, 
-													Context.BIND_AUTO_CREATE);
 		setPendaftaranAnak();
 	}
 	
 	
 	
+	
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		bound = false;
+		serviceConnection = new ServiceConnectionDaftarAnak(this);
+		bindService(new Intent(this, BackgroundService.class), 
+													serviceConnection, 
+													Context.BIND_AUTO_CREATE);
+		
+	}
+
+
+
+
+
 	private void setPendaftaranAnak(){
 		pendaftaranAnak = new PendaftaranAnak(this, null);
 	}
@@ -218,6 +232,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	@Override
 	protected void onStop() {
 		super.onStop();
+		Log.d("daftar anak", "status dari bound adalah : "+bound);
+		
 		if(bound){
 			handlerBinder.unbindWaitingLocation();
 			unbindService(serviceConnection);
@@ -416,13 +432,17 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		public ServiceConnectionDaftarAnak(DaftarAnak daftarAnak){
 			this.daftarAnak = daftarAnak;
 		}
+		
 		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.d("daftar anak", "----onServiceConnected---");
 			daftarAnak.handlerBinder = (HandlerMonakBinder) service;
 			daftarAnak.bound = true;
+			
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
 			daftarAnak.bound = false;
+			Log.d("daftar anak", "---onServiceDisconnected");
 		}
 		
 		private final DaftarAnak daftarAnak;

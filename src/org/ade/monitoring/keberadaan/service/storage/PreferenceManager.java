@@ -14,6 +14,26 @@ public class PreferenceManager {
 		mContext = context;
 	}
 	
+	public boolean isServiceActive(){
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		
+		return pref.getBoolean(SERVICE, false);
+	}
+	
+	public void setActiveService(){
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putBoolean(SERVICE,true);
+		editor.commit();	
+	}
+	
+	public void setInActiveService(){
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putBoolean(SERVICE,false);
+		editor.commit();
+	}
+	
 	public Lokasi getMapLokasi(){
 		Lokasi lokasi = new Lokasi();
 		SharedPreferences pref = mContext.getSharedPreferences(LOKASI_MAP, Activity.MODE_PRIVATE); 
@@ -56,11 +76,12 @@ public class PreferenceManager {
 	}
 
 	private final Context mContext;
-    private static final String LOKASI_MAP 	= "map";
-    private static final String LATITUDE	= "latitude";
-    private static final String LONGITUDE	= "longitude";
-    private static final String URL			= "url";
-    private static final String URL_IP		= "url_ip";
-    private static final String	URL_PORT	= "url_port";
-    
+    private static final String LOKASI_MAP 		= "map";
+    private static final String LATITUDE		= "latitude";
+    private static final String LONGITUDE		= "longitude";
+    private static final String URL				= "url";
+    private static final String URL_IP			= "url_ip";
+    private static final String	URL_PORT		= "url_port";
+    private static final String SERVICE			= "service";
+    private static final String SERVICE_STATUS	= "service_status";
 }
