@@ -13,7 +13,7 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
-import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
@@ -73,7 +73,7 @@ public class Peta extends MapActivity{
 		}
 		
 		serviceConnection = new ServiceConnectionPeta(this);
-		bindService(new Intent(this, BackgroundService.class), 
+		bindService(new Intent(this, MonakService.class), 
 				serviceConnection, 
 				Context.BIND_AUTO_CREATE);
 		

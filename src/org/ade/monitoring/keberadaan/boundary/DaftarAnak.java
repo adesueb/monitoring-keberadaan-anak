@@ -11,7 +11,7 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
-import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -120,7 +120,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		bound = false;
 		serviceConnection = new ServiceConnectionDaftarAnak(this);
-		bindService(new Intent(this, BackgroundService.class), 
+		bindService(new Intent(MonakService.MONAK_SERVICE), 
 													serviceConnection, 
 													Context.BIND_AUTO_CREATE);
 		

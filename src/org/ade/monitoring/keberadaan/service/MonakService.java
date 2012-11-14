@@ -25,7 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-public class BackgroundService extends Service{
+public class MonakService extends Service{
 
     
 	@Override
@@ -127,8 +127,10 @@ public class BackgroundService extends Service{
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		
-		return null;
+		if(handlerMonakBinder==null){
+			handlerMonakBinder = new HandlerMonakBinder(this);
+		}
+		return handlerMonakBinder;
 	}
 	
 	public void addHandlerWaiting(String key, Handler handler){
@@ -161,8 +163,10 @@ public class BackgroundService extends Service{
 	private InternetPushMonak		internetPush		= null;
 	
 	private PreferenceManager 		pref;
+	
+	private HandlerMonakBinder 		handlerMonakBinder;
 
-
+	public final static String MONAK_SERVICE	= "monak_service";
 	public final static String WAITING_LOCATION = "waiting_location";
 
 }

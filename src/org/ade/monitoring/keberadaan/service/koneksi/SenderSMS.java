@@ -67,16 +67,24 @@ public class SenderSMS implements ISender{
 								"\n"+"pesan : "+message);
 	                    break;
 	                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-	                	mHandler.sendEmptyMessage(Status.FAILED);
-	                    break;
+	                	if(mHandler!=null){
+	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                	}
+	                	break;
 	                case SmsManager.RESULT_ERROR_NO_SERVICE:
-	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	if(mHandler!=null){
+	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_NULL_PDU:
-	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	if(mHandler!=null){
+	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_RADIO_OFF:
-	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	if(mHandler!=null){
+	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                	}
 	                	break;
 	            }
 	        }
@@ -89,10 +97,14 @@ public class SenderSMS implements ISender{
 	            switch (getResultCode())
 	            {
 	                case Activity.RESULT_OK:
-	                	mHandler.sendEmptyMessage(Status.SUCCESS);
-	                    break;
+	                	if(mHandler!=null){
+	                		mHandler.sendEmptyMessage(Status.SUCCESS);	
+	                	}
+	                	break;
 	                case Activity.RESULT_CANCELED:
-	                	mHandler.sendEmptyMessage(Status.FAILED);
+	                	if(mHandler!=null){
+		                	mHandler.sendEmptyMessage(Status.FAILED);	                		
+	                	}
 	                    break;                        
 	            }
 	        }
@@ -118,10 +130,16 @@ public class SenderSMS implements ISender{
 	public void kirimRequestLokasiAnak(Anak anak) {
 		this.sendSMS(anak.getNoHpAnak(), REQUEST_LOCATION_ANAK);
 	}
+	
+	public void kirimResponseLokasiAnak(String noHp, Lokasi lokasi){
+		String cvs = "lokasi"+","+lokasi.getlatitude()+","+lokasi.getLongitude();
+		this.sendSMS(noHp, cvs);
+		
+	}
 
 	private Context mContext;
 	private Handler mHandler;
 	
 
-	private final static String REQUEST_LOCATION_ANAK = "REQUEST_LOCATION";
+	public final static String REQUEST_LOCATION_ANAK = "REQUEST_LOCATION";
 }

@@ -106,8 +106,12 @@
             </intent-filter> 
         </receiver>
         
-        <service 	android:name=".service.BackgroundService"
+        <service 	android:name=".service.MonakService"
 									android:icon="@drawable/icon" >
+            	<intent-filter>
+								<action android:name=
+								    "monak_service"/>
+							</intent-filter>
 				</service>
 
     </application>

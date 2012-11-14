@@ -6,7 +6,7 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.service.BackgroundService;
+import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
@@ -31,7 +31,7 @@ import android.widget.Toast;
  */
 public class ReceiverSMS extends BroadcastReceiver {
 
-	public ReceiverSMS (BackgroundService backgroundService) {
+	public ReceiverSMS (MonakService backgroundService) {
 		this.backgroundService = backgroundService;
 	}
 
@@ -42,7 +42,6 @@ public class ReceiverSMS extends BroadcastReceiver {
         String str = "";            
         if (bundle != null)
         {
-            //---retrieve the SMS message received---
             Object[] pdus = (Object[]) bundle.get("pdus");
             msgs = new SmsMessage[pdus.length];
             String noHP="";
@@ -55,9 +54,15 @@ public class ReceiverSMS extends BroadcastReceiver {
             if(cvs[0].equals("location")){
             	menerimaLokasi(noHP,cvs);
             	return;
+            }else if(str.equals(SenderSMS.REQUEST_LOCATION_ANAK)){
+            	
+            }else{
+            	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
+            	if(pesanData!=null){
+            		menerimaPesanData(context, pesanData);	
+            	}
             }
-            IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
-            menerimaPesanData(context, pesanData);
+            
         }
 	}
 	
@@ -74,7 +79,7 @@ public class ReceiverSMS extends BroadcastReceiver {
 	
 	private void menerimaLokasi(String noHp, String[] cvs){
 		if(backgroundService==null)return;
-    	Handler handler = backgroundService.getSingleHandler(BackgroundService.WAITING_LOCATION);
+    	Handler handler = backgroundService.getSingleHandler(MonakService.WAITING_LOCATION);
     	if(handler==null)return;
     	Message message = new Message();
     	Bundle data = new Bundle();
@@ -84,9 +89,19 @@ public class ReceiverSMS extends BroadcastReceiver {
     	message.setData(data);
     	message.what = Status.SUCCESS;
     	handler.sendMessage(message);
-    	backgroundService.removeHandleWaiting(BackgroundService.WAITING_LOCATION);
+    	backgroundService.removeHandleWaiting(MonakService.WAITING_LOCATION);
 	}
 	
-	private BackgroundService backgroundService;
+	private MonakService backgroundService;
+	
+	private static class LocationHandler extends Handler{
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			
+		}
+		
+	}
 
 }

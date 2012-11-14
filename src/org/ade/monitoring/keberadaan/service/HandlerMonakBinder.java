@@ -5,17 +5,17 @@ import android.os.Handler;
 
 public class HandlerMonakBinder extends Binder{
 
-	public HandlerMonakBinder(BackgroundService service){
+	public HandlerMonakBinder(MonakService service){
 		this.service = service;
 	}
 	
 	public void bindWaitingLocation(Handler handler){
-		service.addHandlerWaiting(BackgroundService.WAITING_LOCATION, handler);
+		service.addHandlerWaiting(MonakService.WAITING_LOCATION, handler);
 	}
 	
 	public void unbindWaitingLocation(){
-		service.removeHandleWaiting(BackgroundService.WAITING_LOCATION);
+		service.removeHandleWaiting(MonakService.WAITING_LOCATION);
 	}
 
-	private final BackgroundService service;
+	private final MonakService service;
 }
