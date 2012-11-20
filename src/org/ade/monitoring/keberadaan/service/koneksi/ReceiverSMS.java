@@ -5,7 +5,9 @@ import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
+import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -55,7 +57,9 @@ public class ReceiverSMS extends BroadcastReceiver {
             	menerimaLokasi(noHP,cvs);
             	return;
             }else if(str.equals(SenderSMS.REQUEST_LOCATION_ANAK)){
-            	
+            	LocationReceiverHandler locationHandler = new LocationReceiverHandler(context, noHP);
+            	GpsManager gpsManager = new GpsManager(context, locationHandler);
+            	gpsManager.searchLokasi();
             }else{
             	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
             	if(pesanData!=null){
@@ -94,13 +98,34 @@ public class ReceiverSMS extends BroadcastReceiver {
 	
 	private MonakService backgroundService;
 	
-	private static class LocationHandler extends Handler{
+	private static class LocationReceiverHandler extends Handler{
 
+		public LocationReceiverHandler(Context context, String noHp){
+			this.context 	= context;
+			this.noHp		= noHp;
+		}
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			switch(msg.what){
+				case Status.SUCCESS:{
+					Bundle bundle = msg.getData();
+					if(bundle!=null){
+						Lokasi lokasi = new Lokasi();
+						lokasi.setLatitude(bundle.getDouble("latitude"));
+						lokasi.setLongitude(bundle.getDouble("longitude"));
+						SenderSMS senderSms = new SenderSMS(context, null);
+						senderSms.kirimResponseLokasiAnak(noHp, lokasi);
+					}
+					break;
+				}case Status.FAILED:{
+					break;
+				}
+			}
 			
 		}
+		private final String	noHp;
+		private final Context 	context;
 		
 	}
 
