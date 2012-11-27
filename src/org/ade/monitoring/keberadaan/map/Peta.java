@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -133,7 +134,7 @@ public class Peta extends MapActivity{
   	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
-	}
+	} 
   	
   	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -149,7 +150,7 @@ public class Peta extends MapActivity{
 					(this, android.R.layout.simple_list_item_multiple_choice, VariableEntity.ARR_ENTITY);
 		listView.setAdapter(listAdapter);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		Button buttonOk = (Button) findViewById(R.id.listGeneralButtonOk);
+		Button buttonOk = (Button) dialog.findViewById(R.id.listGeneralButtonOk);
 		buttonOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				int len = listView.getCount();
@@ -235,6 +236,7 @@ public class Peta extends MapActivity{
   		List<Lokasi> lokasis = new ArrayList<Lokasi>();
   		for(Anak anak:anaks){
   			lokasis.add(anak.getLokasi());
+  			Log.d("Peta", "lokasi dari anak adalah : "+anak.getLokasi().getlatitude()+","+anak.getLokasi().getLongitude());
   		}
   		
   		overlayFactory.makeOverlayAnak(anaks, lokasis);
@@ -406,7 +408,6 @@ public class Peta extends MapActivity{
 		}
 		bound = false;
 	}
-
 
 
 	private boolean						bound;

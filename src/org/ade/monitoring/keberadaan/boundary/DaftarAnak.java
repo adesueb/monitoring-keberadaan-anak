@@ -400,24 +400,30 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				lokasi.setLongitude(data.getDouble("longitude"));
 				Lokasi lokasiAnak = anak.getLokasi();
 				
-				if(lokasiAnak!=null){
+				if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
 					lokasi.setId(lokasiAnak.getId());
 					anak.setLokasi(lokasi);
 					daftarAnak.databaseManager.updateAnak(anak);
 					for(Anak anakFor:daftarAnak.anaks){
+						Log.d("daftar_anak", "anak dengan id : "+anak.getIdAnak());
+						Log.d("daftar_anak", "anakFor dengan id : "+anakFor.getIdAnak());
 						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
 							anakFor.setNamaAnak(anak.getNamaAnak());
 							anakFor.setNoHpAnak(anak.getNoHpAnak());
+							Log.d("daftar_anak", "anak dengan nama : "+anak.getNamaAnak());
+							Log.d("daftar_anak", "anak dengan noHP : "+anak.getNoHpAnak());
 						}
 					}
-					daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+
 				}else{
 					IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
 					lokasi.setId(id.getIdLocation());
+					anak.setLokasi(lokasi);
+					daftarAnak.databaseManager.addAnak(anak);
+					daftarAnak.anaks.add(anak);
 				}
 				
-				daftarAnak.databaseManager.addAnak(anak);
-				daftarAnak.anaks.add(anak);
+				
 				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
 			}
 		}

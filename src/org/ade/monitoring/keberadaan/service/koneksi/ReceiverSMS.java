@@ -53,7 +53,7 @@ public class ReceiverSMS extends BroadcastReceiver {
                 str += msgs[i].getMessageBody().toString(); 
             }
             String[] cvs = str.split(",");
-            if(cvs[0].equals("location")){
+            if(cvs[0].equals("lokasi")){
             	menerimaLokasi(noHP,cvs);
             	return;
             }else if(str.equals(SenderSMS.REQUEST_LOCATION_ANAK)){
@@ -82,13 +82,16 @@ public class ReceiverSMS extends BroadcastReceiver {
 	}
 	
 	private void menerimaLokasi(String noHp, String[] cvs){
+		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
 		if(backgroundService==null)return;
+		Log.d("receiver sms", "try to get handler from service");
     	Handler handler = backgroundService.getSingleHandler(MonakService.WAITING_LOCATION);
     	if(handler==null)return;
+		Log.d("receiver sms", "accept handler");
     	Message message = new Message();
     	Bundle data = new Bundle();
-    	data.putString("latitude", cvs[1]);
-    	data.putString("longitude", cvs[2]);
+    	data.putDouble("latitude", Double.parseDouble(cvs[1]));
+    	data.putDouble("longitude", Double.parseDouble(cvs[2]));
     	data.putString("noHp", noHp);
     	message.setData(data);
     	message.what = Status.SUCCESS;

@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.SyncStateContract.Columns;
+import android.util.Log;
 
 
 public class DatabaseManager {
@@ -189,7 +190,13 @@ public class DatabaseManager {
 	}
 	
 	public Lokasi getLokasiByIdLokasi(String idLokasi){
+
+		Log.d("database manager", "dapetin lokasi dari id");
+
 		if(idLokasi!=null&&!idLokasi.equals("")){
+
+			Log.d("database manager", "dapetin lokasi dari cursor dengan id : "+idLokasi);
+
 			Cursor cursor = 
 					actionQuery(LOCATION_TABLE_NAME, null, COLUMN_ID_LOCATION+"='"+idLokasi+"'");
 			if(cursor!=null && cursor.getCount()>0){
@@ -723,7 +730,9 @@ public class DatabaseManager {
 	}
 	
 	public Lokasi getLokasiFromCursor(Cursor cursor){
+		Log.d("database manager", "dapetin lokasi dari cursor");
 		if(cursor!=null && cursor.getCount()>0){
+			Log.d("database manager", "isi cursor tidak kosong");
 			Lokasi lokasi = new Lokasi();
 			int indexIdLokasi	= cursor.getColumnIndex(COLUMN_ID_LOCATION);
 			int indexLatitude 	= cursor.getColumnIndex(COLUMN_LATITUDE);
