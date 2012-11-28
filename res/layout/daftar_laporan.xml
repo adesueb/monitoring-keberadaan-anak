@@ -20,13 +20,13 @@
 			    android:layout_gravity="right">
 
 				<ImageView
-				    android:id="@+id/listMonakAdvance"
+				    android:id="@+id/laporanAdvance"
 				    android:layout_width="50dip"
 				    android:layout_height="50dip"
 				    android:src="@drawable/advanced_search" />
 
 				<ImageView
-				    android:id="@+id/listMonakMap"
+				    android:id="@+id/laporanMap"
 				    android:layout_width="50dip"
 				    android:layout_height="50dip"
 				    android:src="@drawable/map" />
@@ -34,14 +34,19 @@
 			</LinearLayout>
 
 			<ImageView
-			    android:id="@+id/imageView1"
+			    android:id="@+id/laporanSearch"
 				    android:layout_width="50dip"
 				    android:layout_height="50dip"
 			    android:src="@drawable/setting" />
             
         </FrameLayout>
 
-        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/laporanMainView"
+            android:orientation="vertical" >
+        </LinearLayout>
 	
     </LinearLayout>
 
