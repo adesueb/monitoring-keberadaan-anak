@@ -1,5 +1,8 @@
 package org.ade.monitoring.keberadaan.boundary.submenu;
 
+import java.util.List;
+
+import org.ade.monitoring.keberadaan.entity.Laporan;
 import org.afree.chart.AFreeChart;
 import org.afree.chart.ChartFactory;
 import org.afree.chart.axis.CategoryAxis;
@@ -16,17 +19,24 @@ import org.afree.graphics.SolidColor;
 import android.content.Context;
 import android.graphics.Color;
 
-public class LaporanPelanggaranView extends Laporan{
-	public LaporanPelanggaranView(Context context){
+public class LaporanBarView extends LaporanView{
+	public LaporanBarView(Context context){
 		super(context);
 		CategoryDataset dataset = createDataset();
         AFreeChart chart = createChart(dataset);
-
         setChart(chart);
 	}
-	private static CategoryDataset createDataset() {
-
-        // row keys...
+	
+	public LaporanBarView(Context context, Laporan laporan){
+		super(context);
+		CategoryDataset dataset  = createDataset(laporan.getSeries(), laporan.getCategories(), laporan.getValues());
+		AFreeChart chart = createChart(dataset);
+		setChart(chart);
+	}
+	
+	private static CategoryDataset createDataset(){
+		
+		// row keys...
         String series1 = "First";
         String series2 = "Second";
         String series3 = "Third";
@@ -60,7 +70,20 @@ public class LaporanPelanggaranView extends Laporan{
         dataset.addValue(6.0, series3, category5);
 
         return dataset;
-
+	}
+	
+	private static CategoryDataset createDataset(List<String> series, List<String> categories, List<Integer> values) {
+     
+		// create the dataset...
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        int i=0;
+        for(String seri:series){
+        	for(String category:categories){
+        		dataset.addValue(values.get(i), seri, category);
+        		i++;
+        	}
+        }
+        return dataset;
     }
 
     /**

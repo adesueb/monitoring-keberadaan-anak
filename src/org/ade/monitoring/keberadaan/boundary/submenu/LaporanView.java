@@ -77,19 +77,19 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-public class Laporan extends View 
+public class LaporanView extends View 
     implements ChartChangeListener, ChartProgressListener{
     
     /** The user interface thread handler. */
     private Handler mHandler;
 
-    public Laporan(Context context) {
+    public LaporanView(Context context) {
         super(context);
         mHandler = new Handler();
         this.initialize();
     }
     
-    public Laporan(Context context, AttributeSet attrs) {
+    public LaporanView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mHandler = new Handler();
         this.initialize();
