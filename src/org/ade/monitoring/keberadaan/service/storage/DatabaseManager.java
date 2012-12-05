@@ -484,11 +484,15 @@ public class DatabaseManager {
 		}else{
 			addPelanggarans(anak.getPelanggarans());
 		}
+		
 		if(result <=0 || anak.getLokasi()==null){
 			
 		}else{
+			Log.d("insert_anak", "lokasi dari anak adalah : "+anak.getLokasi().getlatitude()+","+anak.getLokasi().getLongitude());
+
 			addLokasi(anak.getLokasi());
 		}
+		
 		if(result <=0 || anak.getDataMonitorings()==null){
 			
 		}else{
@@ -533,7 +537,10 @@ public class DatabaseManager {
 			cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
 			cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
 			
-			getDb().insert(LOCATION_TABLE_NAME, null, cv);	
+			long result = getDb().insert(LOCATION_TABLE_NAME, null, cv);
+			if(result>0){
+				Log.d("DatabaseManager", "insert anak successfully with id : "+lokasi.getId());
+			}
 		}
 	}
 	
@@ -847,7 +854,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 2;
+	    private static final int DATABASE_VERSION = 3;
 		
 	    
 	    private static final String CREATE_ANAK = 
@@ -890,6 +897,8 @@ public class DatabaseManager {
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		LOCATION_TABLE_NAME+" ("+
 	    		COLUMN_ID_LOCATION+" VARCHAR(10) PRIMARY KEY,"+	    	
+	    		COLUMN_LONGITUDE+" REAL,"+
+	    		COLUMN_LATITUDE+" REAL,"+
 	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
