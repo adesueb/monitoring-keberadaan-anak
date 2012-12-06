@@ -4,7 +4,7 @@ import java.util.List;
 
 
 
-public class Anak {
+public class Anak implements IEntity{
 
     public Anak () { }
   
@@ -52,6 +52,10 @@ public class Anak {
 		this.lokasi = lokasi;
 	}
 	
+	public String getIdEntity() {
+		return noHpAnak;
+	}
+	
 	private String idAnak;
 	// id ortu is no hp ortu....
 	private String idOrtu;
@@ -63,4 +67,5 @@ public class Anak {
     
     private List<Pelanggaran> 		pelanggarans;
     private List<DataMonitoring> 	dataMonitorings;
+
 }

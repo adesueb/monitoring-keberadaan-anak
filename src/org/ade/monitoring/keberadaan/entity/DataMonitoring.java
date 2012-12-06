@@ -7,7 +7,7 @@ import org.ade.monitoring.keberadaan.map.MonitoringOverlay;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
 
-public class DataMonitoring implements IPesanData{
+public class DataMonitoring implements IPesanData, IEntity{
 
   
 	public DataMonitoring () { };
@@ -132,6 +132,11 @@ public class DataMonitoring implements IPesanData{
 		return MonakJsonConverter.convertPesanDataToJson(this);
 	}
 	
+	public String getIdEntity() {
+		return idMonitoring;
+	}
+	
+	
 
 	private String	keterangan;
 	private String 	idMonitoring;
@@ -147,7 +152,7 @@ public class DataMonitoring implements IPesanData{
     
     public final static int SEHARUSNYA = 0;
     public final static int TERLARANG	= 1;
-	
+
 
 
 }

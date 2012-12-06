@@ -3,7 +3,7 @@ package org.ade.monitoring.keberadaan.entity;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Pelanggaran {
+public class Pelanggaran implements IEntity{
 	
 	public String getIdPelanggaran() {
 		return idPelanggaran;
@@ -40,10 +40,14 @@ public class Pelanggaran {
 	public void setDataMonitoring(DataMonitoring dataMonitoring) {
 		this.dataMonitoring = dataMonitoring;
 	}
-
+	public String getIdEntity() {
+		return idPelanggaran;
+	}
 
 	private DataMonitoring dataMonitoring;
 	private Anak	anak;
 	private String 	idPelanggaran;
 	private long 	waktuPelanggaran;
-	private Lokasi 	lokasi;}
+	private Lokasi 	lokasi;
+	
+}

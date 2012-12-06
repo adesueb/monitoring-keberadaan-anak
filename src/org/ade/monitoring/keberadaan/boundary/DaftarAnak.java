@@ -12,7 +12,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
+import org.ade.monitoring.keberadaan.service.MonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleMaker;
@@ -226,7 +226,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private void sendRequestLocationAnak(Anak anak){	
 		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
 		senderSms.kirimRequestLokasiAnak(anak);				
-		handlerBinder.bindWaitingLocation(new WaitingLocationHandler(this, anak));		
+		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));		
 	}
 	
 	@Override
@@ -235,7 +235,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		Log.d("daftar anak", "status dari bound adalah : "+bound);
 		
 		if(bound){
-			handlerBinder.unbindWaitingLocation();
+			handlerBinder.unbindUIHandlerWaitingLocation();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -249,7 +249,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private ArrayAdapter<Anak>	daftarAnakAdapter;
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
-	private HandlerMonakBinder	handlerBinder;
+	private MonakBinder	handlerBinder;
 	private SenderSMS 			senderSms;
 	
 	private boolean				bound;
@@ -369,7 +369,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 
 					public void onClick(DialogInterface dialog, int which) {
 
-						daftarAnak.handlerBinder.unbindWaitingLocation();
+						daftarAnak.handlerBinder.unbindUIHandlerWaitingLocation();
 						dialog.dismiss();
 						return;   
 					}
@@ -405,13 +405,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 					anak.setLokasi(lokasi);
 					daftarAnak.databaseManager.updateAnak(anak);
 					for(Anak anakFor:daftarAnak.anaks){
-						Log.d("daftar_anak", "anak dengan id : "+anak.getIdAnak());
-						Log.d("daftar_anak", "anakFor dengan id : "+anakFor.getIdAnak());
 						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
 							anakFor.setNamaAnak(anak.getNamaAnak());
 							anakFor.setNoHpAnak(anak.getNoHpAnak());
-							Log.d("daftar_anak", "anak dengan nama : "+anak.getNamaAnak());
-							Log.d("daftar_anak", "anak dengan noHP : "+anak.getNoHpAnak());
 						}
 					}
 
@@ -441,7 +437,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.d("daftar anak", "----onServiceConnected---");
-			daftarAnak.handlerBinder = (HandlerMonakBinder) service;
+			daftarAnak.handlerBinder = (MonakBinder) service;
 			daftarAnak.bound = true;
 			
 		}

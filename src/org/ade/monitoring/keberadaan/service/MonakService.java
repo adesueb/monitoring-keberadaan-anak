@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,16 +10,15 @@ import java.util.Map;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
-import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
 import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
@@ -44,6 +44,9 @@ public class MonakService extends Service{
 	@Override
 	public void onDestroy() {
 		pref.setInActiveService();
+		if(receiver!=null){
+			unregisterReceiver(receiver);	
+		}
 		super.onDestroy();
 	}
 	
@@ -128,34 +131,70 @@ public class MonakService extends Service{
 	@Override
 	public IBinder onBind(Intent intent) {
 		if(handlerMonakBinder==null){
-			handlerMonakBinder = new HandlerMonakBinder(this);
+			handlerMonakBinder = new MonakBinder(this);
 		}
 		return handlerMonakBinder;
 	}
 	
-	public void addHandlerWaiting(String key, Handler handler){
-		if(mapHandler==null)mapHandler = new HashMap<String, Handler>();
-		mapHandler.put(key, handler);
+	public void addStorageHandlerWaiting(String key, StorageHandler storage){
+		if(mapStorageHandler==null)mapStorageHandler = new HashMap<String, List<StorageHandler>>();
+		List<StorageHandler> list = mapStorageHandler.get(key);
+		if(list==null){
+			list = new ArrayList<StorageHandler>();
+		}	
+		list.add(storage);
 	}
 	
-	public void removeHandleWaiting(String key){
-		if(mapHandler==null)return;
-		mapHandler.remove(key);
+	public void removeStorageHandlerWaiting(String key, StorageHandler storage){
+		if(mapStorageHandler==null) return;
+		List<StorageHandler> list = mapStorageHandler.get(key);
+		if(list==null||list.size()<=0)return;
+		for(StorageHandler storageFor:list){
+			if(storageFor.getIdEntity().equals(storage.getIdEntity())){
+				list.remove(storageFor);
+				break;
+			}
+		}
+		if(list.size()<=0){
+			mapStorageHandler.remove(key);
+		}
+	}
+
+	
+	public void addListStorageHandlerWaiting(String key, List<StorageHandler> list){
+		if(mapStorageHandler==null)mapStorageHandler = new HashMap<String, List<StorageHandler>>();
+		mapStorageHandler.put(key, list);
 	}
 	
-	public Handler getSingleHandler(String key){
-		if(mapHandler==null)return null;
-		return mapHandler.get(key);
+	public void removeListStorageHandlerWaiting(String key){
+		if(mapStorageHandler==null) return;
+		mapStorageHandler.remove(key);
+	}
+	
+	public void addHandlerUIWaiting(String key, Handler handler){
+		if(mapUIHandler==null)mapUIHandler = new HashMap<String, Handler>();
+		mapUIHandler.put(key, handler);
+	}
+	
+	public void removeUIHandlerWaiting(String key){
+		if(mapUIHandler==null)return;
+		mapUIHandler.remove(key);
+	}
+	
+	public Handler getSingleUIHandler(String key){
+		if(mapUIHandler==null)return null;
+		return mapUIHandler.get(key);
 	}
 	
 	private void daftarSmsReceiver(){
-		ReceiverSMS receiver = new ReceiverSMS(this);
+		receiver = new ReceiverSMS(this);
 		IntentFilter intentfilter= new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		registerReceiver(receiver, intentfilter);
 		intentfilter = null;
 	}
 	
-	private Map<String, Handler> 	mapHandler 			= new HashMap<String, Handler>();
+	private Map<String, Handler> 	mapUIHandler 			= new HashMap<String, Handler>();
+	private Map<String, List<StorageHandler>> mapStorageHandler = new HashMap<String, List<StorageHandler>>();
 	
 	private Tracker 				mTracker 			= null;
 	private List<DataMonitoring> 	dataMonitorings 	= null;
@@ -164,9 +203,12 @@ public class MonakService extends Service{
 	
 	private PreferenceManager 		pref;
 	
-	private HandlerMonakBinder 		handlerMonakBinder;
+	private MonakBinder 		handlerMonakBinder;
 
-	public final static String MONAK_SERVICE	= "monak_service";
-	public final static String WAITING_LOCATION = "waiting_location";
+	private ReceiverSMS receiver;
+	
+	public final static String MONAK_SERVICE			= "monak_service";
+	public final static String WAITING_LOCATION 		= "waiting_location";
+	public final static String STORAGE_WAITING_LOCATION = "storage_waiting_location";
 
 }

@@ -14,7 +14,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.lokasi.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.HandlerMonakBinder;
+import org.ade.monitoring.keberadaan.service.MonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -226,7 +226,7 @@ public class Peta extends MapActivity{
   					new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak), anak);
   			sender.send();
   			if(handlerBinder!=null){
-  				handlerBinder.bindWaitingLocation(new WaitingLocationAnakHandler(this));
+  				handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
   			}
   		}
   		//.......................................................................
@@ -403,7 +403,7 @@ public class Peta extends MapActivity{
 	protected void onStop() {
 		super.onStop();
 		if(bound){
-			handlerBinder.unbindWaitingLocation();
+			handlerBinder.unbindUIHandlerWaitingLocation();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -422,7 +422,7 @@ public class Peta extends MapActivity{
 	
 	private List<Anak> 					anaks;
 	
-	private HandlerMonakBinder			handlerBinder;
+	private MonakBinder			handlerBinder;
 	
 	private ServiceConnectionPeta		serviceConnection;
 	
@@ -447,7 +447,7 @@ public class Peta extends MapActivity{
 			this.peta = peta;
 		}
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			peta.handlerBinder = (HandlerMonakBinder) service;
+			peta.handlerBinder = (MonakBinder) service;
 			peta.bound = true;
 		}
 

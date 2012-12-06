@@ -85,8 +85,8 @@ public class ReceiverSMS extends BroadcastReceiver {
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
 		if(backgroundService==null)return;
 		Log.d("receiver sms", "try to get handler from service");
-    	Handler handler = backgroundService.getSingleHandler(MonakService.WAITING_LOCATION);
-    	if(handler==null)return;
+    	Handler handlerUI = backgroundService.getSingleUIHandler(MonakService.WAITING_LOCATION);
+    	if(handlerUI==null)return;
 		Log.d("receiver sms", "accept handler");
     	Message message = new Message();
     	Bundle data = new Bundle();
@@ -95,8 +95,8 @@ public class ReceiverSMS extends BroadcastReceiver {
     	data.putString("noHp", noHp);
     	message.setData(data);
     	message.what = Status.SUCCESS;
-    	handler.sendMessage(message);
-    	backgroundService.removeHandleWaiting(MonakService.WAITING_LOCATION);
+    	handlerUI.sendMessage(message);
+    	backgroundService.removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
 	}
 	
 	private MonakService backgroundService;
