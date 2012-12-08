@@ -1,5 +1,7 @@
 package org.ade.monitoring.keberadaan.service;
 
+import org.ade.monitoring.keberadaan.util.StorageHandler;
+
 import android.os.Binder;
 import android.os.Handler;
 
@@ -9,12 +11,12 @@ public class MonakBinder extends Binder{
 		this.service = service;
 	}
 	
-	public void bindHandlerStorage(String idHandler, Handler handler){
-		service.addHandlerUIWaiting(idHandler, handler);
+	public void bindStorageHandler(String idHandler, StorageHandler handler){
+		service.addStorageHandlerWaiting(idHandler, handler);
 	}
 	
-	public void unbindHandlerStorage(String idHandler){
-		service.removeUIHandlerWaiting(idHandler);
+	public void unbindStorageHandler(String idHandler, StorageHandler handler){
+		service.removeStorageHandlerWaiting(idHandler, handler);
 	}
 	
 	public void bindUIHandlerWaitingLocation(Handler handler){

@@ -3,6 +3,7 @@ package org.ade.monitoring.keberadaan.service.koneksi;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
@@ -12,6 +13,7 @@ import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
+import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -59,7 +61,8 @@ public class ReceiverSMS extends BroadcastReceiver {
             }else if(str.equals(SenderSMS.REQUEST_LOCATION_ANAK)){
             	LocationReceiverHandler locationHandler = new LocationReceiverHandler(context, noHP);
             	GpsManager gpsManager = new GpsManager(context, locationHandler);
-            	gpsManager.searchLokasi();
+            	Lokasi lokasi = gpsManager.getLastLokasi();
+            	sendLocation(context, lokasi, noHP);
             }else{
             	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
             	if(pesanData!=null){
@@ -85,8 +88,17 @@ public class ReceiverSMS extends BroadcastReceiver {
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
 		if(backgroundService==null)return;
 		Log.d("receiver sms", "try to get handler from service");
-    	Handler handlerUI = backgroundService.getSingleUIHandler(MonakService.WAITING_LOCATION);
+    	
+		Handler handlerUI = backgroundService.getSingleUIHandler(MonakService.WAITING_LOCATION);
+    	
     	if(handlerUI==null)return;
+    	
+    	StorageHandler storageHandler = 
+    			backgroundService.getSingleStorageHandler
+    				(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, noHp);
+    	
+    	if(storageHandler==null)return;
+    	
 		Log.d("receiver sms", "accept handler");
     	Message message = new Message();
     	Bundle data = new Bundle();
@@ -96,7 +108,14 @@ public class ReceiverSMS extends BroadcastReceiver {
     	message.setData(data);
     	message.what = Status.SUCCESS;
     	handlerUI.sendMessage(message);
+    	storageHandler.sendMessage(message);
+    	backgroundService.removeStorageHandlerWaiting(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, noHp);
     	backgroundService.removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
+	}
+	
+	private void sendLocation(Context context, Lokasi lokasi, String noHp){
+		SenderSMS senderSms = new SenderSMS(context, null);
+		senderSms.kirimResponseLokasiAnak(noHp, lokasi);
 	}
 	
 	private MonakService backgroundService;

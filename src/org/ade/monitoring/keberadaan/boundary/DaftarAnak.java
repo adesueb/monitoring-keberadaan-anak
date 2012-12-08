@@ -8,6 +8,7 @@ import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.entity.IEntity;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
@@ -20,6 +21,7 @@ import org.ade.monitoring.keberadaan.util.HandlerAdd;
 import org.ade.monitoring.keberadaan.util.HandlerEdit;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.IFormOperation;
+import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -226,7 +228,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private void sendRequestLocationAnak(Anak anak){	
 		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
 		senderSms.kirimRequestLokasiAnak(anak);				
-		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));		
+		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
+		handlerBinder.bindStorageHandler("", new WaitingLocationStorageHandler(this, anak));
 	}
 	
 	@Override
@@ -253,6 +256,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private SenderSMS 			senderSms;
 	
 	private boolean				bound;
+	
+	public final static String WAITING_LOCATION_STORAGE_HANDLER_ID = "waiting_location_storage_handler";
 	
 	private final static class AdapterDaftarAnak extends ArrayAdapter<Anak>{
 
@@ -403,7 +408,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
 					lokasi.setId(lokasiAnak.getId());
 					anak.setLokasi(lokasi);
-					daftarAnak.databaseManager.updateAnak(anak);
 					for(Anak anakFor:daftarAnak.anaks){
 						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
 							anakFor.setNamaAnak(anak.getNamaAnak());
@@ -415,7 +419,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 					IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
 					lokasi.setId(id.getIdLocation());
 					anak.setLokasi(lokasi);
-					daftarAnak.databaseManager.addAnak(anak);
 					daftarAnak.anaks.add(anak);
 				}
 				
@@ -426,6 +429,43 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		private final DaftarAnak daftarAnak;
 		private final Anak anak;
+		
+	}
+	
+	private final static class WaitingLocationStorageHandler extends StorageHandler{
+
+		public WaitingLocationStorageHandler(DaftarAnak daftarAnak, Anak anak) {
+			super(anak);
+			this.anak 		= anak;
+			this.daftarAnak = daftarAnak;
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			Bundle data = msg.getData();
+
+			Lokasi lokasi = new Lokasi();
+			lokasi.setLatitude(data.getDouble("latitude"));
+			lokasi.setLongitude(data.getDouble("longitude"));
+			Lokasi lokasiAnak = anak.getLokasi();
+			
+			if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
+				lokasi.setId(lokasiAnak.getId());
+				anak.setLokasi(lokasi);
+				daftarAnak.databaseManager.updateAnak(anak);
+
+			}else{
+				IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
+				lokasi.setId(id.getIdLocation());
+				anak.setLokasi(lokasi);
+				daftarAnak.databaseManager.addAnak(anak);
+			}
+			
+			
+		}
+		
+		private final Anak 			anak;
+		private final DaftarAnak 	daftarAnak;
 		
 	}
 	
@@ -449,6 +489,4 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		private final DaftarAnak daftarAnak;
 	}
-	
-	
 }

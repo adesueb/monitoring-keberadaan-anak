@@ -159,6 +159,21 @@ public class MonakService extends Service{
 			mapStorageHandler.remove(key);
 		}
 	}
+	
+	public void removeStorageHandlerWaiting(String key, String idStorage){
+		if(mapStorageHandler==null) return;
+		List<StorageHandler> list = mapStorageHandler.get(key);
+		if(list==null||list.size()<=0)return;
+		for(StorageHandler storageFor:list){
+			if(storageFor.getIdEntity().equals(idStorage)){
+				list.remove(storageFor);
+				break;
+			}
+		}
+		if(list.size()<=0){
+			mapStorageHandler.remove(key);
+		}
+	}
 
 	
 	public void addListStorageHandlerWaiting(String key, List<StorageHandler> list){
@@ -184,6 +199,19 @@ public class MonakService extends Service{
 	public Handler getSingleUIHandler(String key){
 		if(mapUIHandler==null)return null;
 		return mapUIHandler.get(key);
+	}
+	
+	public StorageHandler getSingleStorageHandler(String key, String storageHandlerKey){
+		if(mapStorageHandler==null) return null;
+		List<StorageHandler> list = mapStorageHandler.get(key);
+		StorageHandler result = null;
+		for(StorageHandler storageHandler: list){
+			if(storageHandler.getIdEntity().equals(storageHandler)){
+				result = storageHandler;
+			}
+		}
+		
+		return result;
 	}
 	
 	private void daftarSmsReceiver(){
