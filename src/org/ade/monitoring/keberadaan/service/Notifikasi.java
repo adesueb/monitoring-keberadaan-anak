@@ -2,8 +2,12 @@ package org.ade.monitoring.keberadaan.service;
 
 
 import org.ade.monitoring.keberadaan.R;
+import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -28,13 +32,28 @@ public class Notifikasi {
 	public void tampilkanNotifikasiPeringatan(Peringatan peringatan){
 		
 		int icon = R.drawable.pelanggaran;
-		CharSequence tickerText = "Hello";
+		CharSequence tickerText 	= "";
+		CharSequence contentTitle 	= "";
 		long when = System.currentTimeMillis();
+		
+		DatabaseManager databaseManager = new DatabaseManager(context);
+		DataMonitoring 	dataMonitoring 	= 
+				databaseManager.getDataMonitoringByIdMonitoring(peringatan.getIdMonitoring(), true, true);
 
+		Anak anak = dataMonitoring.getAnak();
+		
+		if(peringatan.getTipe()==TipePesanData.PERINGATAN_TERLARANG){
+			tickerText 		= anak.getNamaAnak()+" melakukan pelanggaran..."+"!!!PERINGATAN TERLARANG"+"!!!";
+			contentTitle 	= "PERINGATAN TERLARANG";
+		}else{
+			tickerText = anak.getNamaAnak()+" melakukan pelanggaran..."+"!!!PERINGATAN SEHARUSNYA"+"!!!";
+			contentTitle 	= "PERINGATAN SEHARUSNYA";
+		}
+		
 		Notification notification 	= new Notification(icon, tickerText, when);
-		CharSequence contentTitle 	= "My notification";
-		CharSequence contentText 	= "Hello World!";
+		CharSequence contentText 	= "anak : "+anak.getNamaAnak()+"\n"+"click disini untuk lihat lokasi";
 		Intent notificationIntent 	= new Intent(context, Peta.class);
+		notificationIntent.putExtra(Peta.EXTRA_PELANGGARAN, true);
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 

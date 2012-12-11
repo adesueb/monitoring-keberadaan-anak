@@ -52,7 +52,8 @@ public class Peta extends MapActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
-		ambilLokasi = intent.getBooleanExtra("ambilLokasi", false);
+		isAmbilLokasi = intent.getBooleanExtra(EXTRA_AMBIL_LOKASI, false);
+		isPelanggaran = intent.getBooleanExtra(EXTRA_PELANGGARAN, false);
 		
 		setContentView(R.layout.monitoring_map);
 		
@@ -71,6 +72,10 @@ public class Peta extends MapActivity{
 			prefrenceManager.setMapLokasi(lokasi);
 		}else{
 			lokasi = prefrenceManager.getMapLokasi();
+		}
+		
+		if(isPelanggaran){
+			
 		}
 		
 		serviceConnection = new ServiceConnectionPeta(this);
@@ -332,7 +337,7 @@ public class Peta extends MapActivity{
   	}
   	
   	private void setOverlayFactory(){
-  		if(ambilLokasi){
+  		if(isAmbilLokasi){
 	    	overlayFactory = new MonitoringOverlayFactory(this, new PetaHandlerPositionNClose(this));
 	    }else{
 	    	overlayFactory = new MonitoringOverlayFactory(this, null);
@@ -340,7 +345,7 @@ public class Peta extends MapActivity{
   	}
   	
   	private void setAmbilLokasi(){
-  		if(ambilLokasi){
+  		if(isAmbilLokasi){
   			LinearLayout ll = (LinearLayout) findViewById(R.id.monitoringMapMenu);
   	  		ll.setVisibility(View.GONE);
   		}
@@ -413,7 +418,9 @@ public class Peta extends MapActivity{
 	private boolean						bound;
   	
   	private MonitoringOverlayFactory 	overlayFactory;
-	private boolean 					ambilLokasi; 
+	
+  	private boolean 					isAmbilLokasi; 
+	private boolean						isPelanggaran;
 	private MapController 				mapController;
 	private MapView 					mapView;
 	private GpsManager					gpsManager;
@@ -431,6 +438,9 @@ public class Peta extends MapActivity{
 	private final static String ID_PELANGGARAN 	= "pelanggaran";
 	private final static String ID_SEHARUSNYA	= "seharusnya";
 	private final static String ID_TERLARANG	= "terlarang";
+	
+	public final static String EXTRA_AMBIL_LOKASI	= "ambilLokasi";
+	public final static String EXTRA_PELANGGARAN	= "pelanggaran";
 	
 	private final static int DIALOG_SEARCH		= 0;
 	

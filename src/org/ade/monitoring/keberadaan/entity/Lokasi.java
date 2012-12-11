@@ -10,7 +10,6 @@ public class Lokasi {
 	}
 	
 	public Lokasi(){}
-	  
 	
 	public double getLongitude(  ){
 		return mLongitude;
@@ -20,11 +19,9 @@ public class Lokasi {
 		return mLatitude;
 	}
 	
-	
 	public void setLongitude( double d ){
 		mLongitude = d;
 	}
-	
 	
 	public void setLatitude( double d ){
 		mLatitude = d;
@@ -38,9 +35,16 @@ public class Lokasi {
 		this.id = id;
 	}
 
+	public long getTime() {
+		return time;
+	}
 
+	public void setTime(long time) {
+		this.time = time;
+	}
 
 	private String id;
 	private double mLatitude;
 	private double mLongitude;
+	private long   time;
 }

@@ -42,10 +42,12 @@ public class SenderMonitoring {
 	}
 	
 	private void success(){
+		if(handler==null) return;
 		handler.sendEmptyMessage(Status.SUCCESS);
 	}
 	
 	private void failed(){
+		if(handler==null) return;
 		handler.sendEmptyMessage(Status.FAILED);
 	}
 	

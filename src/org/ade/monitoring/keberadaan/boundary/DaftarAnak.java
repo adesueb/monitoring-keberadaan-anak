@@ -193,6 +193,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.addAnak(anak);
 				sendRequestLocationAnak(anak);
 				break;
 			}case Operation.EDIT:{
@@ -201,6 +202,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.updateAnak(anak);
 				sendRequestLocationAnak(anak);
 				break;
 			}case Operation.DELETE:{
@@ -216,7 +218,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 						break;
 					}
 				}
-								
 				daftarAnakAdapter.notifyDataSetChanged();
 				break;
 			}
@@ -449,19 +450,16 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			lokasi.setLongitude(data.getDouble("longitude"));
 			Lokasi lokasiAnak = anak.getLokasi();
 			
-			if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
-				lokasi.setId(lokasiAnak.getId());
-				anak.setLokasi(lokasi);
-				daftarAnak.databaseManager.updateAnak(anak);
-
+			if(lokasiAnak.getId()!=null&&!lokasiAnak.getId().equals("")){
+				lokasi.setId(lokasiAnak.getId());	
 			}else{
 				IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
 				lokasi.setId(id.getIdLocation());
-				anak.setLokasi(lokasi);
-				daftarAnak.databaseManager.addAnak(anak);
 			}
 			
-			
+			anak.setLokasi(lokasi);
+			daftarAnak.databaseManager.updateAnak(anak);
+
 		}
 		
 		private final Anak 			anak;

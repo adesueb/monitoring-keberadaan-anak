@@ -7,15 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.lokasi.Tracker;
 import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
+import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.app.Service;
@@ -33,9 +37,10 @@ public class MonakService extends Service{
         Log.d("background service", "creating service");
 		pref = new PreferenceManager(this);
 		pref.setActiveService();
-		mTracker = new Tracker(this, null);
-		dataMonitorings = new DatabaseManager(this).getAllDataMonitorings(false,true);
+		mTracker 			= new Tracker(this, null);
+		dataMonitorings 	= new DatabaseManager(this).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
+		senderMonitoring	= new SenderMonitoring(this, null);
 		daftarSmsReceiver();
 	}
 
@@ -109,10 +114,22 @@ public class MonakService extends Service{
 								if(locationMonitorUtil.isInTolerancy()){
 									if(dataMonitoring.isTerlarang()){
 										//TODO : mengirim peringatan
+										Peringatan peringatan = new Peringatan();
+										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
+										peringatan.setLokasiAnak(lokasiHp);
+										peringatan.setTipe(TipePesanData.PERINGATAN_TERLARANG);
+										peringatan.setIdOrtu(new IDGenerator(this, null).getIdOrangTua());
+										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}						
 								}else{
 									if(dataMonitoring.isSeharusnya()){
 										//TODO : mengirim peringatan
+										Peringatan peringatan = new Peringatan();
+										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
+										peringatan.setLokasiAnak(lokasiHp);
+										peringatan.setTipe(TipePesanData.PERINGATAN_SEHARUSNYA);
+										peringatan.setIdOrtu(new IDGenerator(this, null).getIdOrangTua());
+										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}
 								}
 							}
@@ -228,7 +245,7 @@ public class MonakService extends Service{
 	private List<DataMonitoring> 	dataMonitorings 	= null;
 	private LocationMonitorUtil 	locationMonitorUtil = null;
 	private InternetPushMonak		internetPush		= null;
-	
+	private SenderMonitoring		senderMonitoring	= null;
 	private PreferenceManager 		pref;
 	
 	private MonakBinder 		handlerMonakBinder;

@@ -62,6 +62,9 @@ public class ReceiverSMS extends BroadcastReceiver {
             	LocationReceiverHandler locationHandler = new LocationReceiverHandler(context, noHP);
             	GpsManager gpsManager = new GpsManager(context, locationHandler);
             	Lokasi lokasi = gpsManager.getLastLokasi();
+            	if(lokasi!=null){
+            		
+            	}
             	sendLocation(context, lokasi, noHP);
             }else{
             	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);

@@ -392,6 +392,7 @@ public class DatabaseManager {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
 		cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
+		if(lokasi.getTime()!=0)cv.put(COLUMN_TIME, lokasi.getTime());
 		getDb().update(LOCATION_TABLE_NAME, cv, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
 	}
 	
@@ -536,6 +537,7 @@ public class DatabaseManager {
 			cv.put(COLUMN_ID_LOCATION, lokasi.getId());
 			cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
 			cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
+			cv.put(COLUMN_TIME, lokasi.getTime());
 			
 			long result = getDb().insert(LOCATION_TABLE_NAME, null, cv);
 			if(result>0){
@@ -854,7 +856,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 3;
+	    private static final int DATABASE_VERSION = 4;
 		
 	    
 	    private static final String CREATE_ANAK = 
@@ -899,6 +901,7 @@ public class DatabaseManager {
 	    		COLUMN_ID_LOCATION+" VARCHAR(10) PRIMARY KEY,"+	    	
 	    		COLUMN_LONGITUDE+" REAL,"+
 	    		COLUMN_LATITUDE+" REAL,"+
+	    		COLUMN_TIME+" INTEGER,"+
 	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
@@ -964,7 +967,7 @@ public class DatabaseManager {
     private static final String COLUMN_ID_LOCATION	= "id";
     private static final String COLUMN_LONGITUDE 	= "longitude";
     private static final String COLUMN_LATITUDE		= "latitude";
-    
+    private static final String COLUMN_TIME			= "time";
     
     private static final String DATE_MONITORING_TABLE_NAME			=
     		"date";
