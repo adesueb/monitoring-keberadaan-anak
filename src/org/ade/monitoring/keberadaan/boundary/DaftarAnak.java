@@ -8,7 +8,6 @@ import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.IEntity;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.Peta;
@@ -193,6 +192,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				Log.d("DaftarAnak", "add anak");
 				databaseManager.addAnak(anak);
 				sendRequestLocationAnak(anak);
 				break;
@@ -230,7 +230,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
 		senderSms.kirimRequestLokasiAnak(anak);				
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
-		handlerBinder.bindStorageHandler("", new WaitingLocationStorageHandler(this, anak));
+		handlerBinder.bindStorageHandler(WAITING_LOCATION_STORAGE_HANDLER_ID, new WaitingLocationStorageHandler(this, anak));
 	}
 	
 	@Override
