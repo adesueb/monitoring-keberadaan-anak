@@ -128,11 +128,11 @@ public class SenderSMS implements ISender{
 	}
 
 	public void kirimRequestLokasiAnak(Anak anak) {
-		this.sendSMS(anak.getNoHpAnak(), REQUEST_LOCATION_ANAK);
+		this.sendSMS(anak.getNoHpAnak(), REQUEST_LOCATION_ANAK+","+anak.getIdAnak());
 	}
 	
-	public void kirimResponseLokasiAnak(String noHp, Lokasi lokasi){
-		String cvs = "lokasi"+","+lokasi.getlatitude()+","+lokasi.getLongitude();
+	public void kirimResponseLokasiAnak(String noHp, Lokasi lokasi, String idAnak){
+		String cvs = "lokasi"+","+lokasi.getlatitude()+","+lokasi.getLongitude()+","+idAnak;
 		this.sendSMS(noHp, cvs);
 		
 	}

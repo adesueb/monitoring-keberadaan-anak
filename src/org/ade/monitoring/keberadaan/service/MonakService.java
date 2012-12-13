@@ -160,6 +160,8 @@ public class MonakService extends Service{
 			list = new ArrayList<StorageHandler>();
 		}	
 		list.add(storage);
+		Log.d("MonakService", "add storae into list");
+		mapStorageHandler.put(key, list);
 	}
 	
 	public void removeStorageHandlerWaiting(String key, StorageHandler storage){

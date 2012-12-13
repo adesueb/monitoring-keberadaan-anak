@@ -229,6 +229,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private void sendRequestLocationAnak(Anak anak){	
 		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
 		senderSms.kirimRequestLokasiAnak(anak);				
+		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
 		handlerBinder.bindStorageHandler(WAITING_LOCATION_STORAGE_HANDLER_ID, new WaitingLocationStorageHandler(this, anak));
 	}
