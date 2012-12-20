@@ -75,7 +75,7 @@ public class Peta extends MapActivity{
 		}
 		
 		if(isPelanggaran){
-			
+			setOverlayPelanggaran();
 		}
 		
 		serviceConnection = new ServiceConnectionPeta(this);
