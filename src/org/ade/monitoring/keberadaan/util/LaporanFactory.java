@@ -20,47 +20,54 @@ public class LaporanFactory {
 		Laporan laporan = null;
 		
 		for(Anak anak:anaks){
+			int sizeSeharusnya = 0;
+			int sizeTerlarang = 0;
+			List<Pelanggaran> pelanggarans = anak.getPelanggarans();
+			for(Pelanggaran pelanggaran:pelanggarans){
+				DataMonitoring dataMonitoring = pelanggaran.getDataMonitoring();
+				if(dataMonitoring.getStatus()==DataMonitoring.SEHARUSNYA){
+					sizeSeharusnya++;
+				}else{
+					sizeTerlarang++;
+				}
+			}
+			
 			namaAnaks.add(anak.getNamaAnak());
-			values.add(anak.getPelanggarans().size());
-			series.add("");
+			values.add(sizeSeharusnya);
+			series.add("seharusnya");
+			
+			namaAnaks.add(anak.getNamaAnak());
+			values.add(sizeTerlarang);
+			series.add("terlarang");
+			
 		}
+		
 		laporan.setValues(values);
 		laporan.setCategories(namaAnaks);
-		laporan.setSeries(null);
+		laporan.setSeries(series);
 		
 		return laporan;
 	}
 	
-	public static Laporan createLaporanPelanggaranSeharusnya(List<Anak> anaks){
-		List<String> namaAnaks  =new ArrayList<String>();
-		List<Integer> values = new ArrayList<Integer>();
-		List<String> series = new ArrayList<String>();
-		
+	
+	public static Laporan createLaporanFromDataMonitoring(List<DataMonitoring> dataMonitorings){
 		Laporan laporan = null;
-		
-		for(Anak anak:anaks){
-			namaAnaks.add(anak.getNamaAnak());
-			values.add(anak.getPelanggarans().size());
-			series.add("");
+		List<Anak> anaks = new ArrayList<Anak>();
+		for(DataMonitoring dataMonitoring: dataMonitorings){
+			Anak anak = dataMonitoring.getAnak();
+			for(Anak anakFor:anaks){
+				if(anak.getNamaAnak().equals(anakFor.getNamaAnak())){
+//					anak
+				}else{
+					anaks.add(anakFor);
+				}
+			}
+				
 		}
-		laporan.setValues(values);
-		laporan.setCategories(namaAnaks);
-		laporan.setSeries(null);
-		
 		
 		return laporan;
 	}
 	
-	public static Laporan createLaporanFromDataMonitoring(DataMonitoring monitoring){
-		Laporan laporan = null;
-		
-		return laporan;
-	}
 	
-	public static Laporan createLaporanFromPelanggaranTerlarang(Pelanggaran pelanggaran){
-		Laporan laporan = null;
-		
-		return laporan;
-	}
 	
 }

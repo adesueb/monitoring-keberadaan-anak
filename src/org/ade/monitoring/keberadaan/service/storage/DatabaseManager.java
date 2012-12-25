@@ -11,6 +11,7 @@ import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 
+import android.app.DownloadManager.Query;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -29,6 +30,30 @@ public class DatabaseManager {
 	  
 	
 	// get.................................................................
+	
+	
+	// get (laporan).......................................................
+	
+	public List<Anak> getAnaksWithoutPelanggarans(){
+		Cursor cursor = actionQuery("select * " +
+	    		"FROM "+ANAK_TABLE_NAME+" m, "+PELANGGARAN_TABLE_NAME+" p " +
+	    		"WHERE m."+COLUMN_ID_ANAK+" != p."+COLUMN_ANAK_PELANGGARAN);
+		List<Anak> anaks = getAnaksFromCursor(cursor, true, true);
+		return anaks;
+	}
+	
+	public List<DataMonitoring> getDataMonitoringWithoutPelanggarans(){
+		
+		Cursor cursor = actionQuery(
+				"select * " +
+	    		"FROM "+MONITORING_TABLE_NAME+" m, "+PELANGGARAN_TABLE_NAME+" p " +
+	    		"WHERE m."+COLUMN_ID_MONITORING+" != p."+COLUMN_MONITORING_PELANGGARAN);
+		
+		List<DataMonitoring> dataMonitorings = getDataMonitoringsFromCursor(cursor, true, true);
+		
+		return dataMonitorings;
+	}
+	//.....................................................................
 	
 	// get last id.........................................................
 	public String getLasIdAnak(){
@@ -589,6 +614,7 @@ public class DatabaseManager {
 	//............................................................................
 	
 	//get from Cursor.............................................................
+	
 	private String getLastIdFromCursor(Cursor cursor){
 		if(cursor.moveToFirst()){
 			String result = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
@@ -597,6 +623,7 @@ public class DatabaseManager {
 		}
 		return "";
 	}
+	
 	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
 		List<Anak> anaks =  new ArrayList<Anak>();
 		if(cursor.moveToFirst()){
@@ -858,7 +885,6 @@ public class DatabaseManager {
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
 	    private static final int DATABASE_VERSION = 4;
 		
-	    
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		ANAK_TABLE_NAME+" ("+
@@ -927,6 +953,8 @@ public class DatabaseManager {
 	}
 	
 	private DatabaseHelper mDatabaseHelper = null;
+	
+	    
 	
 	private static final String COLUMN_ID 		= "id";
 	
