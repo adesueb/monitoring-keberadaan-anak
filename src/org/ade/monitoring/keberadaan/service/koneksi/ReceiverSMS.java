@@ -98,9 +98,9 @@ public class ReceiverSMS extends BroadcastReceiver {
     	StorageHandler storageHandler = 
     			backgroundService.getSingleStorageHandler
     				(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
-    	
+    	// FIXME : kenapa null?
     	if(storageHandler==null)return;
-    	
+    	// FIXME : kenapa null?
 		Log.d("receiver sms", "accept handler");
     	Message message = new Message();
     	Bundle data = new Bundle();
@@ -113,8 +113,11 @@ public class ReceiverSMS extends BroadcastReceiver {
     	storageHandler.sendMessage(message);
     	backgroundService.removeStorageHandlerWaiting(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
     	
+    	Message  messageHandlerUI = new Message();
+    	messageHandlerUI.copyFrom(message);
+    	
     	if(handlerUI==null)return;
-    	handlerUI.sendMessage(message);
+    	handlerUI.sendMessage(messageHandlerUI);
     	
     	backgroundService.removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
 	}

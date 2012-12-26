@@ -160,7 +160,7 @@ public class MonakService extends Service{
 			list = new ArrayList<StorageHandler>();
 		}	
 		list.add(storage);
-		Log.d("MonakService", "add storae into list");
+		Log.d("MonakService", "add storae into list with key : "+key);
 		mapStorageHandler.put(key, list);
 	}
 	
@@ -224,8 +224,11 @@ public class MonakService extends Service{
 		if(mapStorageHandler==null) return null;
 		List<StorageHandler> list = mapStorageHandler.get(key);
 		StorageHandler result = null;
+		Log.d("receiver sms", "get storage handler with key: "+key+" and key handler : "+storageHandlerKey+" size list:"+list.size());
 		for(StorageHandler storageHandler: list){
-			if(storageHandler.getIdEntity().equals(storageHandler)){
+			Log.d("receiver sms", "key handler : "+storageHandler.getIdEntity());
+			if(storageHandler.getIdEntity().equals(storageHandlerKey)){
+				Log.d("receiver sms", "receive storage handler with key: "+key+" and key handler : "+storageHandlerKey);
 				result = storageHandler;
 			}
 		}

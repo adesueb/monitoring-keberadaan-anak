@@ -224,7 +224,11 @@ public class DatabaseManager {
 
 			Cursor cursor = 
 					actionQuery(LOCATION_TABLE_NAME, null, COLUMN_ID_LOCATION+"='"+idLokasi+"'");
+
+			Log.d("database manager", "dapetin lokasi dari cursor dengan count : "+cursor.getCount());
+			
 			if(cursor!=null && cursor.getCount()>0){
+				cursor.moveToFirst();
 				Lokasi lokasi = 
 						getLokasiFromCursor(cursor);
 				if(cursor!=null){
@@ -318,6 +322,11 @@ public class DatabaseManager {
 	public void deleteLokasi(Lokasi lokasi){
 		getDb().delete
 			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+	}
+	
+	public void deleteAllLokasi(){
+		getDb().delete
+			(LOCATION_TABLE_NAME, null, null);
 	}
 	
 	public void deleteDateMonitoringByIdIdDate(String id){
@@ -415,10 +424,19 @@ public class DatabaseManager {
 	
 	public void updateLokasi(Lokasi lokasi){
 		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_ID_LOCATION, lokasi.getId());
 		cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
 		cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
 		if(lokasi.getTime()!=0)cv.put(COLUMN_TIME, lokasi.getTime());
-		getDb().update(LOCATION_TABLE_NAME, cv, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+		long result = getDb().update(LOCATION_TABLE_NAME, cv, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+		if(result>0){
+			Log.d("database manager", "mengupdate lokasi berhasil..");
+		}else{
+			result = getDb().insert(LOCATION_TABLE_NAME,null, cv);
+			if(result>0){
+				Log.d("database manager", "lokasi di insertkan..");
+			}
+		}
 	}
 	
 	public void updateDataMonitoring(DataMonitoring dataMonitoring){
@@ -454,10 +472,20 @@ public class DatabaseManager {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
+
+		Log.d("database manager", "isi lokasi dari anak : "+anak.getLokasi().getId());
+		if(anak.getLokasi()!=null){
+			cv.put(COLUMN_LAST_LOCATION_ANAK, anak.getLokasi().getId());	
+		}
+
 		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		
+		Log.d("database manager", "result : "+result);
+		
 		if(result>0 && anak.getLokasi()!=null){
 			updateLokasi(anak.getLokasi());
 		}
+		
 	}
 
 	//...................................................................
@@ -646,6 +674,7 @@ public class DatabaseManager {
 			anak.setIdOrtu(cursor.getString(indexOrtuAnak));
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
+			Log.d("database manager", "get lokasi dr anak dgn id lokasi : "+cursor.getString(indexLocationAnak));
 			anak.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
 			if(withPelanggaran){
 				getDataPelanggaransByAnak(cursor.getString(indexIdAnak));

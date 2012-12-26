@@ -51,10 +51,10 @@ public class IDGenerator {
 	
 	private String generateAngkaId(String id){
 		int idAngka = 0;
-		if(id.equals("")){
-			idAngka = 0;
+		if(id!=null&&!id.equals("")){
+			idAngka = Integer.parseInt(id.substring(1));
 		}else{
-			idAngka = Integer.parseInt(id.substring(1));	
+			idAngka = 0;	
 		}
 		
 		idAngka++;

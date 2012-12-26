@@ -53,7 +53,7 @@ public class Anak implements IEntity{
 	}
 	
 	public String getIdEntity() {
-		return noHpAnak;
+		return idAnak;
 	}
 	
 	private String idAnak;

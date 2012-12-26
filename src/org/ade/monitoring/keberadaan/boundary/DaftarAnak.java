@@ -56,7 +56,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		databaseManager 	= new DatabaseManager(this);
 		idGenerator 		= new IDGenerator(this, databaseManager);
-		
+//		databaseManager.deleteAllLokasi();
 		anaks				= databaseManager.getAllAnak(true,false);
 		if(anaks==null){
 			anaks = new ArrayList<Anak>();
@@ -451,7 +451,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			lokasi.setLongitude(data.getDouble("longitude"));
 			Lokasi lokasiAnak = anak.getLokasi();
 			
-			if(lokasiAnak.getId()!=null&&!lokasiAnak.getId().equals("")){
+			if(lokasiAnak!=null && lokasiAnak.getId()!=null && !lokasiAnak.getId().equals("")){
 				lokasi.setId(lokasiAnak.getId());	
 			}else{
 				IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
