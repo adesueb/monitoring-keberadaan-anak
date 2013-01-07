@@ -168,8 +168,36 @@ public class PendaftaranMonitoring extends Activity{
 	private void actionOk(){
 		if(dataMonitoring!=null){
 			Anak anak = dataMonitoring.getAnak();
+			Lokasi lokasi = dataMonitoring.getLokasi();
+			
+			int status = dataMonitoring.getStatus();
+			int toleransi = dataMonitoring.getTolerancy();
+			long waktuMulai = dataMonitoring.getWaktuMulai();
+			if(toleransi == 0){
+				dataMonitoring.setTolerancy(100);
+			}
+			
+			if(status == 0){
+				dataMonitoring.setStatus(DataMonitoring.SEHARUSNYA);
+			}
+			
+			if(waktuMulai == 0){
+
+				Toast.makeText(this, "pilih Waktu terlebih dahulu!!!", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			if(lokasi==null){
+
+				Toast.makeText(this, "pilih Lokasi terlebih dahulu!!!", Toast.LENGTH_SHORT).show();
+				
+				return;
+			}
+			
+			// TODO : more filter......
 			if(anak!=null){
-				new SenderMonitoring(this,new HandlerSendermonitoring(this)).sendDataMonitoringBaru(dataMonitoring);
+				new SenderMonitoring(this,new HandlerSendermonitoring(this))
+					.sendDataMonitoringBaru(dataMonitoring);
 				// FIXME : test pengiriman datamonitoring melalui sms......
 				
 			}else{
@@ -289,7 +317,14 @@ public class PendaftaranMonitoring extends Activity{
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Pilih Status Tanda");
-				builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+				
+				int pilihan = -1;
+				
+				if(dataMonitoring!=null){
+					pilihan = dataMonitoring.getStatus();
+				}
+				
+				builder.setSingleChoiceItems(items, pilihan, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
 				    	switch(item){
 				    		case 0:{

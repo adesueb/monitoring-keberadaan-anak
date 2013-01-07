@@ -157,7 +157,7 @@
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
 	                    android:paddingLeft="5dip"
-	                    android:text="@string/kosong" />
+	                    android:text="@string/seharusnya" />
 	            </LinearLayout>
 
 		       
@@ -285,11 +285,11 @@
 		            	android:paddingTop="10dip"></ImageView>
 
             	 	<TextView 
-            	 	    android:id="@+id/monitoringTextToleransi"
+            	 	  android:id="@+id/monitoringTextToleransi"
 		            	android:paddingLeft="5dip"
 		             	android:layout_width="wrap_content" 
 		             	android:layout_height="wrap_content" 
-		             	android:text="@string/kosong"></TextView>
+		             	android:text="@string/seratus"></TextView>
 		        </LinearLayout>
         	</LinearLayout>
 
