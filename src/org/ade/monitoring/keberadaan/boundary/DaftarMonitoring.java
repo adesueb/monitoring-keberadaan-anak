@@ -7,9 +7,9 @@ import org.ade.monitoring.keberadaan.Variable.Operation;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
-import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.util.BundleMaker;
+import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IFormOperation;
 
@@ -196,7 +196,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		public boolean onLongClick(View arg0) {
 			
 			mDaftarMonitoring.showDialog
-				(Operation.MULTIPLE_CHOICE, BundleMaker.makeBundleFromDataMonitoring(mDataMonitoring));
+				(Operation.MULTIPLE_CHOICE, BundleEntityMaker.makeBundleFromDataMonitoring(mDataMonitoring));
 			return false;
 		}
 		private final DataMonitoring mDataMonitoring;

@@ -10,12 +10,12 @@ import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
-import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.MonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.util.BundleMaker;
+import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
 import org.ade.monitoring.keberadaan.util.HandlerEdit;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -342,7 +342,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 			mAnak 		= anak;
 		}
 		public boolean onLongClick(View arg0) {
-			(new MultipleChoiceAnak(mDaftarAnak, BundleMaker.makeBundleFromAnak(mAnak), true)).show();
+			(new MultipleChoiceAnak(mDaftarAnak, BundleEntityMaker.makeBundleFromAnak(mAnak), true)).show();
 			return false;
 		}
 		private final Anak mAnak;

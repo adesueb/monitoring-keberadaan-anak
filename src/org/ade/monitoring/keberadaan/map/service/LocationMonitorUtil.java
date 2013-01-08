@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.lokasi;
+package org.ade.monitoring.keberadaan.map.service;
 
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;

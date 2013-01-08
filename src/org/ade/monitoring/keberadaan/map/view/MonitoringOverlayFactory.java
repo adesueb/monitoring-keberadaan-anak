@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.map;
+package org.ade.monitoring.keberadaan.map.view;
 
 import java.util.HashMap;
 import java.util.List;

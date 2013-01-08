@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.map;
+package org.ade.monitoring.keberadaan.map.view;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
-import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.MonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;

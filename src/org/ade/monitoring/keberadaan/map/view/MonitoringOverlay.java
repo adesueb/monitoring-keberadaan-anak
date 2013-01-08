@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.map;
+package org.ade.monitoring.keberadaan.map.view;
 
 import android.graphics.drawable.Drawable;
 

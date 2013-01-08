@@ -6,7 +6,7 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanData;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.app.Notification;

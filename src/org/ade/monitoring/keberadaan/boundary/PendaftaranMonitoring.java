@@ -15,8 +15,8 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.lokasi.TandaLokasiSendiri;
-import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -59,13 +59,13 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void initSubMenu(){
 		// ade : not dialog... harus get Dialog dulu buat dapet dialog....
-		pilihAnak 		= new PilihAnak(this, databaseManager, new MonitoringHandler(this));
+		pilihAnak 		= new PilihAnak(this, databaseManager, new HandlerMonitoring(this));
 		//................................................................
 		
 		// ade : dialog...................................................
-		pilihWaktu 		= new PilihWaktu(this, new MonitoringHandler(this));
-		pilihMingguan 	= new PilihMingguan(this, new MonitoringHandler(this));
-		pilihToleransi 	= new PilihToleransi(this, new MonitoringHandler(this));
+		pilihWaktu 		= new PilihWaktu(this, new HandlerMonitoring(this));
+		pilihMingguan 	= new PilihMingguan(this, new HandlerMonitoring(this));
+		pilihToleransi 	= new PilihToleransi(this, new HandlerMonitoring(this));
 		//................................................................
 	}
 
@@ -238,7 +238,7 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void actionTandaiSendiri(){
-		tandaLokasi = new TandaLokasiSendiri(this, new MonitoringHandler(this));
+		tandaLokasi = new TandaLokasiSendiri(this, new HandlerMonitoring(this));
 		tandaLokasi.actionTandaiLokasi();
 	}
 	
@@ -483,9 +483,9 @@ public class PendaftaranMonitoring extends Activity{
 		private PendaftaranMonitoring pendaftaranMonitoring;
 	}
 	
-	private final static class MonitoringHandler extends Handler{
+	private final static class HandlerMonitoring extends Handler{
 
-		public MonitoringHandler(PendaftaranMonitoring pendaftaran){
+		public HandlerMonitoring(PendaftaranMonitoring pendaftaran){
 			mPendaftaran = pendaftaran;
 		}
 		@Override

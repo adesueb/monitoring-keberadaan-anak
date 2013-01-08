@@ -1,7 +1,8 @@
-package org.ade.monitoring.keberadaan.lokasi;
+package org.ade.monitoring.keberadaan.map.service;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 
 import android.content.Context;
 import android.location.Criteria;
@@ -70,14 +71,12 @@ public class Tracker implements LocationListener{
 	public void onLocationChanged(Location loc) {
 		mLokasi.setLatitude(loc.getLatitude());
 		mLokasi.setLongitude(loc.getLongitude());
+		mLokasi.setTime(loc.getTime());
 
 		if(mHandler != null){
-			Bundle bundle = new Bundle();
-			bundle.putDouble("latitude", loc.getLatitude());
-			bundle.putDouble("longitude", loc.getLongitude());
 			Message message = new Message();
 			message.what = Status.SUCCESS;
-			message.setData(bundle);
+			message.setData(BundleEntityMaker.makeBundleFromLocation(loc));
 			mHandler.sendMessage(message);
 		}	
 	}

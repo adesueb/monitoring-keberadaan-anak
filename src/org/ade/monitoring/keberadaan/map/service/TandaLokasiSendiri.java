@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.lokasi;
+package org.ade.monitoring.keberadaan.map.service;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.PendaftaranMonitoring;

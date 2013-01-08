@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.lokasi;
+package org.ade.monitoring.keberadaan.map.service;
 
 import android.content.Context;
 import android.content.Intent;

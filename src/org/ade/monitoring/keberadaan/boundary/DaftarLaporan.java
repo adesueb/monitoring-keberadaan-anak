@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.VariableEntity;
-import org.ade.monitoring.keberadaan.map.Peta;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 
 import android.app.Activity;
 import android.app.Dialog;

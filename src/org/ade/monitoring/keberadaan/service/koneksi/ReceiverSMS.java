@@ -8,7 +8,7 @@ import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.lokasi.GpsManager;
+import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;

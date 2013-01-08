@@ -13,8 +13,8 @@ import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.lokasi.LocationMonitorUtil;
-import org.ade.monitoring.keberadaan.lokasi.Tracker;
+import org.ade.monitoring.keberadaan.map.service.LocationMonitorUtil;
+import org.ade.monitoring.keberadaan.map.service.Tracker;
 import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 public class MonakService extends Service{
@@ -37,10 +38,7 @@ public class MonakService extends Service{
         Log.d("background service", "creating service");
 		pref = new PreferenceManager(this);
 		pref.setActiveService();
-		mTracker 			= new Tracker(this, null);
-		dataMonitorings 	= new DatabaseManager(this).getAllDataMonitorings(false,true);
-		locationMonitorUtil = new LocationMonitorUtil();
-		senderMonitoring	= new SenderMonitoring(this, null);
+	
 		daftarSmsReceiver();
 	}
 
@@ -59,89 +57,6 @@ public class MonakService extends Service{
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("background service", "service started");
-		if(mTracker !=null){
-			if(dataMonitorings != null && locationMonitorUtil != null){
-				for(DataMonitoring dataMonitoring:dataMonitorings){
-					Calendar cal = Calendar.getInstance();
-					
-					Date	now 	= cal.getTime();	
-					int		hari 	= cal.get(Calendar.DAY_OF_WEEK);
-					int 	tanggal	= cal.get(Calendar.DAY_OF_MONTH);
-				
-					Date mulai 		= dataMonitoring.getWaktuMulaiInDate();
-					Date selesai 	= dataMonitoring.getWaktuSelesaiInDate();
-				
-					cal = null;
-					
-					boolean then = false;
-					
-					List<DateMonitoring> tanggalMonitorings = dataMonitoring.getTanggals();
-					List<DayMonitoring> hariMonitorings = dataMonitoring.getHaris();
-					if(tanggalMonitorings!=null){
-						for(DateMonitoring tanggalMonitoring:tanggalMonitorings){
-							if(tanggal == tanggalMonitoring.getDate()){
-								then=true;
-								break;
-							}
-						}
-					}
-					if(hariMonitorings!=null || !then){
-						for(DayMonitoring hariMonitoring:hariMonitorings){
-							if(hari == hariMonitoring.getHari()){
-								then = true;
-								break;
-							}
-						}
-						
-					}
-					
-					if(then){
-						if((now.getHours()>mulai.getHours() && now.getHours()<selesai.getHours())
-								||now==null){
-							if((now.getMinutes()>mulai.getMinutes() && now.getMinutes()<selesai.getMinutes())
-									||now==null){
-								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
-								
-								Lokasi 	lokasiHp 			= mTracker.getLokasi();
-								if(lokasiHp==null)return START_STICKY;
-								
-								int		tolerancy			= dataMonitoring.getTolerancy();
-								locationMonitorUtil.setCurrentLocation(lokasiHp);
-								locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
-								if(tolerancy!=0){
-									locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
-								}
-								if(locationMonitorUtil.isInTolerancy()){
-									if(dataMonitoring.isTerlarang()){
-										//TODO : mengirim peringatan
-										Peringatan peringatan = new Peringatan();
-										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
-										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanData.PERINGATAN_TERLARANG);
-										peringatan.setIdOrtu(new IDGenerator(this, null).getIdOrangTua());
-										senderMonitoring.sendPeringatanSeharusnya(peringatan);
-									}						
-								}else{
-									if(dataMonitoring.isSeharusnya()){
-										//TODO : mengirim peringatan
-										Peringatan peringatan = new Peringatan();
-										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
-										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanData.PERINGATAN_SEHARUSNYA);
-										peringatan.setIdOrtu(new IDGenerator(this, null).getIdOrangTua());
-										senderMonitoring.sendPeringatanSeharusnya(peringatan);
-									}
-								}
-							}
-							
-						}
-					}
-					
-
-				}
-			}
-			
-		}
 		return START_STICKY;
 	}
 
@@ -246,12 +161,7 @@ public class MonakService extends Service{
 	private Map<String, Handler> 	mapUIHandler 			= new HashMap<String, Handler>();
 	private Map<String, List<StorageHandler>> mapStorageHandler = new HashMap<String, List<StorageHandler>>();
 	
-	private Tracker 				mTracker 			= null;
-	private List<DataMonitoring> 	dataMonitorings 	= null;
-	private LocationMonitorUtil 	locationMonitorUtil = null;
-	private InternetPushMonak		internetPush		= null;
-	private SenderMonitoring		senderMonitoring	= null;
-	private PreferenceManager 		pref;
+	private PreferenceManager 	pref;
 	
 	private MonakBinder 		handlerMonakBinder;
 
@@ -260,5 +170,7 @@ public class MonakService extends Service{
 	public final static String MONAK_SERVICE			= "monak_service";
 	public final static String WAITING_LOCATION 		= "waiting_location";
 	public final static String STORAGE_WAITING_LOCATION = "storage_waiting_location";
+	
+	
 
 }
