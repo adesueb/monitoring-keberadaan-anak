@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
 import com.codegero.internet.SocketClientGero;
 

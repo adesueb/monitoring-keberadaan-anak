@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
@@ -91,7 +91,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										Peringatan peringatan = new Peringatan();
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanData.PERINGATAN_TERLARANG);
+										peringatan.setTipe(TipePesanMonitoring.PERINGATAN_TERLARANG);
 										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}						
@@ -101,7 +101,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										Peringatan peringatan = new Peringatan();
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanData.PERINGATAN_SEHARUSNYA);
+										peringatan.setTipe(TipePesanMonitoring.PERINGATAN_SEHARUSNYA);
 										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}

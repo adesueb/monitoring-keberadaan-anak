@@ -8,29 +8,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-public class PreferenceManager {
+public class PreferenceMonitoringManager {
 
-	public PreferenceManager(Context context){
+	public PreferenceMonitoringManager(Context context){
 		mContext = context;
 	}
 	
 	public boolean isServiceActive(){
-		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
 		
-		return pref.getBoolean(SERVICE, false);
+		return pref.getBoolean(SERVICE_STATUS, false);
 	}
 	
 	public void setActiveService(){
-		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
 		Editor editor  = pref.edit();
-		editor.putBoolean(SERVICE,true);
+		editor.putBoolean(SERVICE_STATUS,true);
 		editor.commit();	
 	}
 	
 	public void setInActiveService(){
-		SharedPreferences pref = mContext.getSharedPreferences(SERVICE, Activity.MODE_PRIVATE); 
+		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
 		Editor editor  = pref.edit();
-		editor.putBoolean(SERVICE,false);
+		editor.putBoolean(SERVICE_STATUS,false);
 		editor.commit();
 	}
 	
@@ -49,6 +49,25 @@ public class PreferenceManager {
 		editor.putFloat(LATITUDE, (float)lokasi.getlatitude());
 		editor.putFloat(LONGITUDE, (float)lokasi.getLongitude());
 		editor.commit();
+	}
+	
+	public boolean isAktifTracker(){
+		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 	
+		return pref.getBoolean(TRACKER_STATUS, false);
+	}
+	
+	public void setActiveTracker(){
+		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putBoolean(TRACKER_STATUS,true);
+		editor.commit();	
+	}
+	
+	public void setInActiveTracker(){
+		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putBoolean(TRACKER_STATUS,false);
+		editor.commit();			
 	}
 	
 	public String getIp(){
@@ -82,6 +101,6 @@ public class PreferenceManager {
     private static final String URL				= "url";
     private static final String URL_IP			= "url_ip";
     private static final String	URL_PORT		= "url_port";
-    private static final String SERVICE			= "service";
-    private static final String SERVICE_STATUS	= "service_status";
+    private static final String SERVICE_STATUS	= "service";
+    private static final String TRACKER_STATUS	= "tracker_status";
 }

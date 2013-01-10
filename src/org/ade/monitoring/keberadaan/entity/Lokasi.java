@@ -42,6 +42,10 @@ public class Lokasi {
 	public void setTime(long time) {
 		this.time = time;
 	}
+	
+	public String toString(){
+		return time+","+mLatitude+","+mLongitude;
+	}
 
 	private String id;
 	private double mLatitude;

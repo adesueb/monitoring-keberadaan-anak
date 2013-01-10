@@ -2,7 +2,7 @@ package org.ade.monitoring.keberadaan.service;
 
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
@@ -42,7 +42,7 @@ public class Notifikasi {
 
 		Anak anak = dataMonitoring.getAnak();
 		
-		if(peringatan.getTipe()==TipePesanData.PERINGATAN_TERLARANG){
+		if(peringatan.getTipe()==TipePesanMonitoring.PERINGATAN_TERLARANG){
 			tickerText 		= anak.getNamaAnak()+" melakukan pelanggaran..."+"!!!PERINGATAN TERLARANG"+"!!!";
 			contentTitle 	= "PERINGATAN TERLARANG";
 		}else{

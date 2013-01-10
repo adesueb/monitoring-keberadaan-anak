@@ -2,6 +2,7 @@ package org.ade.monitoring.keberadaan.map.service;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 
 import android.content.Context;
@@ -22,12 +23,14 @@ public class Tracker implements LocationListener{
 		mContext	= context;
 		mLokasi		= lokasi;
 		mHandler	= handler;
+		pref		= new PreferenceMonitoringManager(context);
 	}
 	
 	public Tracker(Context context, Handler handler){
 		mContext	= context;
 		mLokasi		= new Lokasi();
 		mHandler	= handler;
+		pref		= new PreferenceMonitoringManager(context);
 	}
 	
 	
@@ -57,11 +60,13 @@ public class Tracker implements LocationListener{
 		
 		mlocManager.requestLocationUpdates(high.getName(), 0, 0,
 				this);
+		pref.setActiveTracker();
 		
 	}
 	
 	public void stopTracking(){
 		mlocManager.removeUpdates(this);
+		pref.setInActiveTracker();
 	}
 	
 	public Lokasi getLokasi(){
@@ -82,9 +87,11 @@ public class Tracker implements LocationListener{
 	}
 
 	public void onProviderDisabled(String provider) {
+		stopTracking();
 	}
 
 	public void onProviderEnabled(String provider) {
+		startTracking();
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -103,9 +110,10 @@ public class Tracker implements LocationListener{
 
 	}
 	
-	private final Lokasi mLokasi;	
-	private final Context mContext;
-	private final Handler mHandler;
-	private LocationManager mlocManager;
+	private final Lokasi 						mLokasi;	
+	private final Context 						mContext;
+	private final Handler 						mHandler;
+	private LocationManager 					mlocManager;
+	private final PreferenceMonitoringManager 	pref;
 
 }

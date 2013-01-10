@@ -1,7 +1,7 @@
 package org.ade.monitoring.keberadaan.service.koneksi;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
@@ -20,19 +20,19 @@ public class SenderMonitoring {
 		this.handler	= handler;
 	}
 	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
-		dataMonitoring.setTipe(TipePesanData.DATAMONITORING_BARU);
+		dataMonitoring.setTipe(TipePesanMonitoring.DATAMONITORING_BARU);
 		pesanData 		= dataMonitoring;
 		senderSMS.kirimPesanData(pesanData);
 	}
 	
 	public void sendPeringatanTerlarang(Peringatan peringatan){
-		peringatan.setTipe(TipePesanData.PERINGATAN_TERLARANG);
+		peringatan.setTipe(TipePesanMonitoring.PERINGATAN_TERLARANG);
 		pesanData = peringatan;
 		senderSMS.kirimPesanData(pesanData);
 	}
 
 	public void sendPeringatanSeharusnya(Peringatan peringatan){
-		peringatan.setTipe(TipePesanData.PERINGATAN_SEHARUSNYA);
+		peringatan.setTipe(TipePesanMonitoring.PERINGATAN_SEHARUSNYA);
 		pesanData = peringatan;		
 		senderSMS.kirimPesanData(pesanData);
 	}

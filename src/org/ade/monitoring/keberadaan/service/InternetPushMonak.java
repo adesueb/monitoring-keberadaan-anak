@@ -4,7 +4,7 @@ import java.io.FileDescriptor;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
 import com.codegero.internet.SocketClientGero;
 
@@ -18,7 +18,7 @@ public class InternetPushMonak{
 
 	private InternetPushMonak(Context context){
 		
-		PreferenceManager pref = new PreferenceManager(context);
+		PreferenceMonitoringManager pref = new PreferenceMonitoringManager(context);
 		String ip	= pref.getIp();
 		int port	= pref.getPort();
 		socket = new SocketClientGero(ip, port);

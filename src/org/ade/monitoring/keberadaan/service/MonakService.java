@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
@@ -18,7 +18,7 @@ import org.ade.monitoring.keberadaan.map.service.Tracker;
 import org.ade.monitoring.keberadaan.service.koneksi.ReceiverSMS;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
 
@@ -36,9 +36,8 @@ public class MonakService extends Service{
 	@Override
 	public void onCreate() {
         Log.d("background service", "creating service");
-		pref = new PreferenceManager(this);
+		pref = new PreferenceMonitoringManager(this);
 		pref.setActiveService();
-	
 		daftarSmsReceiver();
 	}
 
@@ -57,6 +56,12 @@ public class MonakService extends Service{
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("background service", "service started");
+        
+        if(!pref.isAktifTracker()){
+    		Tracker tracker = new Tracker(this, new HandlerMainReceiveMonitoringLocation(this));
+        	tracker.startTracking();
+        }
+        
 		return START_STICKY;
 	}
 
@@ -161,7 +166,7 @@ public class MonakService extends Service{
 	private Map<String, Handler> 	mapUIHandler 			= new HashMap<String, Handler>();
 	private Map<String, List<StorageHandler>> mapStorageHandler = new HashMap<String, List<StorageHandler>>();
 	
-	private PreferenceManager 	pref;
+	private PreferenceMonitoringManager 	pref;
 	
 	private MonakBinder 		handlerMonakBinder;
 

@@ -18,7 +18,7 @@ import org.ade.monitoring.keberadaan.service.MonakBinder;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.storage.PreferenceManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -67,7 +67,7 @@ public class Peta extends MapActivity{
 		mapController 	= mapView.getController();
 		Lokasi lokasi 	= gpsManager.getLastLokasi();
 		
-		PreferenceManager prefrenceManager = new PreferenceManager(this);
+		PreferenceMonitoringManager prefrenceManager = new PreferenceMonitoringManager(this);
 		if(lokasi !=null){
 			prefrenceManager.setMapLokasi(lokasi);
 		}else{
@@ -88,7 +88,7 @@ public class Peta extends MapActivity{
 
 	    setOverlayFactory();
 	    		
-		setAmbilLokasi();
+		setMenuAmbilLokasi();
 		
 		findLokasiOrangTua();
 		
@@ -264,7 +264,7 @@ public class Peta extends MapActivity{
   		if(gpsManager!=null){
   			Lokasi lokasi 	= gpsManager.getLastLokasi();
   			
-  			PreferenceManager prefrenceManager = new PreferenceManager(this);
+  			PreferenceMonitoringManager prefrenceManager = new PreferenceMonitoringManager(this);
   			if(lokasi !=null){
   				prefrenceManager.setMapLokasi(lokasi);
   			}else{
@@ -344,7 +344,7 @@ public class Peta extends MapActivity{
 	    }
   	}
   	
-  	private void setAmbilLokasi(){
+  	private void setMenuAmbilLokasi(){
   		if(isAmbilLokasi){
   			LinearLayout ll = (LinearLayout) findViewById(R.id.monitoringMapMenu);
   	  		ll.setVisibility(View.GONE);

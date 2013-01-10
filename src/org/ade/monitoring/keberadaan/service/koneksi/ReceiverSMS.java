@@ -2,8 +2,9 @@ package org.ade.monitoring.keberadaan.service.koneksi;
 
 
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
@@ -55,21 +56,40 @@ public class ReceiverSMS extends BroadcastReceiver {
                 str += msgs[i].getMessageBody().toString(); 
             }
             String[] cvs = str.split(",");
-            if(cvs[0].equals("lokasi")){
-            	menerimaLokasi(noHP,cvs);
-            	return;
-            }else if(cvs[0].equals(SenderSMS.REQUEST_LOCATION_ANAK)){
-            	LocationReceiverHandler locationHandler = new LocationReceiverHandler(context, noHP);
-            	GpsManager gpsManager = new GpsManager(context, locationHandler);
-            	Lokasi lokasi = gpsManager.getLastLokasi();
-            	if(lokasi!=null){
-            		
-            	}
-            	sendLocation(context, lokasi, noHP, cvs[1]);
-            }else{
+            
+            int status = 0;
+            try{
+            	status = Integer.parseInt(cvs[0]);
+            }catch(NumberFormatException ex){
             	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
             	if(pesanData!=null){
             		menerimaPesanData(context, pesanData);	
+            	}
+            }
+            
+            switch(status){
+            	case TipePesanMonitoring.RETRIEVE_LOCATION_ANAK:{
+            		menerimaLokasi(noHP,cvs);
+                	break;	
+            	}case TipePesanMonitoring.REQUEST_LOCATION_ANAK:{
+                	LocationReceiverHandler locationHandler = new LocationReceiverHandler(context, noHP);
+                	GpsManager gpsManager = new GpsManager(context, locationHandler);
+                	Lokasi lokasi = gpsManager.getLastLokasi();
+                	if(lokasi!=null){
+                		
+                	}
+                	sendLocation(context, lokasi, noHP, cvs[1]);
+                	break;
+            	}case TipePesanMonitoring.REQUEST_LOG_LOCATION:{
+            		break;
+            	}case TipePesanMonitoring.RETRIEVE_LOG_LOCATION:{
+            		break;
+            	}case TipePesanMonitoring.REQUEST_START_TRACKING:{
+            		break;
+            	}case TipePesanMonitoring.REQUEST_STOP_TRACKING:{
+            		break;
+            	}case TipePesanMonitoring.RETRIEVE_TRACKING:{
+            		break;
             	}
             }
             
@@ -79,7 +99,7 @@ public class ReceiverSMS extends BroadcastReceiver {
 	private void menerimaPesanData(Context context, IPesanData pesanData){
 		if(pesanData!=null){
 			
-		}else if(pesanData.getTipe()==TipePesanData.DATAMONITORING_BARU){
+		}else if(pesanData.getTipe()==TipePesanMonitoring.DATAMONITORING_BARU){
 			new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
 		}else{
 			new Notifikasi(context).tampilkanNotifikasiPeringatan((Peringatan) pesanData);
@@ -124,7 +144,11 @@ public class ReceiverSMS extends BroadcastReceiver {
 	
 	private void sendLocation(Context context, Lokasi lokasi, String noHp, String idAnak){
 		SenderSMS senderSms = new SenderSMS(context, null);
-		senderSms.kirimResponseLokasiAnak(noHp, lokasi, idAnak);
+		Anak anak = new Anak();
+		anak.setIdAnak(idAnak);
+		anak.setNoHpAnak(noHp);
+		anak.setLokasi(lokasi);
+		senderSms.kirimResponseLokasiAnak(anak);
 	}
 	
 	private MonakService backgroundService;
@@ -146,7 +170,11 @@ public class ReceiverSMS extends BroadcastReceiver {
 						lokasi.setLatitude(bundle.getDouble("latitude"));
 						lokasi.setLongitude(bundle.getDouble("longitude"));
 						SenderSMS senderSms = new SenderSMS(context, null);
-						senderSms.kirimResponseLokasiAnak(noHp, lokasi,"");
+						Anak anak = new Anak();
+						anak.setIdAnak("");
+						anak.setNoHpAnak(noHp);
+						anak.setLokasi(lokasi);
+						senderSms.kirimResponseLokasiAnak(anak);
 					}
 					break;
 				}case Status.FAILED:{

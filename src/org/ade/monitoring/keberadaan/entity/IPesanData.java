@@ -2,7 +2,7 @@ package org.ade.monitoring.keberadaan.entity;
 
 import java.util.List;
 
-import org.ade.monitoring.keberadaan.Variable.TipePesanData;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 import org.json.JSONArray;
 import org.json.JSONException;
