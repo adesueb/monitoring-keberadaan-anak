@@ -3,7 +3,7 @@ package org.ade.monitoring.keberadaan.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
@@ -83,7 +83,7 @@ public class MonakJsonConverter {
 		try {
 			JSONObject object = new JSONObject(json);
 			int tipe = object.getInt(TIPE);
-			if(tipe==TipePesanMonitoring.DATAMONITORING_BARU){
+			if(tipe==TipePesanMonak.DATAMONITORING_BARU){
 				pesanData=convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString());
 			}else{
 				pesanData=convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString());
@@ -102,7 +102,7 @@ public class MonakJsonConverter {
 		try {
 			JSONObject jsonPesanData = new JSONObject();
 			jsonPesanData.put(TIPE, pesanData.getTipe());
-			if(pesanData.getTipe()==TipePesanMonitoring.DATAMONITORING_BARU){				
+			if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){				
 				jsonPesanData.put(DATAMONITORING, 
 						MonakJsonConverter.convertDataMonitoringToJson((DataMonitoring) pesanData));	
 			}else{

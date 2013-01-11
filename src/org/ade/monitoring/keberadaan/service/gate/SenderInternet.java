@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.service.koneksi;
+package org.ade.monitoring.keberadaan.service.gate;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import com.codegero.internet.SocketClientGero;
 import android.content.Context;
 import android.os.Handler;
 
-public class SenderInternet implements ISender{
+public class SenderInternet{
 	
 	public SenderInternet(Context context, Handler handler){
 		this.context = context;

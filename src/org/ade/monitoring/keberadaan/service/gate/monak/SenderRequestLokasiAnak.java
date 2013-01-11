@@ -1,7 +1,9 @@
-package org.ade.monitoring.keberadaan.service.koneksi;
+package org.ade.monitoring.keberadaan.service.gate.monak;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
 import android.os.Handler;
@@ -16,15 +18,19 @@ public class SenderRequestLokasiAnak{
 	}
 	
 	public void send(){
-		senderSMS.kirimRequestLokasiAnak(anak);
+		kirimRequestLokasiAnak(anak);
+	}
+	
+	private void kirimRequestLokasiAnak(Anak anak) {
+		senderSMS.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOCATION_ANAK+","+anak.getIdAnak());
 	}
 	
 	
-	public void success(){
+	private void success(){
 		handler.sendEmptyMessage(Status.SUCCESS);
 	}
 	
-	public void failed(){
+	private void failed(){
 		handler.sendEmptyMessage(Status.FAILED);
 	}
 	

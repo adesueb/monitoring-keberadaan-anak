@@ -13,7 +13,8 @@ import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.MonakBinder;
-import org.ade.monitoring.keberadaan.service.koneksi.SenderSMS;
+import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
@@ -227,8 +228,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	}
 	
 	private void sendRequestLocationAnak(Anak anak){	
-		senderSms = new SenderSMS(this, new SendingLocationHandler(this, anak));
-		senderSms.kirimRequestLokasiAnak(anak);				
+		senderSms = new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak),anak);
+		senderSms.send();				
 		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
 		handlerBinder.bindStorageHandler(WAITING_LOCATION_STORAGE_HANDLER_ID, new WaitingLocationStorageHandler(this, anak));
@@ -255,7 +256,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
 	private MonakBinder	handlerBinder;
-	private SenderSMS 			senderSms;
+	private SenderRequestLokasiAnak		senderSms;
 	
 	private boolean				bound;
 	

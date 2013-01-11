@@ -1,11 +1,11 @@
-package org.ade.monitoring.keberadaan.service.koneksi;
+package org.ade.monitoring.keberadaan.service.gate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
@@ -25,7 +25,7 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SenderSMS implements ISender{
+public class SenderSMS{
 	
 	public SenderSMS (Context context, Handler handler) {
 		mContext = context;
@@ -34,7 +34,7 @@ public class SenderSMS implements ISender{
 
 	public void kirimPesanData( IPesanData pesanData ){
 		String phoneNumber;
-		if(pesanData.getTipe()==TipePesanMonitoring.DATAMONITORING_BARU){
+		if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){
 			DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
 			phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
 			
@@ -127,16 +127,9 @@ public class SenderSMS implements ISender{
 //	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
 	}
 
-	public void kirimRequestLokasiAnak(Anak anak) {
-		this.sendSMS(anak.getNoHpAnak(), TipePesanMonitoring.REQUEST_LOCATION_ANAK+","+anak.getIdAnak());
-	}
 	
-	public void kirimResponseLokasiAnak(Anak anak){
-		Lokasi lokasi = anak.getLokasi();
-		String cvs = TipePesanMonitoring.RETRIEVE_LOCATION_ANAK+","+lokasi.getlatitude()+","+lokasi.getLongitude()+","+anak.getIdAnak();
-		this.sendSMS(anak.getNoHpAnak(), cvs);
-		
-	}
+	
+	
 
 	private Context mContext;
 	private Handler mHandler;

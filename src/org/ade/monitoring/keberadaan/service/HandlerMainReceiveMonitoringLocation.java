@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
@@ -12,7 +12,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.map.service.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.map.service.Tracker;
-import org.ade.monitoring.keberadaan.service.koneksi.SenderMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.SenderMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -91,7 +91,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										Peringatan peringatan = new Peringatan();
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanMonitoring.PERINGATAN_TERLARANG);
+										peringatan.setTipe(TipePesanMonak.PERINGATAN_TERLARANG);
 										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}						
@@ -101,7 +101,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										Peringatan peringatan = new Peringatan();
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanMonitoring.PERINGATAN_SEHARUSNYA);
+										peringatan.setTipe(TipePesanMonak.PERINGATAN_SEHARUSNYA);
 										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}

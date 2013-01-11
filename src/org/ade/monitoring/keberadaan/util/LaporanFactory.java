@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.Variable.TipePesanMonitoring;
+import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Laporan;

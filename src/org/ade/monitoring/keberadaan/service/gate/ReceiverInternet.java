@@ -1,4 +1,4 @@
-package org.ade.monitoring.keberadaan.service.koneksi;
+package org.ade.monitoring.keberadaan.service.gate;
 
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 
