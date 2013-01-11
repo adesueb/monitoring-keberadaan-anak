@@ -5,6 +5,7 @@ import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
+import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
@@ -17,24 +18,22 @@ import android.util.Log;
 
 public class ReceiverLokasi {
 
-	public ReceiverLokasi(MonakService backgroundService) {
-		this.backgroundService = backgroundService;
+	public ReceiverLokasi(BinderHandlerMonak binderHandlerMonak) {
+		this.binderHandlerMonak = binderHandlerMonak;
 	}	
 	
 	public void menerimaLokasi(String noHp, String[] cvs){
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
-		if(backgroundService==null)return;
+		if(binderHandlerMonak==null)return;
 		Log.d("receiver sms", "try to get handler from service with no HP :"+noHp);
     	
-		Handler handlerUI = backgroundService.getSingleUIHandler(MonakService.WAITING_LOCATION);
+		Handler handlerUI = binderHandlerMonak.getSingleUIHandler(MonakService.WAITING_LOCATION);
     	
     	
     	StorageHandler storageHandler = 
-    			backgroundService.getSingleStorageHandler
+    			binderHandlerMonak.getSingleStorageHandler
     				(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
-    	// FIXME : kenapa null?
     	if(storageHandler==null)return;
-    	// FIXME : kenapa null?
 		Log.d("receiver sms", "accept handler");
     	Message message = new Message();
     	Bundle data = new Bundle();
@@ -45,7 +44,7 @@ public class ReceiverLokasi {
     	message.what = Status.SUCCESS;
     	
     	storageHandler.sendMessage(message);
-    	backgroundService.removeStorageHandlerWaiting(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
+    	binderHandlerMonak.unbindStorageHandler(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
     	
     	Message  messageHandlerUI = new Message();
     	messageHandlerUI.copyFrom(message);
@@ -53,9 +52,9 @@ public class ReceiverLokasi {
     	if(handlerUI==null)return;
     	handlerUI.sendMessage(messageHandlerUI);
     	
-    	backgroundService.removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
+    	binderHandlerMonak.unbindUIHandlerWaitingLocation();
 	}
 	
-	private MonakService backgroundService;
+	private BinderHandlerMonak binderHandlerMonak;
 	
 }

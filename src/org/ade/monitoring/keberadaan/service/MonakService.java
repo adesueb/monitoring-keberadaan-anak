@@ -25,6 +25,7 @@ import org.ade.monitoring.keberadaan.util.StorageHandler;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -39,6 +40,8 @@ public class MonakService extends Service{
 		pref = new PreferenceMonitoringManager(this);
 		pref.setActiveService();
 		daftarSmsReceiver();
+
+		handlerMonakBinder = new BinderHandlerMonak();
 	}
 
 	
@@ -67,93 +70,17 @@ public class MonakService extends Service{
 
 	@Override
 	public IBinder onBind(Intent intent) {
+		if(binderService==null){
+			binderService = new BinderService(this);
+		}
+		return binderService;
+	}
+	
+	public BinderHandlerMonak getBinderHandlerMonak(){
 		if(handlerMonakBinder==null){
-			handlerMonakBinder = new MonakBinder(this);
+			handlerMonakBinder = new BinderHandlerMonak();
 		}
 		return handlerMonakBinder;
-	}
-	
-	public void addStorageHandlerWaiting(String key, StorageHandler storage){
-		if(mapStorageHandler==null)mapStorageHandler = new HashMap<String, List<StorageHandler>>();
-		List<StorageHandler> list = mapStorageHandler.get(key);
-		if(list==null){
-			list = new ArrayList<StorageHandler>();
-		}	
-		list.add(storage);
-		Log.d("MonakService", "add storae into list with key : "+key);
-		mapStorageHandler.put(key, list);
-	}
-	
-	public void removeStorageHandlerWaiting(String key, StorageHandler storage){
-		if(mapStorageHandler==null) return;
-		List<StorageHandler> list = mapStorageHandler.get(key);
-		if(list==null||list.size()<=0)return;
-		for(StorageHandler storageFor:list){
-			if(storageFor.getIdEntity().equals(storage.getIdEntity())){
-				list.remove(storageFor);
-				break;
-			}
-		}
-		if(list.size()<=0){
-			mapStorageHandler.remove(key);
-		}
-	}
-	
-	public void removeStorageHandlerWaiting(String key, String idStorage){
-		if(mapStorageHandler==null) return;
-		List<StorageHandler> list = mapStorageHandler.get(key);
-		if(list==null||list.size()<=0)return;
-		for(StorageHandler storageFor:list){
-			if(storageFor.getIdEntity().equals(idStorage)){
-				list.remove(storageFor);
-				break;
-			}
-		}
-		if(list.size()<=0){
-			mapStorageHandler.remove(key);
-		}
-	}
-
-	
-	public void addListStorageHandlerWaiting(String key, List<StorageHandler> list){
-		if(mapStorageHandler==null)mapStorageHandler = new HashMap<String, List<StorageHandler>>();
-		mapStorageHandler.put(key, list);
-	}
-	
-	public void removeListStorageHandlerWaiting(String key){
-		if(mapStorageHandler==null) return;
-		mapStorageHandler.remove(key);
-	}
-	
-	public void addHandlerUIWaiting(String key, Handler handler){
-		if(mapUIHandler==null)mapUIHandler = new HashMap<String, Handler>();
-		mapUIHandler.put(key, handler);
-	}
-	
-	public void removeUIHandlerWaiting(String key){
-		if(mapUIHandler==null)return;
-		mapUIHandler.remove(key);
-	}
-	
-	public Handler getSingleUIHandler(String key){
-		if(mapUIHandler==null)return null;
-		return mapUIHandler.get(key);
-	}
-	
-	public StorageHandler getSingleStorageHandler(String key, String storageHandlerKey){
-		if(mapStorageHandler==null) return null;
-		List<StorageHandler> list = mapStorageHandler.get(key);
-		StorageHandler result = null;
-		Log.d("receiver sms", "get storage handler with key: "+key+" and key handler : "+storageHandlerKey+" size list:"+list.size());
-		for(StorageHandler storageHandler: list){
-			Log.d("receiver sms", "key handler : "+storageHandler.getIdEntity());
-			if(storageHandler.getIdEntity().equals(storageHandlerKey)){
-				Log.d("receiver sms", "receive storage handler with key: "+key+" and key handler : "+storageHandlerKey);
-				result = storageHandler;
-			}
-		}
-		
-		return result;
 	}
 	
 	private void daftarSmsReceiver(){
@@ -163,19 +90,33 @@ public class MonakService extends Service{
 		intentfilter = null;
 	}
 	
-	private Map<String, Handler> 	mapUIHandler 			= new HashMap<String, Handler>();
-	private Map<String, List<StorageHandler>> mapStorageHandler = new HashMap<String, List<StorageHandler>>();
-	
 	private PreferenceMonitoringManager 	pref;
 	
-	private MonakBinder 		handlerMonakBinder;
+	private BinderHandlerMonak handlerMonakBinder;
 
 	private ReceiverSMS receiver;
+	
+	private BinderService binderService;
 	
 	public final static String MONAK_SERVICE			= "monak_service";
 	public final static String WAITING_LOCATION 		= "waiting_location";
 	public final static String STORAGE_WAITING_LOCATION = "storage_waiting_location";
 	
+	
+	private class BinderService extends Binder{
+		public BinderService(MonakService monakService){
+			this.monakService = monakService;
+		}
+		
+		public MonakService getMonakService(){
+			if(monakService!=null){
+				return monakService;				
+			}
+			return null;
+
+		}
+		private final MonakService monakService;
+	}
 	
 
 }

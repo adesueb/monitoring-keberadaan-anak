@@ -14,7 +14,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.MonakBinder;
+import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -429,7 +429,7 @@ public class Peta extends MapActivity{
 	
 	private List<Anak> 					anaks;
 	
-	private MonakBinder			handlerBinder;
+	private BinderHandlerMonak			handlerBinder;
 	
 	private ServiceConnectionPeta		serviceConnection;
 	
@@ -457,7 +457,7 @@ public class Peta extends MapActivity{
 			this.peta = peta;
 		}
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			peta.handlerBinder = (MonakBinder) service;
+			peta.handlerBinder = (BinderHandlerMonak) service;
 			peta.bound = true;
 		}
 

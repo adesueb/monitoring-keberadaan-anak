@@ -12,7 +12,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.MonakBinder;
+import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
@@ -255,7 +255,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	private ArrayAdapter<Anak>	daftarAnakAdapter;
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
-	private MonakBinder	handlerBinder;
+	private BinderHandlerMonak	handlerBinder;
 	private SenderRequestLokasiAnak		senderSms;
 	
 	private boolean				bound;
@@ -477,7 +477,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.d("daftar anak", "----onServiceConnected---");
-			daftarAnak.handlerBinder = (MonakBinder) service;
+			daftarAnak.handlerBinder = ((MonakService) service).getBinderHandlerMonak();
 			daftarAnak.bound = true;
 			
 		}

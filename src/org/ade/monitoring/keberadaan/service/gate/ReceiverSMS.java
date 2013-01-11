@@ -39,7 +39,7 @@ public class ReceiverSMS extends BroadcastReceiver {
 		this.backgroundService = backgroundService;
 		this.receiverPesanData = new ReceiverPesanData();
 
-		this.receiverLokasi = new ReceiverLokasi(backgroundService);
+		this.receiverLokasi = new ReceiverLokasi(backgroundService.getBinderHandlerMonak());
 		
 		this.senderLokasi = new SenderLokasi(backgroundService);
 	}
