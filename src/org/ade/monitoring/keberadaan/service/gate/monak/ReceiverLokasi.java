@@ -2,36 +2,40 @@ package org.ade.monitoring.keberadaan.service.gate.monak;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
-import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
+import org.ade.monitoring.keberadaan.service.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
+import org.ade.monitoring.keberadaan.service.ServiceMonakConnection;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class ReceiverLokasi {
+public class ReceiverLokasi implements IBindMonakServiceConnection{
 
-	public ReceiverLokasi(BinderHandlerMonak binderHandlerMonak) {
-		this.binderHandlerMonak = binderHandlerMonak;
+	public ReceiverLokasi(Context context) {
+		Intent intent = new Intent("monak_service");
+		ServiceMonakConnection serviceConnection = new ServiceMonakConnection(this);
+		context.bindService(intent, serviceConnection, 0);
 	}	
 	
 	public void menerimaLokasi(String noHp, String[] cvs){
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
+		if(!bound){
+			return;
+		}
 		if(binderHandlerMonak==null)return;
 		Log.d("receiver sms", "try to get handler from service with no HP :"+noHp);
     	
-		Handler handlerUI = binderHandlerMonak.getSingleUIHandler(MonakService.WAITING_LOCATION);
+		Handler handlerUI = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOCATION);
     	
     	
     	StorageHandler storageHandler = 
-    			binderHandlerMonak.getSingleStorageHandler
+    			binderHandlerMonak.getSingleBindStorageHandler
     				(DaftarAnak.WAITING_LOCATION_STORAGE_HANDLER_ID, cvs[3]);
     	if(storageHandler==null)return;
 		Log.d("receiver sms", "accept handler");
@@ -53,8 +57,18 @@ public class ReceiverLokasi {
     	handlerUI.sendMessage(messageHandlerUI);
     	
     	binderHandlerMonak.unbindUIHandlerWaitingLocation();
+    	
+	}
+	
+	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
+		this.binderHandlerMonak = binderHandlerMonak;
+	}
+
+	public void setBound(boolean bound) {
+		this.bound = bound;
 	}
 	
 	private BinderHandlerMonak binderHandlerMonak;
+	private boolean bound;
 	
 }

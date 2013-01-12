@@ -175,6 +175,7 @@ public class Peta extends MapActivity{
 	}
   	
   	private void refreshOverlay(List<Integer> pilihanOverlay){
+  		// TODO : remove all overlays.......
   		for(int i:pilihanOverlay){
   			switch(i){
   				case VariableEntity.ORANG_TUA:{
@@ -192,6 +193,13 @@ public class Peta extends MapActivity{
   				}
   			}
   		}
+  	}
+  	
+  	/*
+  	 * TODO : get log location n shows these....
+  	 */
+  	private void setOverlayLogLocationAnak(List<Lokasi> lokasis){
+  		
   	}
   	
   	private void setOverlayDataMonitoring(){

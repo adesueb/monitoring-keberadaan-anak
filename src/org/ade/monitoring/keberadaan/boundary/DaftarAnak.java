@@ -11,9 +11,11 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.view.Peta;
+import org.ade.monitoring.keberadaan.service.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
-import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
+import org.ade.monitoring.keberadaan.service.MonakService.BinderService;
+import org.ade.monitoring.keberadaan.service.ServiceMonakConnection;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
@@ -47,7 +49,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DaftarAnak extends ListActivity implements IFormOperation{
+public class DaftarAnak extends ListActivity implements IFormOperation, IBindMonakServiceConnection{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +123,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		super.onStart();
 		
 		bound = false;
-		serviceConnection = new ServiceConnectionDaftarAnak(this);
+		serviceConnection = new ServiceMonakConnection(this);
 		bindService(new Intent(MonakService.MONAK_SERVICE), 
 													serviceConnection, 
 													Context.BIND_AUTO_CREATE);
@@ -248,7 +250,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 	}
 
 
-	private ServiceConnectionDaftarAnak serviceConnection;
+	private ServiceMonakConnection serviceConnection;
 	private IDGenerator			idGenerator;
 	private DatabaseManager 	databaseManager;
 	private PendaftaranAnak 	pendaftaranAnak;
@@ -468,25 +470,14 @@ public class DaftarAnak extends ListActivity implements IFormOperation{
 		private final DaftarAnak 	daftarAnak;
 		
 	}
-	
-	private final static class ServiceConnectionDaftarAnak implements ServiceConnection{
 
-		public ServiceConnectionDaftarAnak(DaftarAnak daftarAnak){
-			this.daftarAnak = daftarAnak;
-		}
-		
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.d("daftar anak", "----onServiceConnected---");
-			daftarAnak.handlerBinder = ((MonakService) service).getBinderHandlerMonak();
-			daftarAnak.bound = true;
-			
-		}
-
-		public void onServiceDisconnected(ComponentName name) {
-			daftarAnak.bound = false;
-			Log.d("daftar anak", "---onServiceDisconnected");
-		}
-		
-		private final DaftarAnak daftarAnak;
+	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
+		handlerBinder =binderHandlerMonak;
 	}
+
+	public void setBound(boolean bound) {
+		this.bound = bound;
+	}
+	
+	
 }

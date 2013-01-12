@@ -5,13 +5,8 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
 public class PetaOverlay extends MonitoringOverlay{

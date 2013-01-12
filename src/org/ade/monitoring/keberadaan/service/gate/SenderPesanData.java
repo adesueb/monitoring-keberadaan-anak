@@ -2,19 +2,17 @@ package org.ade.monitoring.keberadaan.service.gate;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
-import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-public class SenderMonitoring {
+public class SenderPesanData {
 	
-	public SenderMonitoring(Context context, Handler handler){
+	public SenderPesanData(Context context, Handler handler){
 		senderSMS		= new SenderSMS(context, new HandlerSenderSMSMonitoring(this));
 		senderInternet	= new SenderInternet(context, new HandlerSenderInternetMonitoring(this));
 		this.handler	= handler;
@@ -58,8 +56,8 @@ public class SenderMonitoring {
 	
 	private static final class HandlerSenderSMSMonitoring extends Handler{
 
-		public HandlerSenderSMSMonitoring(SenderMonitoring senderMonitoring){
-			senderMonitoring = senderMonitoring;
+		public HandlerSenderSMSMonitoring(SenderPesanData senderMonitoring){
+			this.senderMonitoring = senderMonitoring;
 		}
 		
 		@Override
@@ -73,12 +71,12 @@ public class SenderMonitoring {
 				}
 			}
 		}
-		private SenderMonitoring senderMonitoring;
+		private SenderPesanData senderMonitoring;
 	}
 
 	private static final class HandlerSenderInternetMonitoring extends Handler{
 
-		public HandlerSenderInternetMonitoring(SenderMonitoring senderMonitoring){
+		public HandlerSenderInternetMonitoring(SenderPesanData senderMonitoring){
 			this.senderMonitoring = senderMonitoring;
 		}
 		
@@ -94,7 +92,7 @@ public class SenderMonitoring {
 				}
 			}
 		}
-		private SenderMonitoring senderMonitoring;
+		private SenderPesanData senderMonitoring;
 		
 	}
 	

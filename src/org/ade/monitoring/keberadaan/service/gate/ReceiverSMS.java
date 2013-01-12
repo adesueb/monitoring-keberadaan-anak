@@ -1,48 +1,19 @@
 package org.ade.monitoring.keberadaan.service.gate;
 
-
-import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
-import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
-import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.entity.Peringatan;
-import org.ade.monitoring.keberadaan.map.service.GpsManager;
-import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLokasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverPesanData;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderLokasi;
-import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
-import org.ade.monitoring.keberadaan.util.StorageHandler;
 
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-import android.util.Log;
-import android.widget.Toast;
 
 public class ReceiverSMS extends BroadcastReceiver {
-
-	public ReceiverSMS (MonakService backgroundService) {
-		this.backgroundService = backgroundService;
-		this.receiverPesanData = new ReceiverPesanData();
-
-		this.receiverLokasi = new ReceiverLokasi(backgroundService.getBinderHandlerMonak());
-		
-		this.senderLokasi = new SenderLokasi(backgroundService);
-	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -67,15 +38,19 @@ public class ReceiverSMS extends BroadcastReceiver {
             }catch(NumberFormatException ex){
             	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
             	if(pesanData!=null){
+
+            		ReceiverPesanData receiverPesanData = new ReceiverPesanData();
             		receiverPesanData.menerimaPesanData(context, pesanData);	
             	}
             }
             
             switch(status){
             	case TipePesanMonak.RETRIEVE_LOCATION_ANAK:{
+            		ReceiverLokasi receiverLokasi = new ReceiverLokasi(context);
             		receiverLokasi.menerimaLokasi(noHP,cvs);
                 	break;	
             	}case TipePesanMonak.REQUEST_LOCATION_ANAK:{
+            		SenderLokasi senderLokasi = new SenderLokasi(context);
                 	senderLokasi.sendLocation(noHP, cvs[1]);
                 	break;
             	}case TipePesanMonak.REQUEST_LOG_LOCATION:{
@@ -88,19 +63,14 @@ public class ReceiverSMS extends BroadcastReceiver {
             		break;
             	}case TipePesanMonak.RETRIEVE_TRACKING:{
             		break;
+            	}case TipePesanMonak.REQUEST_ON_MONITORING:{
+            		Intent service = new Intent("monak_service");
+            		context.startService(service);
+            		break;
             	}
             }
             
         }
 	}
-	
-
-	private MonakService backgroundService;
-	
-	private ReceiverPesanData receiverPesanData;
-	
-	private ReceiverLokasi receiverLokasi;
-	
-	private SenderLokasi senderLokasi;
 
 }

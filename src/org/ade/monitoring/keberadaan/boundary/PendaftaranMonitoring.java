@@ -17,7 +17,7 @@ import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.view.Peta;
-import org.ade.monitoring.keberadaan.service.gate.SenderMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
@@ -196,7 +196,7 @@ public class PendaftaranMonitoring extends Activity{
 			
 			// TODO : more filter......
 			if(anak!=null){
-				new SenderMonitoring(this,new HandlerSendermonitoring(this))
+				new SenderPesanData(this,new HandlerSendermonitoring(this))
 					.sendDataMonitoringBaru(dataMonitoring);
 				// FIXME : test pengiriman datamonitoring melalui sms......
 				

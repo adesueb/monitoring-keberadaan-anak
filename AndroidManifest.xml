@@ -95,7 +95,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-<!--  
+          
         <receiver 
             android:name=".koneksi.ReceiverSMS" 
             android:exported="false"> 
@@ -104,21 +104,23 @@
                     "android.provider.Telephony.SMS_RECEIVED" /> 
             </intent-filter> 
         </receiver>
--->
-        <receiver android:name=".service.StartUpService"> 
-            <intent-filter> 
-                <action android:name=
-                    "android.intent.action.BOOT_COMPLETED" /> 
+        
+        <receiver 	android:name=".service.StartUpService"
+            		android:exported="false"> 
+            	<intent-filter> 
+                	<action android:name=
+                    	"android.intent.action.BOOT_COMPLETED" /> 
             </intent-filter> 
         </receiver>
         
         <service 	android:name=".service.MonakService"
-									android:icon="@drawable/icon" >
+            		android:exported="false"
+					android:icon="@drawable/icon" >
             	<intent-filter>
-								<action android:name=
-								    "monak_service"/>
-							</intent-filter>
-				</service>
+					<action android:name=
+						"monak_service"/>
+				</intent-filter>
+		</service>
 
     </application>
 </manifest>

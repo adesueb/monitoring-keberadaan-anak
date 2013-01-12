@@ -11,4 +11,5 @@ public class TipePesanMonak {
 	public final static int REQUEST_START_TRACKING	= 8;
 	public final static int RETRIEVE_TRACKING		= 9;
 	public final static int REQUEST_STOP_TRACKING	= 10;
+	public final static int REQUEST_ON_MONITORING	= 11;
 }

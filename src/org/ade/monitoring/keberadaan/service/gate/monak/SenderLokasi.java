@@ -5,7 +5,6 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
-import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
@@ -15,13 +14,13 @@ import android.os.Message;
 
 public class SenderLokasi {
 	
-	public SenderLokasi(MonakService backgroundService) {
-		this.backgroundService = backgroundService;
+	public SenderLokasi(Context context) {
+		this.context = context;
 	}
 
 	public void sendLocation(String noHP, String id){
 		LocationReceiverHandler locationHandler = new LocationReceiverHandler(this, noHP);
-    	GpsManager gpsManager = new GpsManager(backgroundService, locationHandler);
+    	GpsManager gpsManager = new GpsManager(context, locationHandler);
     	Lokasi lokasi = gpsManager.getLastLokasi();
     	if(lokasi!=null){
     		
@@ -40,12 +39,12 @@ public class SenderLokasi {
 	private void kirimResponseLokasiAnak(Anak anak){
 		Lokasi lokasi = anak.getLokasi();
 		String cvs = TipePesanMonak.RETRIEVE_LOCATION_ANAK+","+lokasi.getlatitude()+","+lokasi.getLongitude()+","+anak.getIdAnak();
-		SenderSMS senderSms = new SenderSMS(backgroundService, null);
+		SenderSMS senderSms = new SenderSMS(context, null);
 		senderSms.sendSMS(anak.getNoHpAnak(), cvs);
 	}
 	
 	
-	private MonakService backgroundService;
+	private Context context;
 	
 	private static class LocationReceiverHandler extends Handler{
 

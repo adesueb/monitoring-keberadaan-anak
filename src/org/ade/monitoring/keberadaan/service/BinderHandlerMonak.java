@@ -5,11 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ade.monitoring.keberadaan.service.gate.ReceiverSMS;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
 
-import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.Handler;
 import android.util.Log;
 
@@ -35,12 +32,12 @@ public class BinderHandlerMonak{
 		removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
 	}
 	
-	public Handler getSingleUIHandler(String key){
+	public Handler getSingleBindUIHandler(String key){
 		if(mapUIHandler==null)return null;
 		return mapUIHandler.get(key);
 	}
 	
-	public StorageHandler getSingleStorageHandler(String key, String storageHandlerKey){
+	public StorageHandler getSingleBindStorageHandler(String key, String storageHandlerKey){
 		if(mapStorageHandler==null) return null;
 		List<StorageHandler> list = mapStorageHandler.get(key);
 		StorageHandler result = null;

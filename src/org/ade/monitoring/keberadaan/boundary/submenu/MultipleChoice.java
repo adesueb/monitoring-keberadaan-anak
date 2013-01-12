@@ -1,7 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary.submenu;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.Operation;
 
 import android.app.Activity;
 import android.app.Dialog;

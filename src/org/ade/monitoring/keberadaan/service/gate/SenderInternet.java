@@ -1,16 +1,7 @@
 package org.ade.monitoring.keberadaan.service.gate;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
-
-import com.codegero.internet.SocketClientGero;
 
 import android.content.Context;
 import android.os.Handler;

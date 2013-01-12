@@ -42,13 +42,14 @@ public class SenderRequestLokasiAnak{
 	private static final class HandlerSenderSMSRequestLocation extends Handler{
 
 		public HandlerSenderSMSRequestLocation(SenderRequestLokasiAnak senderMonitoring){
-			senderMonitoring = senderMonitoring;
+			this.senderMonitoring = senderMonitoring;
 		}
 		
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case Status.FAILED:{
+					senderMonitoring.failed();
 					break;
 				}case Status.SUCCESS:{
 					senderMonitoring.success();

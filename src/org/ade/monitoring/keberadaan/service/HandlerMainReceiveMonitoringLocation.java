@@ -11,13 +11,11 @@ import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.map.service.LocationMonitorUtil;
-import org.ade.monitoring.keberadaan.map.service.Tracker;
-import org.ade.monitoring.keberadaan.service.gate.SenderMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -27,7 +25,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 		this.monakService = monakService;
 		dataMonitorings 	= new DatabaseManager(monakService).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
-		senderMonitoring	= new SenderMonitoring(monakService, null);
+		senderMonitoring	= new SenderPesanData(monakService, null);
 	}
 	
 	@Override
@@ -122,7 +120,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 	
 
 	private InternetPushMonak		internetPush		= null;
-	private SenderMonitoring		senderMonitoring	= null;
+	private SenderPesanData		senderMonitoring	= null;
 	private List<DataMonitoring> 	dataMonitorings 	= null;
 	private LocationMonitorUtil 	locationMonitorUtil = null;
 }

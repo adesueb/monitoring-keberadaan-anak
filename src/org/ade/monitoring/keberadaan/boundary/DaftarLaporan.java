@@ -1,10 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.VariableEntity;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 
 import android.app.Activity;
