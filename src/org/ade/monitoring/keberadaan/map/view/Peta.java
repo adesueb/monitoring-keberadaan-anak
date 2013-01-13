@@ -15,7 +15,6 @@ import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
-import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;

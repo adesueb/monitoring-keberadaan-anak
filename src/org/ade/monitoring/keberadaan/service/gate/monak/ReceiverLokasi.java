@@ -15,15 +15,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class ReceiverRequestLokasi implements IBindMonakServiceConnection{
+public class ReceiverLokasi implements IBindMonakServiceConnection{
 
-	public ReceiverRequestLokasi(Context context) {
-		Intent intent = new Intent("monak_service");
-		ServiceMonakConnection serviceConnection = new ServiceMonakConnection(this);
-		context.bindService(intent, serviceConnection, 0);
+	public ReceiverLokasi(Context context) {
+		this.context = context;
 	}	
 	
 	public void menerimaLokasi(String noHp, String[] cvs){
+		this.noHp 	= noHp;
+		this.cvs	= cvs;
+		
+		Intent intent = new Intent("monak_service");
+		ServiceMonakConnection serviceConnection = new ServiceMonakConnection(this);
+		context.bindService(intent, serviceConnection, 0);
+	}
+	
+	private void action(){
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
 		if(!bound){
 			return;
@@ -57,11 +64,11 @@ public class ReceiverRequestLokasi implements IBindMonakServiceConnection{
     	handlerUI.sendMessage(messageHandlerUI);
     	
     	binderHandlerMonak.unbindUIHandlerWaitingLocation();
-    	
 	}
 	
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
 		this.binderHandlerMonak = binderHandlerMonak;
+		action();
 	}
 
 	public void setBound(boolean bound) {
@@ -70,5 +77,10 @@ public class ReceiverRequestLokasi implements IBindMonakServiceConnection{
 	
 	private BinderHandlerMonak binderHandlerMonak;
 	private boolean bound;
+	
+	private final Context context;
+	
+	private String 		noHp;
+	private String[] 	cvs;
 	
 }

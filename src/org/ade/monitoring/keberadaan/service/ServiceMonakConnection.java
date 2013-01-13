@@ -1,6 +1,5 @@
 package org.ade.monitoring.keberadaan.service;
 
-import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.service.MonakService.BinderService;
 
 import android.content.ComponentName;
@@ -16,8 +15,9 @@ public class ServiceMonakConnection implements ServiceConnection{
 	
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d("daftar anak", "----onServiceConnected---");
-		bind.setBinderHandlerMonak( ((BinderService) service).getMonakService().getBinderHandlerMonak());
 		bind.setBound(true);
+		bind.setBinderHandlerMonak( ((BinderService) service).getMonakService().getBinderHandlerMonak());
+
 		
 	}
 

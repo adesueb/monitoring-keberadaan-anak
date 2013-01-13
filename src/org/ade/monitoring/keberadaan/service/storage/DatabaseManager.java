@@ -8,16 +8,15 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
+import org.ade.monitoring.keberadaan.entity.LogMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 
-import android.app.DownloadManager.Query;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.SyncStateContract.Columns;
 import android.util.Log;
 
 
@@ -96,6 +95,21 @@ public class DatabaseManager {
 	}
 	//.....................................................................
 	
+	public List<Lokasi> getAllLokasi(){
+		Cursor cursor = actionQuery(LOCATION_TABLE_NAME,null,null);
+		if(cursor!=null && cursor.getCount()>0){
+			List<Lokasi> lokasis = getAllLokasiFromCursor(cursor);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return lokasis;
+		}
+		if(cursor!=null){
+			cursor.close();
+		}
+		return null;
+	}
+	
 	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
@@ -109,6 +123,19 @@ public class DatabaseManager {
 			cursor.close();
 		}
 		return null;
+	}
+	
+	public List<LogMonak> getAllLogMonak(Anak anak){
+		List<LogMonak> logs = null;
+		
+		Cursor cursor = actionQuery(LOG_TABLE_NAME, null, COLUMN_ANAK_LOG+"='"+anak.getIdAnak()+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			logs = getAllLogMonakFromCursor(cursor);
+		}
+		if(cursor!=null){
+			cursor.close();
+		}
+		return logs;
 	}
 	
 	public Anak getAnakById(String idAnak, boolean withPelanggaran, boolean withMonitoring){
@@ -243,9 +270,8 @@ public class DatabaseManager {
 			}
 		}
 		return null;
-		
-		
 	}
+	
 	public List<DateMonitoring> getTanggalMonitoringsByMonitoring(String idMonitoring, boolean withDataMonitoring){
 		Cursor cursor = 
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DATE_MONITORING+"='"+idMonitoring+"'");
@@ -318,6 +344,13 @@ public class DatabaseManager {
 	//...................................................................
 	
 	// delete............................................................
+	
+	public void deleteLog(LogMonak logMonak){
+		deleteLokasi(logMonak.getLokasi());
+		getDb().delete
+			(LOG_TABLE_NAME, "_id='"+logMonak.getIdLog()+"'", null);
+		
+	}
 	
 	public void deleteLokasi(Lokasi lokasi){
 		getDb().delete
@@ -491,13 +524,22 @@ public class DatabaseManager {
 	//...................................................................
 	
 	// add...............................................................
+	public void addLocationLog(LogMonak log){
+		addLokasi(log.getLokasi());
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_LOCATION_LOG, log.getLokasi().getId());
+		cv.put(COLUMN_ANAK_LOG, log.getAnak().getIdAnak());
+		long result = getDb().insert(LOG_TABLE_NAME, null, cv);	
+		if(result>0){
+		}
+	}
+	
 	public void addDataMonitorings(List<DataMonitoring> dataMonitorings){
 		if(dataMonitorings!=null){
 			for(DataMonitoring dataMonitoring:dataMonitorings){
 				addDataMonitoring(dataMonitoring);
 			}
 		}
-		
 	}
 	  
 	public void addDataMonitoring( DataMonitoring dataMonitoring ){
@@ -652,6 +694,26 @@ public class DatabaseManager {
 		return "";
 	}
 	
+	private List<LogMonak> getAllLogMonakFromCursor(Cursor cursor){
+		List<LogMonak> logs = new ArrayList<LogMonak>();
+		if(cursor.moveToFirst()){
+			do{
+				logs.add(getLogMonakFromCursor(cursor));
+			}while(cursor.moveToNext());
+		}
+		return logs;
+	}
+	
+	private List<Lokasi> getAllLokasiFromCursor(Cursor cursor){
+		List<Lokasi> lokasis = new ArrayList<Lokasi>();
+		if(cursor.moveToFirst()){
+			do{
+				lokasis.add(getLokasiFromCursor(cursor));
+			}while(cursor.moveToNext());
+		}
+		return lokasis;
+	}
+	
 	private List<Anak> getAnaksFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
 		List<Anak> anaks =  new ArrayList<Anak>();
 		if(cursor.moveToFirst()){
@@ -659,6 +721,22 @@ public class DatabaseManager {
 			}while(cursor.moveToNext());
 		}
 		return anaks;
+	}
+	
+	private LogMonak getLogMonakFromCursor(Cursor cursor){
+		if(cursor!=null && cursor.getCount()>0){
+			LogMonak log = new LogMonak();
+			int indexIdLog = cursor.getColumnIndex("_id");
+			int indexIdAnak = cursor.getColumnIndex(COLUMN_ANAK_LOG);
+			int indexIdLokasi = cursor.getColumnIndex(COLUMN_LOCATION_LOG);
+			
+			log.setLokasi(getLokasiByIdLokasi(cursor.getString(indexIdLokasi)));
+			log.setAnak(getAnakById(cursor.getString(indexIdAnak),false, false));
+			log.setIdLog(""+cursor.getInt(indexIdLog));
+			
+			return log;
+		}
+		return null;
 	}
 	
 	private Anak getAnakFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
@@ -886,6 +964,7 @@ public class DatabaseManager {
 	    	db.execSQL(CREATE_LOCATION);
 			db.execSQL(CREATE_PELANGGARAN);
 			db.execSQL(CREATE_MONITORING);
+			db.execSQL(CREATE_LOG);
 			db.execSQL(CREATE_DATE_MONITORING);
 			db.execSQL(CREATE_DAY_MONITORING);
 	    }
@@ -895,6 +974,7 @@ public class DatabaseManager {
 	    	db.execSQL("DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + PELANGGARAN_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + MONITORING_TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + LOG_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + DATE_MONITORING_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + DAY_MONITORING_TABLE_NAME);
 			
@@ -961,6 +1041,13 @@ public class DatabaseManager {
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
+	    private static final String CREATE_LOG =
+	    		"CREATE TABLE IF NOT EXISTS "+
+	    		LOG_TABLE_NAME+" ("+
+	    		"_id INTEGER PRIMARY KEY,"+
+	    		COLUMN_LOCATION_LOG+" VARCHAR(10),"+
+	    		COLUMN_ANAK_LOG+" VARCHAR(10))";
+	    
 	    private static final String CREATE_DATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		DATE_MONITORING_TABLE_NAME+" ("+
@@ -1025,6 +1112,11 @@ public class DatabaseManager {
     private static final String COLUMN_LONGITUDE 	= "longitude";
     private static final String COLUMN_LATITUDE		= "latitude";
     private static final String COLUMN_TIME			= "time";
+    
+    private static final String LOG_TABLE_NAME		=
+    		"log";
+    private static final String COLUMN_LOCATION_LOG	= "location";
+    private static final String COLUMN_ANAK_LOG		= "anak";
     
     private static final String DATE_MONITORING_TABLE_NAME			=
     		"date";
