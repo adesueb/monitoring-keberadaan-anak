@@ -5,34 +5,49 @@ import java.util.Date;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
+import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.map.service.LocationMonitorUtil;
-import org.ade.monitoring.keberadaan.service.gate.SenderPesanData;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderLokasi;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
 public class HandlerMainReceiveMonitoringLocation extends Handler{
 
-	public HandlerMainReceiveMonitoringLocation(MonakService monakService){
-		this.monakService = monakService;
-		dataMonitorings 	= new DatabaseManager(monakService).getAllDataMonitorings(false,true);
+	public HandlerMainReceiveMonitoringLocation(Context context){
+		this.context 	= context;
+		dataMonitorings 	= new DatabaseManager(context).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
-		senderMonitoring	= new SenderPesanData(monakService, null);
+		senderMonitoring	= new SenderPesanData(context, null);
+		pref				= new PreferenceMonitoringManager(context);
+		senderLokasi		= new SenderLokasi(context);
 	}
 	
 	@Override
 	public void handleMessage(Message msg) {
 		super.handleMessage(msg);
 		Lokasi 	lokasiHp = EntityBundleMaker.getLokasiFromBundle(msg.getData());
+		
 		if(lokasiHp!=null){
+			
+			if(pref.isAktifTrackingMode()){
+				Anak anak = new Anak();
+				anak.setIdAnak(pref.getIdAnak());
+				anak.setLokasi(lokasiHp);
+				senderLokasi.sendLocationModeTracking(anak);
+			}
+			
 			if(dataMonitorings != null && locationMonitorUtil != null){
 				for(DataMonitoring dataMonitoring:dataMonitorings){
 					Calendar cal = Calendar.getInstance();
@@ -90,7 +105,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
 										peringatan.setTipe(TipePesanMonak.PERINGATAN_TERLARANG);
-										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
+										peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}						
 								}else{
@@ -100,7 +115,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
 										peringatan.setLokasiAnak(lokasiHp);
 										peringatan.setTipe(TipePesanMonak.PERINGATAN_SEHARUSNYA);
-										peringatan.setIdOrtu(new IDGenerator(monakService, null).getIdOrangTua());
+										peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
 										senderMonitoring.sendPeringatanSeharusnya(peringatan);
 									}
 								}
@@ -116,11 +131,11 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 		}
 		
 	}
-	private final MonakService monakService;
+	private final Context context;
 	
-
-	private InternetPushMonak		internetPush		= null;
-	private SenderPesanData		senderMonitoring	= null;
+	private SenderPesanData			senderMonitoring	= null;
 	private List<DataMonitoring> 	dataMonitorings 	= null;
 	private LocationMonitorUtil 	locationMonitorUtil = null;
+	private PreferenceMonitoringManager pref;
+	private SenderLokasi			senderLokasi		= null;
 }

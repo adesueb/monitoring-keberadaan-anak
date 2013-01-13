@@ -6,16 +6,31 @@ import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
 
-public class SenderRequestOnMonitoring {
+public class SenderRequestOnMonitoring extends ASenderMonak{
 
 	public SenderRequestOnMonitoring(Context context){
-		this.senderSms = new SenderSMS(context, null);
+		super(context);
+		this.senderSms = getSenderSMS();
+
 	}
 	
 	public void sendRequestLocation(Anak anak){
 		this.senderSms.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_ON_MONITORING+","+anak.getIdAnak());
 	}
 	
+	@Override
+	public void success(int tipeKoneksi) {
+		
+	}
+
+	@Override
+	public void failed(int tipeKoneksi) {
+		// TODO : send internet
+		
+	}
+	
 	private final SenderSMS senderSms;
+
+	
 	
 }

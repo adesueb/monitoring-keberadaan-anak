@@ -1,18 +1,8 @@
 package org.ade.monitoring.keberadaan.service.gate;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
-import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.DataMonitoring;
-import org.ade.monitoring.keberadaan.entity.DateMonitoring;
-import org.ade.monitoring.keberadaan.entity.DayMonitoring;
-import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.entity.Peringatan;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,26 +13,12 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.widget.Toast;
 
 public class SenderSMS{
 	
 	public SenderSMS (Context context, Handler handler) {
 		mContext = context;
 		mHandler = handler;	
-	}
-
-	public void kirimPesanData( IPesanData pesanData ){
-		String phoneNumber;
-		if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){
-			DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
-			phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
-			
-		}else{
-			Peringatan peringatan = (Peringatan) pesanData;
-			phoneNumber = peringatan.getIdOrtu();
-		}
-		sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 
 

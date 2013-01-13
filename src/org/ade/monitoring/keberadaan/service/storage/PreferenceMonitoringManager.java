@@ -16,22 +16,15 @@ public class PreferenceMonitoringManager {
 	
 	public boolean isServiceActive(){
 		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
-		
 		return pref.getBoolean(SERVICE_STATUS, false);
 	}
 	
 	public void setActiveService(){
-		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
-		Editor editor  = pref.edit();
-		editor.putBoolean(SERVICE_STATUS,true);
-		editor.commit();	
+		setPrefBool(SERVICE_STATUS, true);
 	}
 	
 	public void setInActiveService(){
-		SharedPreferences pref = mContext.getSharedPreferences(SERVICE_STATUS, Activity.MODE_PRIVATE); 
-		Editor editor  = pref.edit();
-		editor.putBoolean(SERVICE_STATUS,false);
-		editor.commit();
+		setPrefBool(SERVICE_STATUS, false);
 	}
 	
 	public Lokasi getMapLokasi(){
@@ -57,17 +50,24 @@ public class PreferenceMonitoringManager {
 	}
 	
 	public void setActiveTracker(){
-		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 
-		Editor editor  = pref.edit();
-		editor.putBoolean(TRACKER_STATUS,true);
-		editor.commit();	
+		setPrefBool(TRACKER_STATUS, true);
 	}
 	
 	public void setInActiveTracker(){
-		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 
-		Editor editor  = pref.edit();
-		editor.putBoolean(TRACKER_STATUS,false);
-		editor.commit();			
+		setPrefBool(TRACKER_STATUS, false);
+	}
+	
+	public boolean isAktifTrackingMode(){
+		SharedPreferences pref = mContext.getSharedPreferences(TRACKING_MODE, Activity.MODE_PRIVATE); 	
+		return pref.getBoolean(TRACKING_MODE, false);
+	}
+	
+	public void setActiveTrackingMode(){
+		setPrefBool(TRACKING_MODE, true);
+	}
+	
+	public void setInActiveTrackingMode(){
+		setPrefBool(TRACKING_MODE, false);
 	}
 	
 	public String getIp(){
@@ -76,10 +76,7 @@ public class PreferenceMonitoringManager {
 	}
 	
 	public void setIp(String ip){
-		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE); 
-		Editor editor  = pref.edit();
-		editor.putString(URL_IP, ip);
-		editor.commit();
+		setPrefString(URL_IP, ip);
 	}
 	
 	public int getPort(){
@@ -93,6 +90,40 @@ public class PreferenceMonitoringManager {
 		editor.putInt(URL_PORT, port);
 		editor.commit();
 	}
+	
+	public void setNoHpOrtu(String noHp){
+		setPrefString(NO_HP_ORTU, noHp);
+	}
+	
+	public void setIdAnak(String idAnak){
+		setPrefString(ID_ANAK, idAnak);
+	}
+	
+	public String getNoHpOrtu(){
+		return getPrefString(NO_HP_ORTU, null);
+	}
+	
+	public String getIdAnak(){
+		return getPrefString(ID_ANAK, null);
+	}
+	
+	public String getPrefString(String id, String valueDefault){
+		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
+		return pref.getString(id, valueDefault);
+	}
+	
+	private void setPrefString(String id, String value){
+		SharedPreferences pref = mContext.getSharedPreferences(id, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putString(id,value);
+		editor.commit();		
+	}
+	private void setPrefBool(String id, boolean bool){
+		SharedPreferences pref = mContext.getSharedPreferences(id, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putBoolean(id,bool);
+		editor.commit();			
+	}
 
 	private final Context mContext;
     private static final String LOKASI_MAP 		= "map";
@@ -103,4 +134,7 @@ public class PreferenceMonitoringManager {
     private static final String	URL_PORT		= "url_port";
     private static final String SERVICE_STATUS	= "service";
     private static final String TRACKER_STATUS	= "tracker_status";
+    private static final String TRACKING_MODE	= "tracking_mode";
+    private static final String NO_HP_ORTU		= "no_hp_ortu";
+    private static final String ID_ANAK			= "id_anak";
 }

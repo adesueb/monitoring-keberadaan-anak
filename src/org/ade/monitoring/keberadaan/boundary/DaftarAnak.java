@@ -14,9 +14,8 @@ import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
-import org.ade.monitoring.keberadaan.service.MonakService.BinderService;
 import org.ade.monitoring.keberadaan.service.ServiceMonakConnection;
-import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderPendaftaranAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.HandlerAdd;
@@ -28,14 +27,11 @@ import org.ade.monitoring.keberadaan.util.StorageHandler;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -230,8 +226,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	private void sendRequestLocationAnak(Anak anak){	
-		senderSms = new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak),anak);
-		senderSms.send();				
+		senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak));
+		senderAnak.sendAnak(anak);				
 		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
 		handlerBinder.bindStorageHandler(WAITING_LOCATION_STORAGE_HANDLER_ID, new WaitingLocationStorageHandler(this, anak));
@@ -258,7 +254,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
 	private BinderHandlerMonak	handlerBinder;
-	private SenderRequestLokasiAnak		senderSms;
+	private SenderPendaftaranAnak		senderAnak;
 	
 	private boolean				bound;
 	

@@ -15,9 +15,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class ReceiverLokasi implements IBindMonakServiceConnection{
+public class ReceiverRequestLokasi implements IBindMonakServiceConnection{
 
-	public ReceiverLokasi(Context context) {
+	public ReceiverRequestLokasi(Context context) {
 		Intent intent = new Intent("monak_service");
 		ServiceMonakConnection serviceConnection = new ServiceMonakConnection(this);
 		context.bindService(intent, serviceConnection, 0);

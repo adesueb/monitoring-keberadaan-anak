@@ -8,7 +8,11 @@ public class StartUpService extends BroadcastReceiver{
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Intent service = new Intent(context, MonakService.class);
+		StartUpService.startService(context);
+	}
+	
+	public final static void startService(Context context){
+		Intent service = new Intent("monak_service");
 	    context.startService(service);
 	}
  

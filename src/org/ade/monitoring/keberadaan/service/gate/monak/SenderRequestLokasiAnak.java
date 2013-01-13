@@ -7,12 +7,12 @@ import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Message;
 
-public class SenderRequestLokasiAnak{
+public class SenderRequestLokasiAnak extends ASenderMonak{
 
 	public SenderRequestLokasiAnak(Context context, Handler handler, Anak anak){
-		senderSMS		= new SenderSMS(context, new HandlerSenderSMSRequestLocation(this));
+		super(context);
+		senderSMS		= getSenderSMS();
 		this.handler	= handler;
 		this.anak		= anak;
 	}
@@ -26,39 +26,21 @@ public class SenderRequestLokasiAnak{
 	}
 	
 	
-	private void success(){
-		handler.sendEmptyMessage(Status.SUCCESS);
+	public void success(int tipeKoneksi) {
+		if(handler!=null){
+			handler.sendEmptyMessage(Status.SUCCESS);	
+		}
+		
 	}
-	
-	private void failed(){
-		handler.sendEmptyMessage(Status.FAILED);
+
+	public void failed(int tipeKoneksi) {
+		if(handler!=null){
+			handler.sendEmptyMessage(Status.FAILED);
+		}
 	}
 	
 	private final SenderSMS			senderSMS;
 	private final Handler			handler;
 	private final Anak				anak;
 	
-	
-	private static final class HandlerSenderSMSRequestLocation extends Handler{
-
-		public HandlerSenderSMSRequestLocation(SenderRequestLokasiAnak senderMonitoring){
-			this.senderMonitoring = senderMonitoring;
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case Status.FAILED:{
-					senderMonitoring.failed();
-					break;
-				}case Status.SUCCESS:{
-					senderMonitoring.success();
-					break;
-				}
-			}
-		}
-		private SenderRequestLokasiAnak senderMonitoring;
-	}
-	
-
 }

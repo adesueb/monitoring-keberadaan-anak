@@ -2,8 +2,11 @@ package org.ade.monitoring.keberadaan.service.gate;
 
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
-import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLokasi;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestLokasi;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestOnMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverPendaftaranAnak;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverPesanData;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverTrackingMode;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderLokasi;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
@@ -46,26 +49,34 @@ public class ReceiverSMS extends BroadcastReceiver {
             
             switch(status){
             	case TipePesanMonak.RETRIEVE_LOCATION_ANAK:{
-            		ReceiverLokasi receiverLokasi = new ReceiverLokasi(context);
+            		ReceiverRequestLokasi receiverLokasi = new ReceiverRequestLokasi(context);
             		receiverLokasi.menerimaLokasi(noHP,cvs);
                 	break;	
             	}case TipePesanMonak.REQUEST_LOCATION_ANAK:{
-            		SenderLokasi senderLokasi = new SenderLokasi(context);
-                	senderLokasi.sendLocation(noHP, cvs[1]);
+            		SenderLokasi sender = new SenderLokasi(context);
+            		sender.sendLocationSingleRequest(cvs[1]);
                 	break;
             	}case TipePesanMonak.REQUEST_LOG_LOCATION:{
             		break;
             	}case TipePesanMonak.RETRIEVE_LOG_LOCATION:{
             		break;
             	}case TipePesanMonak.REQUEST_START_TRACKING:{
+            		ReceiverTrackingMode tracking = new ReceiverTrackingMode(context);
+            		tracking.startTrackingMode();
             		break;
             	}case TipePesanMonak.REQUEST_STOP_TRACKING:{
+            		ReceiverTrackingMode tracking = new ReceiverTrackingMode(context);
+            		tracking.stopTrackingMode();
             		break;
             	}case TipePesanMonak.RETRIEVE_TRACKING:{
             		break;
             	}case TipePesanMonak.REQUEST_ON_MONITORING:{
-            		Intent service = new Intent("monak_service");
-            		context.startService(service);
+            		ReceiverRequestOnMonitoring onMonitoring = new ReceiverRequestOnMonitoring(context);
+            		onMonitoring.startService();
+            		break;
+            	}case TipePesanMonak.PENDAFTARAN_ANAK:{
+            		ReceiverPendaftaranAnak receiver = new ReceiverPendaftaranAnak(context);
+            		receiver.receivePendaftaranAnak(noHP, cvs[1]);
             		break;
             	}
             }

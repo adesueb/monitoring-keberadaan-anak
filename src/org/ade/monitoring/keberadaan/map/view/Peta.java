@@ -433,7 +433,6 @@ public class Peta extends MapActivity{
 	private MapView 					mapView;
 	private GpsManager					gpsManager;
 	private DatabaseManager				databaseManager;
-	private SenderSMS					senderSms;
 	
 	private List<Anak> 					anaks;
 	
