@@ -79,6 +79,7 @@ public class MonakService extends Service{
 	
 	public final static String MONAK_SERVICE			= "monak_service";
 	public final static String WAITING_LOCATION 		= "waiting_location";
+	public final static String WAITING_LOG_LOCATION		= "waiting_log_location";
 	public final static String STORAGE_WAITING_LOCATION = "storage_waiting_location";
 	
 	

@@ -3,6 +3,7 @@ package org.ade.monitoring.keberadaan.service.gate.monak;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
+import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 
 import android.content.Context;
 import android.os.Handler;

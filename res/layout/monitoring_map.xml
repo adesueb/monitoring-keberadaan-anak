@@ -33,12 +33,6 @@
                 android:layout_height="50dip"
                 android:src="@drawable/monitor" />
 
-            <ImageView
-                android:id="@+id/monitoringMapLaporan"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
-                android:src="@drawable/laporan" />
-
         </LinearLayout>
 
     </FrameLayout>

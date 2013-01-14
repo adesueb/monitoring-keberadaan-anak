@@ -6,6 +6,7 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderInternet;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 

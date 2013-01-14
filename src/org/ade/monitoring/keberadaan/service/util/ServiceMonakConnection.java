@@ -1,5 +1,6 @@
-package org.ade.monitoring.keberadaan.service;
+package org.ade.monitoring.keberadaan.service.util;
 
+import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.MonakService.BinderService;
 
 import android.content.ComponentName;

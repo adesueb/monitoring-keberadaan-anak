@@ -2,6 +2,7 @@ package org.ade.monitoring.keberadaan.service.gate;
 
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLogMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestLogMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLokasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestOnMonitoring;
@@ -62,6 +63,8 @@ public class ReceiverSMS extends BroadcastReceiver {
             		receiver.receiveRequestLogLocation();
             		break;
             	}case TipePesanMonak.RETRIEVE_LOG_LOCATION:{
+            		ReceiverLogMonak receiver = new ReceiverLogMonak(context);
+            		receiver.receiveLogMonak(cvs[1], cvs);
             		break;
             	}case TipePesanMonak.REQUEST_START_TRACKING:{
             		ReceiverTrackingMode tracking = new ReceiverTrackingMode(context);

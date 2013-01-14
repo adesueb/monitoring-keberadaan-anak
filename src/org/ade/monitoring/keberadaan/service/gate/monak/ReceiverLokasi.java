@@ -3,9 +3,9 @@ package org.ade.monitoring.keberadaan.service.gate.monak;
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
-import org.ade.monitoring.keberadaan.service.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.MonakService;
-import org.ade.monitoring.keberadaan.service.ServiceMonakConnection;
+import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
+import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
 import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.content.Context;
@@ -26,7 +26,7 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
 		this.cvs	= cvs;
 		
 		Intent intent = new Intent("monak_service");
-		ServiceMonakConnection serviceConnection = new ServiceMonakConnection(this);
+		serviceConnection = new ServiceMonakConnection(this);
 		context.bindService(intent, serviceConnection, 0);
 	}
 	
@@ -51,6 +51,7 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
     	data.putDouble("latitude", Double.parseDouble(cvs[1]));
     	data.putDouble("longitude", Double.parseDouble(cvs[2]));
     	data.putString("noHp", noHp);
+    	data.putString("idAnak", cvs[3]);
     	message.setData(data);
     	message.what = Status.SUCCESS;
     	
@@ -64,6 +65,9 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
     	handlerUI.sendMessage(messageHandlerUI);
     	
     	binderHandlerMonak.unbindUIHandlerWaitingLocation();
+    	if(bound){
+    		context.unbindService(serviceConnection);
+    	}
 	}
 	
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
@@ -77,6 +81,8 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
 	
 	private BinderHandlerMonak binderHandlerMonak;
 	private boolean bound;
+	
+	private ServiceMonakConnection serviceConnection;
 	
 	private final Context context;
 	

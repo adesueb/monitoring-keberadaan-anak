@@ -1,4 +1,6 @@
-package org.ade.monitoring.keberadaan.service;
+package org.ade.monitoring.keberadaan.service.util;
+
+import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 
 public interface IBindMonakServiceConnection {
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak);

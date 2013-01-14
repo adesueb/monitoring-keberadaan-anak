@@ -1,8 +1,7 @@
-package org.ade.monitoring.keberadaan.service.gate.monak;
+package org.ade.monitoring.keberadaan.service.gate;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.Variable.TipeKoneksi;
-import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
 import android.os.Handler;

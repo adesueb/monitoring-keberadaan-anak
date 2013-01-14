@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
+import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
+import org.ade.monitoring.keberadaan.util.LokasisConverter;
 
 import android.content.Context;
 
@@ -17,21 +19,13 @@ public class SenderLogMonak extends ASenderMonak{
 	}
 	
 	public void sendLogMonak(){
-		getSenderSMS().sendSMS(pref.getNoHpOrtu(), TipePesanMonak.RETRIEVE_LOG_LOCATION+","+pref.getIdAnak()+","+convertAllLogMonakToText(getAllLogMonak()));
+		getSenderSMS().sendSMS(pref.getNoHpOrtu(), TipePesanMonak.RETRIEVE_LOG_LOCATION+","+pref.getIdAnak()+","+LokasisConverter.convertLokasisToText(getAllLogMonak()));
 	}
 	
 	private List<Lokasi> getAllLogMonak(){
 		DatabaseManager db = new DatabaseManager(getContext());
 		List<Lokasi> lokasis = db.getAllLokasi();
 		return lokasis;
-	}
-	
-	private String convertAllLogMonakToText(List<Lokasi> logs){
-		String text = "";
-		for(Lokasi log:logs){
-			text = text + log.toString()+",:";
-		}
-		return text;
 	}
 	
 	@Override

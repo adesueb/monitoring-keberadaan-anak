@@ -5,6 +5,7 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
+import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
