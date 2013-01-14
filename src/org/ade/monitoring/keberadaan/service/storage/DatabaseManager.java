@@ -11,6 +11,7 @@ import org.ade.monitoring.keberadaan.entity.DayMonitoring;
 import org.ade.monitoring.keberadaan.entity.LogMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
+import org.ade.monitoring.keberadaan.util.IDGenerator;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,6 +25,7 @@ public class DatabaseManager {
 
 	
 	public DatabaseManager (Context context) { 
+		this.context = context;
 		mDatabaseHelper = new DatabaseHelper(context);
 	}
 	  
@@ -502,10 +504,17 @@ public class DatabaseManager {
 	}
 		
 	public void updateAnak(Anak anak){
+		
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
-		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
-
+		
+		if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
+			cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());	
+		}
+		
+		if(anak.getNoHpAnak()!=null && !anak.getNoHpAnak().equals("")){
+			cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
+		}
+		
 		Log.d("database manager", "isi lokasi dari anak : "+anak.getLokasi().getId());
 		if(anak.getLokasi()!=null){
 			cv.put(COLUMN_LAST_LOCATION_ANAK, anak.getLokasi().getId());	
@@ -520,10 +529,28 @@ public class DatabaseManager {
 		}
 		
 	}
+	
+	public void updateLokasiAnak(Anak anakParam){
+		Anak anak = getAnakById(anakParam.getIdAnak(), false, false);
+		Lokasi lokasi = anakParam.getLokasi();
+		if(anak.getLokasi()==null){
+			IDGenerator idGenerator = new IDGenerator(context, this);
+			anakParam.getLokasi().setId(idGenerator.getIdLocation());
+			addLokasiToAnak(anakParam);
+		}else if(lokasi!=null){
+			lokasi.setId(anak.getLokasi().getId());
+			updateLokasi(lokasi);
+		}
+	}
 
 	//...................................................................
 	
 	// add...............................................................
+	
+	public void addLokasiToAnak(Anak anak){
+		updateAnak(anak);
+	}
+	
 	public void addLocationLog(LogMonak log){
 		addLokasi(log.getLokasi());
 		ContentValues cv = new ContentValues();
@@ -1067,6 +1094,8 @@ public class DatabaseManager {
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
 	}
+	
+	private final Context context;
 	
 	private DatabaseHelper mDatabaseHelper = null;
 	

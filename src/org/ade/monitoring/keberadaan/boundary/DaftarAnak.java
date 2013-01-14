@@ -22,7 +22,6 @@ import org.ade.monitoring.keberadaan.util.HandlerAdd;
 import org.ade.monitoring.keberadaan.util.HandlerEdit;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 import org.ade.monitoring.keberadaan.util.IFormOperation;
-import org.ade.monitoring.keberadaan.util.StorageHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -230,7 +229,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		senderAnak.sendAnak(anak);				
 		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
-		handlerBinder.bindStorageHandler(WAITING_LOCATION_STORAGE_HANDLER_ID, new WaitingLocationStorageHandler(this, anak));
 	}
 	
 	@Override
@@ -430,40 +428,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 		private final DaftarAnak daftarAnak;
 		private final Anak anak;
-		
-	}
-	
-	private final static class WaitingLocationStorageHandler extends StorageHandler{
-
-		public WaitingLocationStorageHandler(DaftarAnak daftarAnak, Anak anak) {
-			super(anak);
-			this.anak 		= anak;
-			this.daftarAnak = daftarAnak;
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			Bundle data = msg.getData();
-
-			Lokasi lokasi = new Lokasi();
-			lokasi.setLatitude(data.getDouble("latitude"));
-			lokasi.setLongitude(data.getDouble("longitude"));
-			Lokasi lokasiAnak = anak.getLokasi();
-			
-			if(lokasiAnak!=null && lokasiAnak.getId()!=null && !lokasiAnak.getId().equals("")){
-				lokasi.setId(lokasiAnak.getId());	
-			}else{
-				IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
-				lokasi.setId(id.getIdLocation());
-			}
-			
-			anak.setLokasi(lokasi);
-			daftarAnak.databaseManager.updateAnak(anak);
-
-		}
-		
-		private final Anak 			anak;
-		private final DaftarAnak 	daftarAnak;
 		
 	}
 

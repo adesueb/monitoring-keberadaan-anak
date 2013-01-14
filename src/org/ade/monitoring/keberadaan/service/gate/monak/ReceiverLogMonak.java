@@ -59,14 +59,16 @@ public class ReceiverLogMonak implements IBindMonakServiceConnection{
 				
 			}
 			Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
-			Message message = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putString("textLog", textLogs);
-			message.setData(bundle);
-			message.what = Status.SUCCESS;
-			handler.sendMessage(message);
-			
-			binderHandlerMonak.unBindUIHandlerWaitingLogLocation();
+			if(handler!=null){
+				Message message = new Message();
+				Bundle bundle = new Bundle();
+				bundle.putString("textLog", textLogs);
+				message.setData(bundle);
+				message.what = Status.SUCCESS;
+				handler.sendMessage(message);
+				
+				binderHandlerMonak.unBindUIHandlerWaitingLogLocation();	
+			}
 			context.unbindService(serviceConnection);
 		}
 	}
