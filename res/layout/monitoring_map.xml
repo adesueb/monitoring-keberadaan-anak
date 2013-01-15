@@ -21,17 +21,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right" >
 
-            <ImageView
-                android:id="@+id/monitoringMapAnak"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
-                android:src="@drawable/anak" />
+
 
             <ImageView
-                android:id="@+id/monitoringMapMonitoring"
+                android:id="@+id/monitoringMapLog"
                 android:layout_width="50dip"
                 android:layout_height="50dip"
-                android:src="@drawable/monitor" />
+                android:src="@drawable/history" />
+            <ImageView
+                android:id="@+id/monitoringMapTracking"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:src="@drawable/tracking" />
 
         </LinearLayout>
 

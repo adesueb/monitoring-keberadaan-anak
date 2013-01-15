@@ -65,7 +65,7 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
         	
         	handlerUI.sendMessage(message);
         	
-        	binderHandlerMonak.unbindUIHandlerWaitingLocation();
+        	binderHandlerMonak.unBindUIHandlerWaitingLocation();
         	
     	}
     	

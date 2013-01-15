@@ -28,7 +28,6 @@ public class OverlayControllerMonak {
 		this.mapView	= mapView;
 	}
 	
-	
 	public void refreshOverlay(List<Integer> pilihanOverlay){
   		// TODO : remove all overlays.......
   		for(int i:pilihanOverlay){

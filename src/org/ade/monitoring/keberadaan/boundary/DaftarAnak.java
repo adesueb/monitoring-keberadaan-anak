@@ -237,7 +237,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		Log.d("daftar anak", "status dari bound adalah : "+bound);
 		
 		if(bound){
-			handlerBinder.unbindUIHandlerWaitingLocation();
+			handlerBinder.unBindUIHandlerWaitingLocation();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -373,7 +373,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 
 					public void onClick(DialogInterface dialog, int which) {
 
-						daftarAnak.handlerBinder.unbindUIHandlerWaitingLocation();
+						daftarAnak.handlerBinder.unBindUIHandlerWaitingLocation();
 						dialog.dismiss();
 						return;   
 					}

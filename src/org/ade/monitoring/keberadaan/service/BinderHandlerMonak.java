@@ -24,19 +24,19 @@ public class BinderHandlerMonak{
 		removeStorageHandlerWaiting(idHandler, idStoragehandler);
 	}
 	
-	public void bindUIHanlderWaitingLogLocation(Handler handler){
-		addHandlerUIWaiting(MonakService.WAITING_LOCATION, handler);
+	public void bindUIHandlerWaitingLogLocation(Handler handler){
+		addHandlerUIWaiting(MonakService.WAITING_LOG_LOCATION, handler);
 	}
 	
 	public void  unBindUIHandlerWaitingLogLocation(){
-		removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
+		removeUIHandlerWaiting(MonakService.WAITING_LOG_LOCATION);
 	}
 	
 	public void bindUIHandlerWaitingLocation(Handler handler){
 		addHandlerUIWaiting(MonakService.WAITING_LOCATION, handler);
 	}
 	
-	public void unbindUIHandlerWaitingLocation(){
+	public void unBindUIHandlerWaitingLocation(){
 		removeUIHandlerWaiting(MonakService.WAITING_LOCATION);
 	}
 	

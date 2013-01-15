@@ -63,6 +63,7 @@ public class ReceiverLogMonak implements IBindMonakServiceConnection{
 				Message message = new Message();
 				Bundle bundle = new Bundle();
 				bundle.putString("textLog", textLogs);
+				bundle.putString("idAnak", idAnak);
 				message.setData(bundle);
 				message.what = Status.SUCCESS;
 				handler.sendMessage(message);

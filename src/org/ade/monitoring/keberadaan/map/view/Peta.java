@@ -57,6 +57,8 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		
 		gpsManager 		= new GpsManager(this, new PetaHandlerLocationOrangTua(this));
 		
+		petaDialog		= new PetaDialog(this);
+		
 		MapView mapView	= (MapView) findViewById(R.id.mapview);
 		mapController 	= mapView.getController();
 		Lokasi lokasi 	= gpsManager.getLastLokasi();
@@ -108,23 +110,20 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			}
 		});
 		
-		ImageView ivAnak 	= (ImageView) findViewById(R.id.monitoringMapAnak);		
-		ivAnak.setOnClickListener(new View.OnClickListener() {
+		
+		ImageView ivLog 	= (ImageView) findViewById(R.id.monitoringMapLog);		
+		ivLog.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Peta.this, DaftarAnak.class); 
-				startActivity(intent);
-				finish();
+				showDialog(DIALOG_LOG);
 			}
 		});
 		
-		ImageView ivMonitor 	= (ImageView) findViewById(R.id.monitoringMapMonitoring);		
-		ivMonitor.setOnClickListener(new View.OnClickListener() {
+		ImageView ivTracking 	= (ImageView) findViewById(R.id.monitoringMapTracking);		
+		ivTracking.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Peta.this, DaftarMonitoring.class);
-				startActivity(intent);
-				finish();
+				showDialog(DIALOG_TRACK);
 			}
 		});
 		
@@ -138,45 +137,42 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	@Override
 	protected Dialog onCreateDialog(int id) {
   		super.onCreateDialog(id);
-  		final Dialog dialog = new Dialog(this);
-  		dialog.setContentView(R.layout.list_general);
-		
-		final ListView listView = (ListView) dialog.findViewById(R.id.listGeneral);
-		
-		
-		ArrayAdapter<String>listAdapter = 
-				new ArrayAdapter<String>
-					(this, android.R.layout.simple_list_item_multiple_choice, VariableEntity.ARR_ENTITY);
-		listView.setAdapter(listAdapter);
-		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		Button buttonOk = (Button) dialog.findViewById(R.id.listGeneralButtonOk);
-		buttonOk.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				int len = listView.getCount();
-				List<Integer> pilihanOverlay = new ArrayList<Integer>();
-				SparseBooleanArray checked = listView.getCheckedItemPositions();
-				for (int i = 0; i < len; i++){
-					 if (checked.get(i)) {
-						 pilihanOverlay.add(i);
-					 }
-				}
-				overlayControllerMonak.refreshOverlay(pilihanOverlay);
-					
-				dialog.dismiss();
-			}
-		});
-		return dialog;
+  		switch(id){
+  			case DIALOG_SEARCH : {
+  				return petaDialog.getDialogSearch();
+  			}case DIALOG_LOG : {
+  				return petaDialog.getDialogLog();
+  			}case DIALOG_TRACK : {
+  				return petaDialog.getDialogTrack();
+  			}
+  		}
+  		return  null;
 	}
   	
+  	public void actionOkSearchDialog(List<Integer> pilihanOverlay){
+  		overlayControllerMonak.refreshOverlay(pilihanOverlay);
+  	}
   	
+  	public void actionOkLogDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
+  		
+  	}
   	
-  	private void updateOverlaySingleAnak(Anak anak){
-		databaseManager.updateAnak(anak);
-  		overlayControllerMonak.removeOverlayAnaks();
+  	public void actionOkTrackDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
+  		
+  	}
+  	
+  	public void receiveLogFromAnak(String idAnak, List<Lokasi> lokasis){
+  		
+  	}
+  	  	
+  	public BinderHandlerMonak getBinderHandler(){
+  		return handlerBinder;
+  	}
+  	
+  	private void updateOverlaySingleAnak(){
+		overlayControllerMonak.removeOverlayAnaks();
   		overlayControllerMonak.setOverlayAnak();
   	}
-
-  
   	
   	private void requestAllAnakLocations(){
   		List<Anak> anaks = databaseManager.getAllAnak(false, false);
@@ -257,7 +253,8 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	protected void onStop() {
 		super.onStop();
 		if(bound){
-			handlerBinder.unbindUIHandlerWaitingLocation();
+			handlerBinder.unBindUIHandlerWaitingLocation();
+			handlerBinder.unBindUIHandlerWaitingLogLocation();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -272,7 +269,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		this.bound = bound;
 	}
   	
-
+	private PetaDialog					petaDialog;
 	private boolean						bound;
 	
   	private boolean 					isAmbilLokasi; 
@@ -292,6 +289,8 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	public final static String EXTRA_PELANGGARAN	= "pelanggaran";
 	
 	private final static int DIALOG_SEARCH		= 0;
+	private final static int DIALOG_LOG			= 1;
+	private final static int DIALOG_TRACK		= 2;
 	
   	private static final class PetaHandlerPositionNClose extends Handler{
 
@@ -360,19 +359,9 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			super.handleMessage(msg);
 			switch(msg.what){
 				case Status.SUCCESS:{
-					Bundle bundle = msg.getData();
-					Anak anak = new Anak();
-					Lokasi lokasi = new Lokasi();
-					lokasi.setLatitude(bundle.getDouble("latitude"));
-					lokasi.setLongitude(bundle.getDouble("longitude"));
-					anak.setLokasi(lokasi);
-					anak.setNoHpAnak(bundle.getString("noHp"));
-					anak.setIdAnak(bundle.getString("idAnak"));
-					peta.updateOverlaySingleAnak(anak);
-					
+					peta.updateOverlaySingleAnak();
 					break;
 				}case Status.FAILED:{
-					
 					break;
 				}
 			}
