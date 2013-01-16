@@ -22,8 +22,7 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
 		this.context = context;
 	}	
 	
-	public void menerimaLokasi(String noHp, String[] cvs){
-		this.noHp 	= noHp;
+	public void menerimaLokasi(String[] cvs){
 		this.cvs	= cvs;
 		
 		Intent intent = new Intent("monak_service");
@@ -50,7 +49,6 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
 		databaseManager.updateLokasiAnak(anak);
 		
 		if(binderHandlerMonak==null)return;
-		Log.d("receiver sms", "try to get handler from service with no HP :"+noHp);
     	
 		Handler handlerUI = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOCATION);
     	if(handlerUI!=null){
@@ -58,19 +56,13 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
         	Bundle data = new Bundle();
         	data.putDouble("latitude", Double.parseDouble(cvs[1]));
         	data.putDouble("longitude", Double.parseDouble(cvs[2]));
-        	data.putString("noHp", noHp);
         	data.putString("idAnak", cvs[3]);
         	message.setData(data);
         	message.what = Status.SUCCESS;
         	
         	handlerUI.sendMessage(message);
         	
-        	binderHandlerMonak.unBindUIHandlerWaitingLocation();
         	
-    	}
-    	
-    	if(bound){
-    		context.unbindService(serviceConnection);
     	}
 	}
 	
@@ -90,7 +82,6 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
 	
 	private final Context context;
 	
-	private String 		noHp;
 	private String[] 	cvs;
 	
 }

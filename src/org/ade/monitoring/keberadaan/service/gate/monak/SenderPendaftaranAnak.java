@@ -28,6 +28,7 @@ public class SenderPendaftaranAnak extends ASenderMonak{
 	}
 	
 	public void sendAnak(Anak anak){
+		
 		getSenderSMS().sendSMS
 			(anak.getNoHpAnak(), TipePesanMonak.PENDAFTARAN_ANAK+","+anak.getIdAnak());
 	}

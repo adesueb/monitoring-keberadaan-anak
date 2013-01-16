@@ -1,13 +1,9 @@
 package org.ade.monitoring.keberadaan.map.view;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.Variable.VariableEntity;
 import org.ade.monitoring.keberadaan.Variable.Status;
-import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
-import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
@@ -32,13 +28,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 public class Peta extends MapActivity implements IBindMonakServiceConnection{
 
@@ -169,23 +161,23 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   		return handlerBinder;
   	}
   	
-  	private void updateOverlaySingleAnak(){
+  	private void updateOverlayAnaks(){
 		overlayControllerMonak.removeOverlayAnaks();
   		overlayControllerMonak.setOverlayAnak();
   	}
   	
   	private void requestAllAnakLocations(){
   		List<Anak> anaks = databaseManager.getAllAnak(false, false);
-  		// FIXME : bind sender waiting harus satu2.... disini lgsg di looping.... seharusnya g boleh....
-  		for(Anak anak:anaks){
-  			SenderRequestLokasiAnak sender = 
-  					new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak), anak);
-  			sender.send();
+  		if(anaks!=null && anaks.size()>0){
   			if(handlerBinder!=null){
-  				handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
-  			}
+				handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
+			}
+	  		for(Anak anak:anaks){
+	  			SenderRequestLokasiAnak sender = 
+	  					new SenderRequestLokasiAnak(this, new SendingLocationHandler(this, anak), anak);
+	  			sender.send();  			
+	  		}	
   		}
-  		//.......................................................................
   	}
   
   	
@@ -359,16 +351,13 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			super.handleMessage(msg);
 			switch(msg.what){
 				case Status.SUCCESS:{
-					peta.updateOverlaySingleAnak();
+					peta.updateOverlayAnaks();
 					break;
 				}case Status.FAILED:{
 					break;
 				}
 			}
 		}
-		
 		private final Peta peta;
-  		 
   	}
-
 }
