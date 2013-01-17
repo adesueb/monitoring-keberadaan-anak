@@ -347,6 +347,11 @@ public class DatabaseManager {
 	
 	// delete............................................................
 	
+	public void deleteLogByLokasi(Lokasi lokasi){
+		getDb().delete
+			(LOG_TABLE_NAME, COLUMN_LOCATION_LOG+"='"+lokasi.getId()+"'", null);
+	}
+	
 	public void deleteLog(LogMonak logMonak){
 		deleteLokasi(logMonak.getLokasi());
 		getDb().delete
@@ -355,8 +360,12 @@ public class DatabaseManager {
 	}
 	
 	public void deleteLokasi(Lokasi lokasi){
-		getDb().delete
+		long result = getDb().delete
 			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
+		if(result>0){
+			deleteLogByLokasi(lokasi);	
+		}
+		
 	}
 	
 	public void deleteAllLokasi(){
@@ -532,15 +541,22 @@ public class DatabaseManager {
 	
 	public void updateLokasiAnak(Anak anakParam){
 		Anak anak = getAnakById(anakParam.getIdAnak(), false, false);
-		Lokasi lokasi = anakParam.getLokasi();
-		if(anak.getLokasi()==null){
-			IDGenerator idGenerator = new IDGenerator(context, this);
-			anakParam.getLokasi().setId(idGenerator.getIdLocation());
-			addLokasiToAnak(anakParam);
-		}else if(lokasi!=null){
-			lokasi.setId(anak.getLokasi().getId());
-			updateLokasi(lokasi);
+		Lokasi lokasi = anak.getLokasi();
+		if(lokasi!=null){
+			deleteLokasi(lokasi);
 		}
+		
+		Lokasi lokasiParam = anakParam.getLokasi();
+		if(lokasiParam==null){
+			return;
+		}
+		
+		if(lokasiParam.getId()==null || lokasiParam.getId().equals("")){
+			IDGenerator idGenerator = new IDGenerator(context, this);
+			anakParam.getLokasi().setId(idGenerator.getIdLocation());	
+		}
+		
+		addLokasiToAnak(anakParam);
 	}
 
 	//...................................................................

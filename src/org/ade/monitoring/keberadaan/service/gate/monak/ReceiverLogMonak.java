@@ -39,9 +39,13 @@ public class ReceiverLogMonak{
 		// TODO : test me!!!!
 		DatabaseManager databaseManager = new DatabaseManager(context);
 		IDGenerator idGenerator = new IDGenerator(context, databaseManager);
+		
 		List<Lokasi> lokasis = LokasisConverter.covertTextToLokasis(textLogs);
+		if(lokasis.size()<=0)return;
+		
 		Anak anak = new Anak();
 		anak.setIdAnak(idAnak);
+		
 		for(Lokasi lokasi:lokasis){
 			
 			lokasi.setId(idGenerator.getIdLocation());
@@ -53,6 +57,10 @@ public class ReceiverLogMonak{
 			databaseManager.addLocationLog(log);
 			
 		}
+		
+		anak.setLokasi(lokasis.get(lokasis.size()-1));
+		databaseManager.updateLokasiAnak(anak);
+		
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
 		if(handler!=null){
 			Message message = new Message();
