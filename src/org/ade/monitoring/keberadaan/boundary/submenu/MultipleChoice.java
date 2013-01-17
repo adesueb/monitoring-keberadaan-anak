@@ -21,6 +21,10 @@ public abstract class MultipleChoice extends Dialog{
 		withDetail = false;
 	}
 	
+	public Bundle getBundle(){
+		return this.bundle;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

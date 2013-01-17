@@ -11,8 +11,12 @@ import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
+import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.google.android.maps.MapView;
@@ -42,7 +46,7 @@ public class OverlayControllerMonak {
   					setOverlayAnaks();
   					break;
   				}case VariableEntity.PELANGGARAN:{
-  					setOverlayPelanggaran();
+  					setOverlayPelanggarans();
   					break;
   				}
   			}
@@ -101,9 +105,25 @@ public class OverlayControllerMonak {
   		}
   	}
   	
-  	public void setOverlayPelanggaran(){
+	public void setOverlayNewPelanggaran(Handler handler){
+		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
+  		int size = pelanggarans.size();
+		if(size>0){
+			Pelanggaran pelanggaran = pelanggarans.get(size-1);
+			overlayFactory.makeOverlayNewPelanggaran(pelanggaran);
+  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
+  	  		mapView.getOverlays().add(pelanggaranOverlay);
+  	  		Message message = new Message();
+  	  		Bundle data = BundleEntityMaker.makeBundleFromLokasi(pelanggaran.getLokasi());
+  	  		message.setData(data);
+  	  		handler.sendMessage(message);
+  		}
+		
+	}
+	
+  	public void setOverlayPelanggarans(){
   		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
-  		overlayFactory.makeOverlayPelanggaran(pelanggarans);
+  		overlayFactory.makeOverlayPelanggarans(pelanggarans);
   		for(Pelanggaran pelanggaran : pelanggarans){
   			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
   			mapView.getOverlays().add(pelanggaranOverlay);

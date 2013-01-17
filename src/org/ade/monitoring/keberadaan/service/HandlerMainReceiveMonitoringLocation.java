@@ -106,7 +106,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 										peringatan.setLokasiAnak(lokasiHp);
 										peringatan.setTipe(TipePesanMonak.PERINGATAN_TERLARANG);
 										peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
-										senderMonitoring.sendPeringatanSeharusnya(peringatan);
+										senderMonitoring.sendPeringatanTerlarang(peringatan);
 									}						
 								}else{
 									if(dataMonitoring.isSeharusnya()){

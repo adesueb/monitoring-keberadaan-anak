@@ -368,6 +368,11 @@ public class DatabaseManager {
 		
 	}
 	
+	public void deleteAllLog(){
+		getDb().delete
+			(LOG_TABLE_NAME, null, null);
+	}
+	
 	public void deleteAllLokasi(){
 		getDb().delete
 			(LOCATION_TABLE_NAME, null, null);
@@ -540,15 +545,17 @@ public class DatabaseManager {
 	}
 	
 	public void updateLokasiAnak(Anak anakParam){
-		Anak anak = getAnakById(anakParam.getIdAnak(), false, false);
-		Lokasi lokasi = anak.getLokasi();
-		if(lokasi!=null){
-			deleteLokasi(lokasi);
-		}
+		
 		
 		Lokasi lokasiParam = anakParam.getLokasi();
 		if(lokasiParam==null){
 			return;
+		}
+		
+		Anak anak = getAnakById(anakParam.getIdAnak(), false, false);
+		Lokasi lokasi = anak.getLokasi();
+		if(lokasi!=null){
+			deleteLokasi(lokasi);
 		}
 		
 		if(lokasiParam.getId()==null || lokasiParam.getId().equals("")){

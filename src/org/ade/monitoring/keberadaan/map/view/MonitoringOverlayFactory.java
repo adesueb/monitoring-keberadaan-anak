@@ -106,7 +106,14 @@ public class MonitoringOverlayFactory {
 		monitoringOverlays.put(LOG, petaOverlay);
 	}
 	
-	public void makeOverlayPelanggaran(List<Pelanggaran> pelanggarans){
+	public void makeOverlayNewPelanggaran(Pelanggaran pelanggaran){
+		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);		
+		OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
+		monitoringOverlay.addOverLay(overlayItem);
+		monitoringOverlays.put(PELANGGARAN, monitoringOverlay);
+	}
+	
+	public void makeOverlayPelanggarans(List<Pelanggaran> pelanggarans){
 		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);
 		
 		for(Pelanggaran pelanggaran:pelanggarans){

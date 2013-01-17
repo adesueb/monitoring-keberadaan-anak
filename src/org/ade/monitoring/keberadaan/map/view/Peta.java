@@ -14,6 +14,7 @@ import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
+import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.LokasisConverter;
 
 import com.google.android.maps.GeoPoint;
@@ -79,7 +80,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		overlayControllerMonak = new OverlayControllerMonak(this, overlayFactory, mapView, gpsManager);
 		
 		if(isPelanggaran){
-			overlayControllerMonak.setOverlayPelanggaran();
+			overlayControllerMonak.setOverlayNewPelanggaran(new HandlerPetaCenter(this));
 		}
 		
 		
@@ -201,7 +202,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   		gpsManager.searchLokasi();
   	}
   	
-  	private void setPetaCenter(Lokasi lokasi){
+  	public void setPetaCenter(Lokasi lokasi){
   		if(mapController!=null&&lokasi!=null){
   			mapController.setCenter(new GeoPoint((int)(lokasi.getlatitude()*1E6), 
   					(int)(lokasi.getLongitude()*1E6)));
@@ -387,5 +388,21 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		}
 		
 		private final Peta peta;
+  	}
+  	
+  	private final static class HandlerPetaCenter extends Handler{
+  		public HandlerPetaCenter(Peta peta){
+  			this.peta = peta;
+  		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			Lokasi lokasi = EntityBundleMaker.getLokasiFromBundle(msg.getData());
+			peta.setPetaCenter(lokasi);
+		}
+		
+		private final Peta peta;
+  		
   	}
 }

@@ -28,10 +28,14 @@ public class SenderLogMonak extends ASenderMonak{
 		return lokasis;
 	}
 	
+	private void deleteAllLog(){
+		DatabaseManager db = new DatabaseManager(getContext());
+		db.deleteAllLog();
+	}
+	
 	@Override
 	public void success(int tipeKoneksi) {
-		// TODO Auto-generated method stub
-		
+		deleteAllLog();
 	}
 
 	@Override

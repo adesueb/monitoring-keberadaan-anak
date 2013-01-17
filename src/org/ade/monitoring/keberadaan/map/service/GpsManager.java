@@ -43,6 +43,7 @@ public class GpsManager {
         
         lokasi.setLatitude(location.getLatitude());
         lokasi.setLongitude(location.getLongitude());
+        lokasi.setTime(location.getTime());
        
         return lokasi;
 	}
