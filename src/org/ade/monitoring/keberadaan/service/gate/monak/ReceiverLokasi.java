@@ -6,37 +6,30 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
-import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class ReceiverLokasi implements IBindMonakServiceConnection{
+public class ReceiverLokasi{
 
-	public ReceiverLokasi(Context context) {
-		this.context = context;
+	public ReceiverLokasi(Context context, BinderHandlerMonak binder) {
+		this.context 			= context;
+		this.binderHandlerMonak = binder;
 	}	
 	
 	public void menerimaLokasi(String[] cvs){
 		this.cvs	= cvs;
-		
-		Intent intent = new Intent("monak_service");
-		serviceConnection = new ServiceMonakConnection(this);
-		context.bindService(intent, serviceConnection, 0);
+		action();
+	
 	}
 	
 	private void action(){
 		
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
-		if(!bound){
-			return;
-		}
-		
+			
 		Lokasi lokasi = new Lokasi();
 		lokasi.setLatitude(Double.parseDouble(cvs[1]));
 		lokasi.setLongitude(Double.parseDouble(cvs[2]));
@@ -61,24 +54,10 @@ public class ReceiverLokasi implements IBindMonakServiceConnection{
         	message.what = Status.SUCCESS;
         	
         	handlerUI.sendMessage(message);
-        	
-        	
     	}
 	}
 	
-	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
-		this.binderHandlerMonak = binderHandlerMonak;
-		action();
-	}
-
-	public void setBound(boolean bound) {
-		this.bound = bound;
-	}
-	
 	private BinderHandlerMonak binderHandlerMonak;
-	private boolean bound;
-	
-	private ServiceMonakConnection serviceConnection;
 	
 	private final Context context;
 	

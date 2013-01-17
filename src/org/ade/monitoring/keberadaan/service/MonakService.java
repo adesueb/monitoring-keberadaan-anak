@@ -119,7 +119,7 @@ public class MonakService extends Service{
         }
 		switch(status){
 	    	case TipePesanMonak.RETRIEVE_LOCATION_ANAK:{
-	    		ReceiverLokasi receiverLokasi = new ReceiverLokasi(this);
+	    		ReceiverLokasi receiverLokasi = new ReceiverLokasi(this, getBinderHandlerMonak());
 	    		receiverLokasi.menerimaLokasi(cvs);
 	        	break;	
 	    	}case TipePesanMonak.REQUEST_LOCATION_ANAK:{
@@ -131,7 +131,7 @@ public class MonakService extends Service{
 	    		receiver.receiveRequestLogLocation();
 	    		break;
 	    	}case TipePesanMonak.RETRIEVE_LOG_LOCATION:{
-	    		ReceiverLogMonak receiver = new ReceiverLogMonak(this);
+	    		ReceiverLogMonak receiver = new ReceiverLogMonak(this, getBinderHandlerMonak());
 	    		receiver.receiveLogMonak(cvs[1], cvs);
 	    		break;
 	    	}case TipePesanMonak.REQUEST_START_TRACKING:{
@@ -143,6 +143,8 @@ public class MonakService extends Service{
 	    		tracking.stopTrackingMode();
 	    		break;
 	    	}case TipePesanMonak.RETRIEVE_TRACKING:{
+	    		ReceiverLokasi receiverLokasi = new ReceiverLokasi(this, getBinderHandlerMonak());
+	    		receiverLokasi.menerimaLokasi(cvs);
 	    		break;
 	    	}case TipePesanMonak.REQUEST_ON_MONITORING:{
 	    		ReceiverRequestOnMonitoring onMonitoring = new ReceiverRequestOnMonitoring(this);
@@ -191,10 +193,7 @@ public class MonakService extends Service{
 				return monakService;				
 			}
 			return null;
-
 		}
 		private final MonakService monakService;
 	}
-	
-
 }

@@ -56,7 +56,23 @@ public class MonitoringOverlayFactory {
 		return monitoringOverlays.get(ORANG_TUA)!=null;
 	}
 	
-	public void makeOverlayAnak(List<Anak> anaks, List<Lokasi> lokasis){
+	public void makeOverlayAnak(Anak anak){
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
+		Lokasi lokasi = anak.getLokasi();
+		if(lokasi!=null){
+			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+			OverlayItem overlayItem = 
+					new OverlayItem
+						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());	
+			petaOverlay.addOverLay(overlayItem);
+
+			monitoringOverlays.put(ANAK, petaOverlay);
+		}
+		
+		
+	}
+	
+	public void makeOverlayAnaks(List<Anak> anaks, List<Lokasi> lokasis){
 		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
 		
 		for(int i = 0 ;i<anaks.size();i++){
@@ -73,6 +89,21 @@ public class MonitoringOverlayFactory {
 		}
 
 		monitoringOverlays.put(ANAK, petaOverlay);
+	}
+	
+	public void makeOverlayLogAnak(Anak anak, List<Lokasi> lokasis){
+		MonitoringOverlay petaOverlay = createPetaOverlay(LOG);
+		for(int i=0;i<lokasis.size()-1;i++){
+			Lokasi lokasi = lokasis.get(i);
+			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+			OverlayItem overlayItem = 
+					new OverlayItem
+						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
+
+			petaOverlay.addOverLay(overlayItem);
+		}
+
+		monitoringOverlays.put(LOG, petaOverlay);
 	}
 	
 	public void makeOverlayPelanggaran(List<Pelanggaran> pelanggarans){
@@ -172,6 +203,7 @@ public class MonitoringOverlayFactory {
 	public final static int TERLARANG	= R.drawable.terlarang;
 	public final static int PELANGGARAN	= R.drawable.pelanggaran;
 	public final static int ORANG_TUA	= R.drawable.parent;
+	public final static int LOG			= R.drawable.log;
 	public final static String TITLE_ORANG_TUA = "posisi anda";
 
 }

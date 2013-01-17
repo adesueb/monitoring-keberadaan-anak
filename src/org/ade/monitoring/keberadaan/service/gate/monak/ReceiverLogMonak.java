@@ -19,9 +19,11 @@ import android.os.Message;
 
 public class ReceiverLogMonak{
 
-	public ReceiverLogMonak(Context context){
-		this.context = context;
+	public ReceiverLogMonak(Context context, BinderHandlerMonak binder){
+		this.context 			= context;
+		this.binderHandlerMonak = binder;
 	}
+	
 	public void receiveLogMonak(String idAnak, String[] cvs){
 
 		this.textLogs = "";
@@ -31,7 +33,6 @@ public class ReceiverLogMonak{
 		this.idAnak = idAnak;
 		
 		action();
-
 	}
 	
 	private void action(){

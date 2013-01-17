@@ -14,6 +14,7 @@ import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
+import org.ade.monitoring.keberadaan.util.LokasisConverter;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -145,16 +146,24 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   		overlayControllerMonak.refreshOverlay(pilihanOverlay);
   	}
   	
-  	public void actionOkLogDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
-  		
+  	public void actionOkLogDialog(Anak anak){
+  		PetaLogController petaLog = new PetaLogController(this);
+  		petaLog.action(anak);
+  		if(bound && handlerBinder!=null && anak!=null){
+  			handlerBinder.bindUIHandlerWaitingLogLocation(new HandlerLogPeta(this));
+  		}
   	}
   	
   	public void actionOkTrackDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
-  		
+  		PetaTrackingController petaTrack = new PetaTrackingController(this);
+  		petaTrack.refreshTrackingController(pilihanOverlay, anaks);
+  		if(bound && handlerBinder!=null && pilihanOverlay.size()>0){
+  			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
+  		}
   	}
-  	
+ 
   	public void receiveLogFromAnak(String idAnak, List<Lokasi> lokasis){
-  		
+  		overlayControllerMonak.setOverlayLogLocationAnak(idAnak, lokasis);
   	}
   	  	
   	public BinderHandlerMonak getBinderHandler(){
@@ -163,13 +172,13 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	
   	private void updateOverlayAnaks(){
 		overlayControllerMonak.removeOverlayAnaks();
-  		overlayControllerMonak.setOverlayAnak();
+  		overlayControllerMonak.setOverlayAnaks();
   	}
   	
   	private void requestAllAnakLocations(){
   		List<Anak> anaks = databaseManager.getAllAnak(false, false);
   		if(anaks!=null && anaks.size()>0){
-  			if(handlerBinder!=null){
+  			if(bound && handlerBinder!=null){
 				handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
 			}
 	  		for(Anak anak:anaks){
@@ -358,6 +367,25 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 				}
 			}
 		}
+		private final Peta peta;
+  	}
+  	
+  	private final static class HandlerLogPeta extends Handler{
+
+  		public HandlerLogPeta(Peta peta){
+  			this.peta = peta;
+  		}
+  		
+  		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			Bundle bundle 	= msg.getData();
+			String text 	= bundle.getString("textLog");
+			String idAnak	= bundle.getString("idAnak");
+			List<Lokasi> lokasis = LokasisConverter.covertTextToLokasis(text);
+			peta.receiveLogFromAnak(idAnak, lokasis);
+		}
+		
 		private final Peta peta;
   	}
 }
