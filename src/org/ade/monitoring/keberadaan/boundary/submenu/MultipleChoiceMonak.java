@@ -8,17 +8,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public abstract class MultipleChoice extends Dialog{
+public abstract class MultipleChoiceMonak extends Dialog{
 	
-	public MultipleChoice(Activity activity, Bundle bundle, boolean withDetail){
+	public MultipleChoiceMonak(Activity activity, Bundle bundle, boolean isAnak){
 		super(activity);
 		this.activity = activity;
 		this.bundle = bundle;
-		this.withDetail = withDetail;
+		this.isAnak = isAnak;
 	}
 	
 	public void hideDetail(){
-		withDetail = false;
+		isAnak = false;
 	}
 	
 	public Bundle getBundle(){
@@ -50,8 +50,9 @@ public abstract class MultipleChoice extends Dialog{
 			}
 		});
 		
-		if(!withDetail){
+		if(!isAnak){
 			buttonDetail.setVisibility(View.INVISIBLE);
+			
 		}
 	}
 	
@@ -62,9 +63,11 @@ public abstract class MultipleChoice extends Dialog{
 	protected abstract void onDelete(Bundle bundle);
 	protected abstract void onEdit(Bundle bundle);
 	protected abstract void onDetail(Bundle bundle);
+	protected abstract void onLog(Bundle bundle);
+	protected abstract void onTrack(Bundle bundle);
 	
 	private final Activity activity;
 	private final Bundle bundle;
-	private boolean withDetail = true;
+	private boolean isAnak = true;
 
 }

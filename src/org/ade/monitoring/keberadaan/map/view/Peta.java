@@ -40,8 +40,25 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
-		isAmbilLokasi = intent.getBooleanExtra(EXTRA_AMBIL_LOKASI, false);
-		isPelanggaran = intent.getBooleanExtra(EXTRA_PELANGGARAN, false);
+		
+		int action = intent.getIntExtra(EXTRA_ACTION, 0);
+		switch(action){
+			case EXTRA_AMBIL_LOKASI :{
+				isAmbilLokasi = true;
+				break;
+			}case EXTRA_PELANGGARAN	:{
+				isPelanggaran = true;
+				break;
+			}case EXTRA_LOG :{
+				isLog = true;
+				break;
+			}case EXTRA_TRACK:{
+				isTrack = true;
+				break;
+			}
+		}
+ 
+		
 		
 		setContentView(R.layout.monitoring_map);
 		
@@ -83,6 +100,32 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			overlayControllerMonak.setOverlayNewPelanggaran(new HandlerPetaCenter(this));
 		}
 		
+		if(isLog){
+			Bundle bundle = getIntent().getExtras();
+			Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
+			List<Lokasi>lokasis = databaseManager.getAllLokasiAnak(anak);
+			overlayControllerMonak.setOverlayLogLocationAnak(anak.getIdAnak(), lokasis);
+			requestLogMonakAnak(anak);
+		}
+		
+		if(isTrack){
+			Bundle bundle = getIntent().getExtras();
+			Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
+			Lokasi lastLokasi = null;
+			if(anak.getLastLokasi()!=null){
+				 String idLokasi = anak.getLastLokasi().getId();
+				 lastLokasi = databaseManager.getLokasiByIdLokasi(idLokasi);
+			}else{
+				lastLokasi = databaseManager.getAnakById(anak.getIdAnak(), false, false).getLastLokasi();
+				
+			}
+			
+			anak.setLastLokasi(lastLokasi);
+			
+			overlayControllerMonak.setOverlayAnak(anak);
+			
+			requestTrackAnak(anak);
+		}
 		
 		setMenuAmbilLokasi();
 		
@@ -148,11 +191,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
   	
   	public void actionOkLogDialog(Anak anak){
-  		PetaLogController petaLog = new PetaLogController(this);
-  		petaLog.action(anak);
-  		if(bound && handlerBinder!=null && anak!=null){
-  			handlerBinder.bindUIHandlerWaitingLogLocation(new HandlerLogPeta(this));
-  		}
+  		requestLogMonakAnak(anak);
   	}
   	
   	public void actionOkTrackDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
@@ -162,13 +201,29 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
   		}
   	}
- 
-  	public void receiveLogFromAnak(String idAnak, List<Lokasi> lokasis){
+   	
+  	public void refreshLogFromAnak(String idAnak, List<Lokasi> lokasis){
   		overlayControllerMonak.setOverlayLogLocationAnak(idAnak, lokasis);
   	}
   	  	
   	public BinderHandlerMonak getBinderHandler(){
   		return handlerBinder;
+  	}
+  	
+  	private void requestTrackAnak(Anak anak){
+  		PetaTrackingController petaTrack = new PetaTrackingController(this);
+  		petaTrack.senderRequestTrackAnak(anak);
+  		if(bound && handlerBinder!=null && anak!=null){
+  			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
+  		}
+  	}
+  	
+  	private void requestLogMonakAnak(Anak anak){
+  		PetaLogController petaLog = new PetaLogController(this);
+  		petaLog.action(anak);
+  		if(bound && handlerBinder!=null && anak!=null){
+  			handlerBinder.bindUIHandlerWaitingLogLocation(new HandlerLogPeta(this));
+  		}
   	}
   	
   	private void updateOverlayAnaks(){
@@ -276,6 +331,9 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	
   	private boolean 					isAmbilLokasi; 
 	private boolean						isPelanggaran;
+	private boolean						isLog;
+	private boolean						isTrack;
+	
 	private MapController 				mapController;
 	private GpsManager					gpsManager;
 	private DatabaseManager				databaseManager;
@@ -286,9 +344,11 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	
 	private ServiceMonakConnection		serviceConnection;
 	
-	
-	public final static String EXTRA_AMBIL_LOKASI	= "ambilLokasi";
-	public final static String EXTRA_PELANGGARAN	= "pelanggaran";
+	public final static String 	EXTRA_ACTION		= "action";
+	public final static int 	EXTRA_AMBIL_LOKASI	= 1;
+	public final static int 	EXTRA_PELANGGARAN	= 2;
+	public final static int		EXTRA_LOG			= 3;
+	public final static int		EXTRA_TRACK			= 4;
 	
 	private final static int DIALOG_SEARCH		= 0;
 	private final static int DIALOG_LOG			= 1;
@@ -384,7 +444,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			String text 	= bundle.getString("textLog");
 			String idAnak	= bundle.getString("idAnak");
 			List<Lokasi> lokasis = LokasisConverter.covertTextToLokasis(text);
-			peta.receiveLogFromAnak(idAnak, lokasis);
+			peta.refreshLogFromAnak(idAnak, lokasis);
 		}
 		
 		private final Peta peta;

@@ -13,8 +13,14 @@ public class PetaTrackingController {
 		for(int i:pilihanOverlay){
 			Anak anak = anaks.get(i);
 			
-			sender.sendStartTracking(anak);
+			senderRequestTrackAnak(anak);
   		}
+	}
+	
+	public void senderRequestTrackAnak(Anak anak){
+		if(anak!=null){
+			sender.sendStartTracking(anak);	
+		}
 	}
 	private final SenderTrackingMode sender;
 	

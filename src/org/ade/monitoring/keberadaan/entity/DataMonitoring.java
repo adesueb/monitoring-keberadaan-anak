@@ -3,7 +3,6 @@ package org.ade.monitoring.keberadaan.entity;
 
 import java.util.*;
 
-import org.ade.monitoring.keberadaan.map.view.MonitoringOverlay;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
 

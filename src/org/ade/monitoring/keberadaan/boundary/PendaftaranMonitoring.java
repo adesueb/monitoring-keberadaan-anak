@@ -19,6 +19,7 @@ import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
 import android.app.Activity;
@@ -44,17 +45,31 @@ public class PendaftaranMonitoring extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.pendaftaran_monitoring);
+		
 		databaseManager = new DatabaseManager(this);
-		mIDGenerator	= new IDGenerator(this,databaseManager);
-		initAllButton();
-		initSubMenu();
-		dataMonitoring = new DataMonitoring();
-		String idAnak = mIDGenerator.getIdMonitoring();
+		dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
+		
+		String idMonitoring = "";
+		if(dataMonitoring==null){
+			mIDGenerator	= new IDGenerator(this,databaseManager);
+			dataMonitoring = new DataMonitoring();
+			
+			idMonitoring = mIDGenerator.getIdMonitoring();	
+		}else{
+			idMonitoring = dataMonitoring.getIdMonitoring();
+		}
 
 		TextView textId= (TextView) findViewById(R.id.monitoringTextId);
-		textId.setText(idAnak);
-		dataMonitoring.setIdMonitoring(idAnak);
+		textId.setText(idMonitoring);
+		dataMonitoring.setIdMonitoring(idMonitoring);
+
+		initAllButton();
+		initSubMenu();
+		
+		
+
 	}
 	
 	private void initSubMenu(){
@@ -233,7 +248,7 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void actionTandaiDariMap(){
 		Intent intent = new Intent(this, Peta.class);
-		intent.putExtra("ambilLokasi", true);
+		intent.putExtra(Peta.EXTRA_ACTION, Peta.EXTRA_AMBIL_LOKASI);
 		startActivityForResult(intent, LOKASI);
 	}
 	

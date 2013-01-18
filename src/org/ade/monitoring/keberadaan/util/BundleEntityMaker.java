@@ -15,14 +15,16 @@ public class BundleEntityMaker {
 		bundle.putString("nama", anak.getNamaAnak());
 		bundle.putString("orangTua", anak.getIdOrtu());
 		bundle.putString("noHp", anak.getNoHpAnak());
+		if(anak.getLastLokasi()!=null){
+			bundle.putString("lastLokasi", anak.getLastLokasi().getId());
+		}
 		return bundle;
 	}
 	
 	public static Bundle makeBundleFromDataMonitoring(DataMonitoring dataMonitoring){
 		Bundle bundle = new Bundle();
 		bundle.putString("id", dataMonitoring.getIdMonitoring());
-		bundle.putString("anak", dataMonitoring.getAnak().getIdAnak());
-		// TODO : make bundle from monitoring......
+		
 		return bundle;
 	}
 	

@@ -84,7 +84,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	protected Dialog onCreateDialog(int id, final Bundle bundle) {
 		switch(id){
 			case Operation.MULTIPLE_CHOICE:{
-				return new MultipleChoiceDataMonitoring(this, bundle, true);
+				return new MultipleChoiceDataMonitoring(this, bundle);
 			}case Operation.DELETE:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
@@ -99,6 +99,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
+						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
 						databaseManager.deleteDataMonitoring(dataMonitoring);
 						for(DataMonitoring dataMonitoringFor:dataMonitorings){
 							if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
@@ -195,8 +196,15 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		}
 		public boolean onLongClick(View arg0) {
 			
+			DataMonitoring dataMonitoring = mDataMonitoring;
+			Anak anak = mDataMonitoring.getAnak();
+			
+			if(anak==null){
+				dataMonitoring = mDaftarMonitoring.databaseManager.getDataMonitoringByIdMonitoring(mDataMonitoring.getIdMonitoring(), true, true);
+			}
+			
 			mDaftarMonitoring.showDialog
-				(Operation.MULTIPLE_CHOICE, BundleEntityMaker.makeBundleFromDataMonitoring(mDataMonitoring));
+				(Operation.MULTIPLE_CHOICE, BundleEntityMaker.makeBundleFromDataMonitoring(dataMonitoring));
 			return false;
 		}
 		private final DataMonitoring mDataMonitoring;

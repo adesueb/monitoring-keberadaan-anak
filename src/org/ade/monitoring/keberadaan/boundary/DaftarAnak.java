@@ -339,7 +339,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 			mAnak 		= anak;
 		}
 		public boolean onLongClick(View arg0) {
-			(new MultipleChoiceAnak(mDaftarAnak, BundleEntityMaker.makeBundleFromAnak(mAnak), true)).show();
+			(new MultipleChoiceAnak(mDaftarAnak, BundleEntityMaker.makeBundleFromAnak(mAnak))).show();
 			return false;
 		}
 		private final Anak mAnak;
@@ -366,7 +366,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 						daftarAnak.sendRequestLocationAnak(anak);
 						dialog.dismiss();
 						return;                  
-			         }  
+			        }  
 			     });  
 
 				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {

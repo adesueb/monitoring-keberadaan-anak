@@ -8,18 +8,36 @@ import android.os.Bundle;
 
 public class EntityBundleMaker {
 	public static Anak getAnakFromBundle(Bundle bundle){
+		if(bundle.getString("id")==null || bundle.getString("id").equals("")){
+			return null;
+		}
 		Anak anak = new Anak();
-		//TODO : first step is create anak from bundle, and then return it...   
+		anak.setIdAnak(bundle.getString("id"));
+		anak.setNamaAnak(bundle.getString("nama"));
+		anak.setNoHpAnak(bundle.getString("noHp"));
+		anak.setIdOrtu(bundle.getString("orangTua"));
+		Lokasi lokasi = new Lokasi();
+		lokasi.setId(bundle.getString("lastLokasi"));
+		anak.setLastLokasi(lokasi);  
 		return anak;
 	}
 	
 	public static DataMonitoring getDataMonitoringFromBundle(Bundle bundle){
+		
+		
+		if(bundle.getString("id")==null||bundle.getString("id").equals("")){
+			return null;
+		}
+		
 		DataMonitoring dataMonitoring = new DataMonitoring();
-		//TODO : first step is create datamonitoring, then return it....
+		dataMonitoring.setIdMonitoring(bundle.getString("id"));
 		return dataMonitoring;
 	}
 	
 	public static Lokasi getLokasiFromBundle(Bundle bundle){
+		if(bundle.getDouble("latitude")==0){
+			return null;
+		}
 		Lokasi lokasi = new Lokasi();
 		lokasi.setLatitude(bundle.getDouble("latitude"));
 		lokasi.setLongitude(bundle.getDouble("longitude"));

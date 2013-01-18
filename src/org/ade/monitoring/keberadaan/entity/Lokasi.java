@@ -44,10 +44,12 @@ public class Lokasi {
 	}
 	
 	public Anak getAnak() {
+		anak.setLastLokasi(this);
 		return anak;
 	}
 
 	public void setAnak(Anak anak) {
+		anak.setLastLokasi(null);
 		this.anak = anak;
 	}
 

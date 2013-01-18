@@ -53,7 +53,7 @@ public class Notifikasi {
 		Notification notification 	= new Notification(icon, tickerText, when);
 		CharSequence contentText 	= "anak : "+anak.getNamaAnak()+"\n"+"click disini untuk lihat lokasi";
 		Intent notificationIntent 	= new Intent(context, Peta.class);
-		notificationIntent.putExtra(Peta.EXTRA_PELANGGARAN, true);
+		notificationIntent.putExtra(Peta.EXTRA_ACTION, Peta.EXTRA_PELANGGARAN);
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 

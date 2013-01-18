@@ -96,6 +96,21 @@ public class DatabaseManager {
 	}
 	//.....................................................................
 	
+	public List<Lokasi> getAllLokasiAnak(Anak anak){
+		Cursor cursor = actionQuery(LOCATION_TABLE_NAME,null,COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			List<Lokasi> lokasis = getAllLokasiFromCursor(cursor);
+			if(cursor!=null){
+				cursor.close();
+			}
+			return lokasis;
+		}
+		if(cursor!=null){
+			cursor.close();
+		}
+		return null;
+	}
+	
 	public List<Lokasi> getAllLokasi(){
 		Cursor cursor = actionQuery(LOCATION_TABLE_NAME,null,null);
 		if(cursor!=null && cursor.getCount()>0){

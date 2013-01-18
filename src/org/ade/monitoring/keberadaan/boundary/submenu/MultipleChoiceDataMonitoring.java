@@ -4,13 +4,11 @@ import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
 
 import android.os.Bundle;
 
-public class MultipleChoiceDataMonitoring extends MultipleChoice{
+public class MultipleChoiceDataMonitoring extends MultipleChoiceMonak{
 
-	public MultipleChoiceDataMonitoring(DaftarMonitoring activity, Bundle bundle,
-			boolean withDetail) {
-		super(activity, bundle, withDetail);
+	public MultipleChoiceDataMonitoring(DaftarMonitoring activity, Bundle bundle) {
+		super(activity, bundle, false);
 		daftarMonitoring = activity;
-
 		setTitle("Pilih Sub Menu : ");
 	}
 
@@ -26,9 +24,16 @@ public class MultipleChoiceDataMonitoring extends MultipleChoice{
 
 	@Override
 	protected void onDetail(Bundle bundle) {
-		
 	}
 	
+	@Override
+	protected void onLog(Bundle bundle) {		
+	}
+
+	@Override
+	protected void onTrack(Bundle bundle) {		
+	}
+
 	private DaftarMonitoring daftarMonitoring;
 
 }

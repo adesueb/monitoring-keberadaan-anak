@@ -54,10 +54,12 @@ public class Anak implements IEntity{
 
 	
 	public Lokasi getLastLokasi() {
+		lastLokasi.setAnak(this);
 		return lastLokasi;
 	}
 
 	public void setLastLokasi(Lokasi lastLokasi) {
+		lastLokasi.setAnak(null);
 		this.lastLokasi = lastLokasi;
 	}
 
