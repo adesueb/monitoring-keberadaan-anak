@@ -44,7 +44,7 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 			if(pref.isAktifTrackingMode()){
 				Anak anak = new Anak();
 				anak.setIdAnak(pref.getIdAnak());
-				anak.setLokasi(lokasiHp);
+				anak.setLastLokasi(lokasiHp);
 				senderLokasi.sendLocationModeTracking(anak);
 			}
 			

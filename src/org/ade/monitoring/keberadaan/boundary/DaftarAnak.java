@@ -402,11 +402,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				Lokasi lokasi = new Lokasi();
 				lokasi.setLatitude(data.getDouble("latitude"));
 				lokasi.setLongitude(data.getDouble("longitude"));
-				Lokasi lokasiAnak = anak.getLokasi();
+				Lokasi lokasiAnak = anak.getLastLokasi();
 				
 				if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
 					lokasi.setId(lokasiAnak.getId());
-					anak.setLokasi(lokasi);
+					anak.setLastLokasi(lokasi);
 					for(Anak anakFor:daftarAnak.anaks){
 						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
 							anakFor.setNamaAnak(anak.getNamaAnak());
@@ -417,7 +417,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				}else{
 					IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
 					lokasi.setId(id.getIdLocation());
-					anak.setLokasi(lokasi);
+					anak.setLastLokasi(lokasi);
 					daftarAnak.anaks.add(anak);
 				}
 				

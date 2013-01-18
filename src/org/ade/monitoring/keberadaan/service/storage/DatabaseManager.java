@@ -8,7 +8,6 @@ import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.DateMonitoring;
 import org.ade.monitoring.keberadaan.entity.DayMonitoring;
-import org.ade.monitoring.keberadaan.entity.LogMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -127,18 +126,7 @@ public class DatabaseManager {
 		return null;
 	}
 	
-	public List<LogMonak> getAllLogMonak(Anak anak){
-		List<LogMonak> logs = null;
-		
-		Cursor cursor = actionQuery(LOG_TABLE_NAME, null, COLUMN_ANAK_LOG+"='"+anak.getIdAnak()+"'");
-		if(cursor!=null && cursor.getCount()>0){
-			logs = getAllLogMonakFromCursor(cursor);
-		}
-		if(cursor!=null){
-			cursor.close();
-		}
-		return logs;
-	}
+	
 	
 	public Anak getAnakById(String idAnak, boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null,COLUMN_ID_ANAK+"='"+idAnak+"'");
@@ -347,17 +335,17 @@ public class DatabaseManager {
 	
 	// delete............................................................
 	
+	public void deleteLokasiAnak(Anak anak){
+		getDb().delete
+			(LOCATION_TABLE_NAME, COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'", null);
+	}
+	
 	public void deleteLogByLokasi(Lokasi lokasi){
 		getDb().delete
 			(LOG_TABLE_NAME, COLUMN_LOCATION_LOG+"='"+lokasi.getId()+"'", null);
 	}
 	
-	public void deleteLog(LogMonak logMonak){
-		deleteLokasi(logMonak.getLokasi());
-		getDb().delete
-			(LOG_TABLE_NAME, "_id='"+logMonak.getIdLog()+"'", null);
-		
-	}
+
 	
 	public void deleteLokasi(Lokasi lokasi){
 		long result = getDb().delete
@@ -440,10 +428,8 @@ public class DatabaseManager {
 		getDb().delete
 		(ANAK_TABLE_NAME, 
 				COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
-		Lokasi lokasi = anak.getLokasi();
-		if(lokasi!=null){
-			deleteLokasi(lokasi);
-		}
+		deleteLokasiAnak(anak);
+		
 	}
 	
 	public void deletePelanggaran(Pelanggaran pelanggaran){
@@ -519,6 +505,50 @@ public class DatabaseManager {
 		
 	public void updateAnak(Anak anak){
 		
+		if(anak.getLokasis()!=null){
+			updateLokasisAnak(anak);	
+		}
+		
+		if(anak.getLastLokasi()!=null){
+			updateLastLokasiAnak(anak);	
+		}
+		
+	}
+	
+	public void updateLokasisAnak(Anak anak){
+		
+		ContentValues cv = new ContentValues();
+		
+		if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
+			cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());	
+		}
+		
+		if(anak.getNoHpAnak()!=null && !anak.getNoHpAnak().equals("")){
+			cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
+		}
+		List<Lokasi> lokasis= anak.getLokasis();
+		
+		if(lokasis!=null && lokasis.size()>0){
+			cv.put(COLUMN_LAST_LOCATION_ANAK, lokasis.get(lokasis.size()-1).getId());	
+		}
+		
+		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		
+		Log.d("database manager", "result : "+result);
+		
+		if(result>0 && anak.getLokasis()!=null){
+			Anak anakLokasi = new Anak();
+			anakLokasi.setIdAnak(anak.getIdAnak());
+			for(Lokasi lokasi:lokasis){
+				lokasi.setAnak(anakLokasi);
+			}
+			addLokasis(anak.getLokasis());
+		}
+		
+	}
+	
+	public void updateLastLokasiAnak(Anak anak){
+		
 		ContentValues cv = new ContentValues();
 		
 		if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
@@ -529,60 +559,40 @@ public class DatabaseManager {
 			cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
 		}
 		
-		Log.d("database manager", "isi lokasi dari anak : "+anak.getLokasi().getId());
-		if(anak.getLokasi()!=null){
-			cv.put(COLUMN_LAST_LOCATION_ANAK, anak.getLokasi().getId());	
+		Lokasi lastLokasi = anak.getLastLokasi();
+		
+		if(lastLokasi!=null){
+			if(lastLokasi.getId()==null||lastLokasi.getId().equals("")){
+				IDGenerator idGenerator = new IDGenerator(context, this);
+				lastLokasi.setId(idGenerator.getIdLocation());				
+			}
+			cv.put(COLUMN_LAST_LOCATION_ANAK, lastLokasi.getId());	
 		}
 
 		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
-		
-		Log.d("database manager", "result : "+result);
-		
-		if(result>0 && anak.getLokasi()!=null){
-			updateLokasi(anak.getLokasi());
-		}
-		
-	}
 	
-	public void updateLokasiAnak(Anak anakParam){
-		
-		
-		Lokasi lokasiParam = anakParam.getLokasi();
-		if(lokasiParam==null){
-			return;
+		if(result>0 && anak.getLastLokasi()!=null){
+			Anak anakLokasi = new Anak();
+			anakLokasi.setIdAnak(anak.getIdAnak());
+			anak.getLastLokasi().setAnak(anakLokasi);
+			addLokasi(anak.getLastLokasi());
 		}
 		
-		Anak anak = getAnakById(anakParam.getIdAnak(), false, false);
-		Lokasi lokasi = anak.getLokasi();
-		if(lokasi!=null){
-			deleteLokasi(lokasi);
-		}
-		
-		if(lokasiParam.getId()==null || lokasiParam.getId().equals("")){
-			IDGenerator idGenerator = new IDGenerator(context, this);
-			anakParam.getLokasi().setId(idGenerator.getIdLocation());	
-		}
-		
-		addLokasiToAnak(anakParam);
 	}
 
 	//...................................................................
 	
 	// add...............................................................
 	
-	public void addLokasiToAnak(Anak anak){
-		updateAnak(anak);
+	public void addLastLokasiAnak(Anak anak){
+		updateLastLokasiAnak(anak);
 	}
 	
-	public void addLocationLog(LogMonak log){
-		addLokasi(log.getLokasi());
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_LOCATION_LOG, log.getLokasi().getId());
-		cv.put(COLUMN_ANAK_LOG, log.getAnak().getIdAnak());
-		long result = getDb().insert(LOG_TABLE_NAME, null, cv);	
-		if(result>0){
-		}
+	public void addLokasisAnak(Anak anak){
+		updateLokasisAnak(anak);
 	}
+	
+
 	
 	public void addDataMonitorings(List<DataMonitoring> dataMonitorings){
 		if(dataMonitorings!=null){
@@ -631,12 +641,14 @@ public class DatabaseManager {
 			addPelanggarans(anak.getPelanggarans());
 		}
 		
-		if(result <=0 || anak.getLokasi()==null){
+		if(result <=0 || anak.getLastLokasi()==null){
 			
 		}else{
-			Log.d("insert_anak", "lokasi dari anak adalah : "+anak.getLokasi().getlatitude()+","+anak.getLokasi().getLongitude());
-
-			addLokasi(anak.getLokasi());
+			Log.d("insert_anak", "lokasi dari anak adalah : "+anak.getLastLokasi().getlatitude()+","+anak.getLastLokasi().getLongitude());
+			Anak anakLokasi = new Anak();
+			anakLokasi.setIdAnak(anak.getIdAnak());
+			anak.getLastLokasi().setAnak(anakLokasi);
+			addLokasi(anak.getLastLokasi());
 		}
 		
 		if(result <=0 || anak.getDataMonitorings()==null){
@@ -676,10 +688,22 @@ public class DatabaseManager {
 		}
 	}
 	
+	public void addLokasis(List<Lokasi> lokasis){
+		if(lokasis!=null){
+			for(Lokasi lokasi:lokasis){
+				addLokasi(lokasi);
+			}
+		}
+	}
+	
 	public void addLokasi(Lokasi lokasi){
 		if(lokasi!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_ID_LOCATION, lokasi.getId());
+			Anak anak = lokasi.getAnak();
+			if(anak!=null){
+				cv.put(COLUMN_ANAK_LOCATION, anak.getIdAnak());	
+			}
 			cv.put(COLUMN_LATITUDE, lokasi.getlatitude());
 			cv.put(COLUMN_LONGITUDE, lokasi.getLongitude());
 			cv.put(COLUMN_TIME, lokasi.getTime());
@@ -743,17 +767,7 @@ public class DatabaseManager {
 		}
 		return "";
 	}
-	
-	private List<LogMonak> getAllLogMonakFromCursor(Cursor cursor){
-		List<LogMonak> logs = new ArrayList<LogMonak>();
-		if(cursor.moveToFirst()){
-			do{
-				logs.add(getLogMonakFromCursor(cursor));
-			}while(cursor.moveToNext());
-		}
-		return logs;
-	}
-	
+
 	private List<Lokasi> getAllLokasiFromCursor(Cursor cursor){
 		List<Lokasi> lokasis = new ArrayList<Lokasi>();
 		if(cursor.moveToFirst()){
@@ -773,21 +787,7 @@ public class DatabaseManager {
 		return anaks;
 	}
 	
-	private LogMonak getLogMonakFromCursor(Cursor cursor){
-		if(cursor!=null && cursor.getCount()>0){
-			LogMonak log = new LogMonak();
-			int indexIdLog = cursor.getColumnIndex("_id");
-			int indexIdAnak = cursor.getColumnIndex(COLUMN_ANAK_LOG);
-			int indexIdLokasi = cursor.getColumnIndex(COLUMN_LOCATION_LOG);
-			
-			log.setLokasi(getLokasiByIdLokasi(cursor.getString(indexIdLokasi)));
-			log.setAnak(getAnakById(cursor.getString(indexIdAnak),false, false));
-			log.setIdLog(""+cursor.getInt(indexIdLog));
-			
-			return log;
-		}
-		return null;
-	}
+	
 	
 	private Anak getAnakFromCursor(Cursor cursor, boolean withPelanggaran, boolean withMonitoring){
 		if(cursor!=null && cursor.getCount()>0){
@@ -803,7 +803,7 @@ public class DatabaseManager {
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
 			Log.d("database manager", "get lokasi dr anak dgn id lokasi : "+cursor.getString(indexLocationAnak));
-			anak.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
+			anak.setLastLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
 			if(withPelanggaran){
 				getDataPelanggaransByAnak(cursor.getString(indexIdAnak));
 			}
@@ -1161,6 +1161,7 @@ public class DatabaseManager {
     private static final String LOCATION_TABLE_NAME				=
     		"lokasi";
     private static final String COLUMN_ID_LOCATION	= "id";
+    private static final String COLUMN_ANAK_LOCATION= "anak";
     private static final String COLUMN_LONGITUDE 	= "longitude";
     private static final String COLUMN_LATITUDE		= "latitude";
     private static final String COLUMN_TIME			= "time";

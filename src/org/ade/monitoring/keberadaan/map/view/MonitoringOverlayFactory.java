@@ -58,7 +58,7 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayAnak(Anak anak){
 		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
-		Lokasi lokasi = anak.getLokasi();
+		Lokasi lokasi = anak.getLastLokasi();
 		if(lokasi!=null){
 			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
 			OverlayItem overlayItem = 

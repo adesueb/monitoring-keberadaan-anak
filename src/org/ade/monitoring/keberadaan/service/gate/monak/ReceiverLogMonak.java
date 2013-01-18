@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.LogMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.MonakService;
@@ -49,17 +48,14 @@ public class ReceiverLogMonak{
 		for(Lokasi lokasi:lokasis){
 			
 			lokasi.setId(idGenerator.getIdLocation());
+			lokasi.setAnak(anak);
 			
-			LogMonak log = new LogMonak();
-			log.setLokasi(lokasi);
-			log.setAnak(anak);
-			
-			databaseManager.addLocationLog(log);
+			databaseManager.addLokasi(lokasi);
 			
 		}
 		
-		anak.setLokasi(lokasis.get(lokasis.size()-1));
-		databaseManager.updateLokasiAnak(anak);
+		anak.setLastLokasi(lokasis.get(lokasis.size()-1));
+		databaseManager.updateLastLokasiAnak(anak);
 		
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
 		if(handler!=null){

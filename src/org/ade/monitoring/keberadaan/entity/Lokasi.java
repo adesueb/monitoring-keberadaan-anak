@@ -43,6 +43,14 @@ public class Lokasi {
 		this.time = time;
 	}
 	
+	public Anak getAnak() {
+		return anak;
+	}
+
+	public void setAnak(Anak anak) {
+		this.anak = anak;
+	}
+
 	public String toString(){
 		return time+","+mLatitude+","+mLongitude;
 	}
@@ -51,4 +59,6 @@ public class Lokasi {
 	private double mLatitude;
 	private double mLongitude;
 	private long   time;
+	
+	private Anak anak;
 }

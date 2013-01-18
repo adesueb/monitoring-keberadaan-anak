@@ -2,7 +2,6 @@ package org.ade.monitoring.keberadaan.service.gate.monak;
 
 import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.entity.Anak;
-import org.ade.monitoring.keberadaan.entity.LogMonak;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.MonakService;
@@ -38,15 +37,12 @@ public class ReceiverLokasi{
 		
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[4]);
-		anak.setLokasi(lokasi);
+		anak.setLastLokasi(lokasi);
 		
-		LogMonak log = new LogMonak();
-		log.setAnak(anak);
-		log.setLokasi(lokasi);
+		lokasi.setAnak(anak);
 		
 		DatabaseManager databaseManager = new DatabaseManager(context);
-		databaseManager.updateLokasiAnak(anak);
-		databaseManager.addLocationLog(log);
+		databaseManager.addLastLokasiAnak(anak);
 		
 		if(binderHandlerMonak==null)return;
     	

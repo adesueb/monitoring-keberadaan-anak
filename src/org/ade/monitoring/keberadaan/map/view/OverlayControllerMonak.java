@@ -25,11 +25,11 @@ import com.google.android.maps.Overlay;
 public class OverlayControllerMonak {
 	
 	public OverlayControllerMonak(Context context, MonitoringOverlayFactory overlayFactory, MapView mapView, GpsManager gpsManager){
-		this.context = context;
-		this.gpsManager = gpsManager;
-		databaseManager = new DatabaseManager(context);
+		this.context 		= context;
+		this.gpsManager 	= gpsManager;
+		databaseManager 	= new DatabaseManager(context);
 		this.overlayFactory = overlayFactory;
-		this.mapView	= mapView;
+		this.mapView		= mapView;
 	}
 	
 	public void refreshOverlay(List<Integer> pilihanOverlay){
@@ -75,13 +75,13 @@ public class OverlayControllerMonak {
   		overlayFactory.makeOverlayLogAnak(anak, lokasis);
   		int size = lokasis.size();
   		if(size>0){
-  			anak.setLokasi(lokasis.get(size-1));		
+  			anak.setLastLokasi(lokasis.get(size-1));		
   		}
   		setOverlayAnak(anak);
   	}
   	
   	public void setOverlayAnak(Anak anak){
-  		Lokasi lokasi = anak.getLokasi();
+  		Lokasi lokasi = anak.getLastLokasi();
   		if(lokasi!=null){
   	  		overlayFactory.makeOverlayAnak(anak);
   			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
@@ -94,8 +94,8 @@ public class OverlayControllerMonak {
   		List<Anak> anaks = databaseManager.getAllAnak(false, false);
   		List<Lokasi> lokasis = new ArrayList<Lokasi>();
   		for(Anak anak:anaks){
-  			lokasis.add(anak.getLokasi());
-  			Log.d("Peta", "lokasi dari anak adalah : "+anak.getLokasi().getlatitude()+","+anak.getLokasi().getLongitude());
+  			lokasis.add(anak.getLastLokasi());
+  			Log.d("Peta", "lokasi dari anak adalah : "+anak.getLastLokasi().getlatitude()+","+anak.getLastLokasi().getLongitude());
   		}
   		
   		overlayFactory.makeOverlayAnaks(anaks, lokasis);

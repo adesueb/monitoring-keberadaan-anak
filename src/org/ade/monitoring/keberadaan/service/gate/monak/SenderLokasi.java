@@ -8,7 +8,6 @@ import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
-import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 
 import android.content.Context;
@@ -37,7 +36,7 @@ public class SenderLokasi extends ASenderMonak{
 	public void sendLocationSingleRequest(Lokasi lokasi,  String idAnak){
 		Anak anak = new Anak();
 		anak.setIdAnak(idAnak);
-		anak.setLokasi(lokasi);
+		anak.setLastLokasi(lokasi);
 		sendLocationSingleRequest(anak);
 	}
 	
@@ -50,7 +49,7 @@ public class SenderLokasi extends ASenderMonak{
 	}
 	
 	private void send(Anak anak, int tipe){
-		Lokasi lokasi = anak.getLokasi();
+		Lokasi lokasi = anak.getLastLokasi();
 		String cvs = tipe+","+lokasi.getlatitude()+","+lokasi.getLongitude()+","+lokasi.getTime()+","+anak.getIdAnak();
 		SenderSMS senderSms = new SenderSMS(getContext(), null);
 		senderSms.sendSMS(pref.getNoHpOrtu(), cvs);
@@ -84,7 +83,7 @@ public class SenderLokasi extends ASenderMonak{
 						Lokasi lokasi = EntityBundleMaker.getLokasiFromBundle(bundle);
 						Anak anak = new Anak();
 						anak.setIdAnak("");
-						anak.setLokasi(lokasi);
+						anak.setLastLokasi(lokasi);
 						senderLokasi.sendLocationSingleRequest(anak);
 					}
 					break;

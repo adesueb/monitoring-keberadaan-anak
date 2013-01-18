@@ -45,13 +45,25 @@ public class Anak implements IEntity{
 	public void setDataMonitorings(List<DataMonitoring> dataMonitorings) {
 		this.dataMonitorings = dataMonitorings;
 	}
-	public Lokasi getLokasi() {
-		return lokasi;
+	public List<Lokasi> getLokasis() {
+		return lokasis;
 	}
-	public void setLokasi(Lokasi lokasi) {
-		this.lokasi = lokasi;
+	public void setLokasis(List<Lokasi> lokasis) {
+		this.lokasis = lokasis;
 	}
+
 	
+	public Lokasi getLastLokasi() {
+		return lastLokasi;
+	}
+
+	public void setLastLokasi(Lokasi lastLokasi) {
+		this.lastLokasi = lastLokasi;
+	}
+
+
+
+
 	public String getIdEntity() {
 		return idAnak;
 	}
@@ -62,9 +74,9 @@ public class Anak implements IEntity{
 	//..........................
     private String namaAnak;
     private String noHpAnak;
+    private Lokasi lastLokasi;
     
-    private Lokasi lokasi;
-    
+    private List<Lokasi>			lokasis;
     private List<Pelanggaran> 		pelanggarans;
     private List<DataMonitoring> 	dataMonitorings;
 
