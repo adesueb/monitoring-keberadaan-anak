@@ -28,7 +28,7 @@ public class PilihMingguan extends Dialog{
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.list_general);
 		
-		final ListView listView = (ListView) findViewById(R.id.listGeneral);
+		listView = (ListView) findViewById(R.id.listGeneral);
 		
 		String[] arrHari = new String[]{"Minggu","Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu"};
 		
@@ -52,12 +52,25 @@ public class PilihMingguan extends Dialog{
 				dismiss();
 			}
 		});
+		
+		
+		
 	}
 
+	public void setHaris(List<Integer> haris){
+		this.haris = haris;
+		if(haris!=null&&haris.size()>0){
+			for(int hari:haris){
+				listView.setItemChecked(hari, true);
+			}
+		}
+	}
+	
 	public List<Integer> getHaris(){
 		return haris;
 	}
 	
+	private ListView listView;
 	private List<Integer> haris = new ArrayList<Integer>();
 	private Handler mHandler;
 

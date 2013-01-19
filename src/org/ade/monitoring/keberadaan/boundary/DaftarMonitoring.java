@@ -70,6 +70,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 
 	public void onEdit(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
+		bundle.putBoolean(PendaftaranMonitoring.EXTRA_EDIT, true);
 		intent.putExtras(bundle);
 		startActivityForResult(intent, Operation.EDIT);
 	}

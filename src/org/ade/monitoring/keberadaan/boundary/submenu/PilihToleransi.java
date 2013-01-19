@@ -34,7 +34,14 @@ public class PilihToleransi extends Dialog{
 	}
 
 
-
+	public void setToleransi(int toleransi){
+		this.toleransi = toleransi;
+		if(toleransi!=0){
+			EditText textNumber = (EditText) findViewById(R.id.monitoringToleransiTextNumber);	
+			textNumber.setText(toleransi);
+		}
+	}
+	
 	public int getToleransi(){
 		return toleransi;
 	}

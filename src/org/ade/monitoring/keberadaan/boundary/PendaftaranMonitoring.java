@@ -48,8 +48,10 @@ public class PendaftaranMonitoring extends Activity{
 		
 		setContentView(R.layout.pendaftaran_monitoring);
 		
+		isEdit = getIntent().getBooleanExtra(EXTRA_EDIT, false);
+		
 		databaseManager = new DatabaseManager(this);
-		dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
+		dataMonitoring 	= EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
 		
 		String idMonitoring = "";
 		if(dataMonitoring==null){
@@ -68,6 +70,9 @@ public class PendaftaranMonitoring extends Activity{
 		initAllButton();
 		initSubMenu();
 		
+		if(isEdit){
+			initEditMode();
+		}
 		
 
 	}
@@ -82,6 +87,7 @@ public class PendaftaranMonitoring extends Activity{
 		pilihMingguan 	= new PilihMingguan(this, new HandlerMonitoring(this));
 		pilihToleransi 	= new PilihToleransi(this, new HandlerMonitoring(this));
 		//................................................................
+		
 	}
 
 	private void initAllButton(){
@@ -146,6 +152,90 @@ public class PendaftaranMonitoring extends Activity{
 				actionClear();
 			}
 		});
+	}
+	
+	private void initEditMode(){
+		if(dataMonitoring!=null){
+			Anak anak = dataMonitoring.getAnak();
+			if(anak!=null){
+				pilihAnak.setAnak(anak);
+				TextView txt = (TextView) findViewById(R.id.monitoringTextAnak);
+				txt.setText(anak.getNamaAnak());
+			}
+			
+			if(dataMonitoring.getWaktuMulai()!=0){
+				List<Long> waktus = new ArrayList<Long>();
+				long waktu1 = dataMonitoring.getWaktuMulai();
+				long waktu2 = dataMonitoring.getWaktuSelesai();
+				waktus.add(waktu1);
+				waktus.add(waktu2);
+				
+				pilihWaktu.setWaktus(waktus);
+				
+				TextView textWaktu = (TextView) findViewById(R.id.monitoringTextWaktu);
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(waktus.get(0));
+				String stringWaktu = cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+" s/d ";
+				cal.setTimeInMillis(waktus.get(1));
+				stringWaktu += cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE);
+				textWaktu.setText(stringWaktu);
+				
+			}
+			
+			List<DayMonitoring> haris = dataMonitoring.getHaris();
+			if(haris!=null && haris.size()>0){
+				List<Integer> angkas = new ArrayList<Integer>();
+				for(DayMonitoring day:haris){
+					angkas.add(day.getHari());
+				}
+				pilihMingguan.setHaris(angkas);
+				
+				TextView textHaris = (TextView) findViewById(R.id.monitoringTextMingguan);
+				String stringHari = "";
+				for(int hari:angkas){
+					stringHari += hari+",";
+				}
+				if(!stringHari.equals("")){
+					stringHari = stringHari.substring(0, stringHari.length()-1);	
+				}
+				textHaris.setText(stringHari);
+			}
+			
+			int toleransi = dataMonitoring.getTolerancy();
+			if(toleransi>0){
+				pilihToleransi.setToleransi(toleransi);
+				TextView textToleransi = (TextView) findViewById(R.id.monitoringTextToleransi);
+				textToleransi.setText(pilihToleransi.getToleransi()+"m");
+			}
+			
+			TextView textKeterangan = 
+					(TextView) findViewById(R.id.monitoringTextKeterangan);
+	    	textKeterangan.setText(dataMonitoring.getKeterangan());
+	    	
+	    	
+	    	List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
+	    	if(tanggals!=null && tanggals.size()>0){
+	    		
+	    		Calendar cal = Calendar.getInstance();
+	    		
+	    		DateMonitoring tanggal = tanggals.get(tanggals.size()-1);
+				long timeMillis = tanggal.getDate();
+				cal.setTimeInMillis(timeMillis);
+				
+	    		TextView tv = (TextView) findViewById(R.id.monitoringTextTanggal);
+	    		tv.setText(cal.get(Calendar.DATE)+"-"+
+						(cal.get(Calendar.MONTH)+1)+"-"+
+							cal.get(Calendar.YEAR));
+	    		
+	    	}
+	    	
+			Lokasi lokasi = dataMonitoring.getLokasi();
+			if(lokasi!=null){
+				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
+				textLokasi.setText(lokasi.getlatitude()+", "+lokasi.getLongitude());
+			}
+	    	
+		}
 	}
 	
 	private void actionPilihAnak(){
@@ -293,6 +383,10 @@ public class PendaftaranMonitoring extends Activity{
 				input.setSingleLine(false);
 			    input.setLines(3);
 				alert.setView(input);
+				
+				if(dataMonitoring!=null){
+					input.setText(dataMonitoring.getKeterangan());
+				}
 
 				alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
 			      
@@ -321,6 +415,14 @@ public class PendaftaranMonitoring extends Activity{
 				return pilihWaktu;
 			}case TANGGAL:{
 				Calendar cal = Calendar.getInstance();
+				if(dataMonitoring!=null){
+					List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
+					if(tanggals!=null && tanggals.size()>0){
+						DateMonitoring tanggal = tanggals.get(tanggals.size()-1);
+						long timeMillis = tanggal.getDate();
+						cal.setTimeInMillis(timeMillis);
+					}
+				}
 				return new DatePickerDialog
 						(this,new PendaftaranMonitoringDateListener(this),
 								cal.get(Calendar.YEAR),
@@ -468,6 +570,10 @@ public class PendaftaranMonitoring extends Activity{
 	private IDGenerator		mIDGenerator;
 	
 	private DataMonitoring dataMonitoring;
+	
+	private boolean isEdit;
+	
+	public final static String EXTRA_EDIT		= "isEdit";
 	
 	public final static int ANAK			= 0;
 	public final static int KETERANGAN		= 1;

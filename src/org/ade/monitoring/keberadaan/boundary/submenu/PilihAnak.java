@@ -44,7 +44,7 @@ public class PilihAnak{
 		if(anaks==null){
 			return getDirectionAnakDialog();
 		}else{
-			return new PilihAnakDialog(this, anaks);
+			return new PilihAnakDialog(this, anaks, anak);
 		}
 	}
 	
@@ -88,10 +88,11 @@ public class PilihAnak{
 	
 	private final static class PilihAnakDialog extends Dialog{
 
-		public PilihAnakDialog(PilihAnak pilihAnak, List<Anak> anaks) {
+		public PilihAnakDialog(PilihAnak pilihAnak, List<Anak> anaks, Anak anak) {
 			super(pilihAnak.getContext());
 			mPilihAnak = pilihAnak;
 			mAnaks = anaks;
+			this.anak = anak;
 		}
 		
 		@Override
@@ -130,8 +131,14 @@ public class PilihAnak{
 			
 			if(mAnaks!=null){
 				String[] arrAnak = new String[mAnaks.size()];
+				int positionAnak = 0;
 				for(int i=0;i<mAnaks.size();i++){
 					arrAnak[i] = mAnaks.get(i).getNamaAnak();
+					if(anak!=null){
+						if(mAnaks.get(i).getIdAnak().equals(anak.getIdAnak())){
+							positionAnak = i+1;
+						}
+					}
 				}
 				ArrayAdapter<String>listAdapter = 
 						new ArrayAdapter<String>
@@ -139,6 +146,9 @@ public class PilihAnak{
 				
 				listView = (ListView) findViewById(org.ade.monitoring.keberadaan.R.id.listGeneral);
 				listView.setAdapter(listAdapter);
+				if(positionAnak!=0){
+					listView.setSelection(positionAnak-1);	
+				}
 				listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			}
 		}
@@ -147,6 +157,8 @@ public class PilihAnak{
 		
 		private final PilihAnak mPilihAnak;
 		private ListView listView;
+		
+		private final Anak anak;
 		
 		
 	}

@@ -1,6 +1,7 @@
 package org.ade.monitoring.keberadaan;
 
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
+import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
 
 import android.app.Activity;
@@ -21,8 +22,8 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
         ImageView menuDaftarAnak 		= (ImageView) findViewById(R.id.menuDaftarAnak);
         menuDaftarAnak.setOnClickListener(this);
         
-        ImageView menuReport 			= (ImageView) findViewById(R.id.menuReport);
-        menuReport.setOnClickListener(this);
+        ImageView menuMap 			= (ImageView) findViewById(R.id.menuMap);
+        menuMap.setOnClickListener(this);
         
         ImageView menuHelp 				= (ImageView) findViewById(R.id.menuHelp);
         menuHelp.setOnClickListener(this);
@@ -36,8 +37,9 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
         context.startActivity(intent);
     }
     
-    private static void goToReport(Context context){
-        // TODO : to report activity....
+    private static void goToMap(Context context){
+    	Intent intent = new Intent(context, Peta.class);
+    	context.startActivity(intent);
     }
     
     private static void goToHelp(Context context){
@@ -50,8 +52,8 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
 				goToDaftarAnak(this);
 				break;
 			
-			}case R.id.menuReport:{
-				goToReport(this);
+			}case R.id.menuMap:{
+				goToMap(this);
 				break;
 			}case R.id.menuHelp:{
 				goToHelp(this);

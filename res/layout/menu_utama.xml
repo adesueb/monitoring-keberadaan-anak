@@ -29,13 +29,13 @@
         android:layout_height="wrap_content">
         
         <ImageView
-            android:id="@+id/menuReport"
+            android:id="@+id/menuMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top"
             android:layout_margin="20dip"
             android:layout_weight="1"
-            android:src="@drawable/laporan" >
+            android:src="@drawable/map" >
 
         	</ImageView>
        

@@ -24,12 +24,30 @@ public class PilihWaktu extends Dialog{
 		
 	}
 	
-	
+	public void setWaktus(List<Long> waktus){
+		this.waktus = waktus;
+		if(waktus!=null && waktus.size()>0){
+			
+			Calendar cal = Calendar.getInstance();
+			
+			TimePicker time1 = (TimePicker) findViewById(R.id.monitoringTime1);
+			long waktu1 = waktus.get(0);
+			cal.setTimeInMillis(waktu1);
+			time1.setCurrentHour(cal.get(Calendar.HOUR));
+			
+			TimePicker time2 = (TimePicker) findViewById(R.id.monitoringTime2);
+			long waktu2 = waktus.get(1);
+			cal.setTimeInMillis(waktu2);
+			time2.setCurrentHour(cal.get(Calendar.HOUR));
+			
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.monitoring_waktu);
 		Button buttonOk = (Button) findViewById(R.id.monitoringWaktuBtnOk);
+		
 		buttonOk.setOnClickListener( new View.OnClickListener() {
 			
 			public void onClick(View v) {
