@@ -355,26 +355,18 @@ public class DatabaseManager {
 			(LOCATION_TABLE_NAME, COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'", null);
 	}
 	
-	public void deleteLogByLokasi(Lokasi lokasi){
-		getDb().delete
-			(LOG_TABLE_NAME, COLUMN_LOCATION_LOG+"='"+lokasi.getId()+"'", null);
-	}
-	
+
 
 	
 	public void deleteLokasi(Lokasi lokasi){
 		long result = getDb().delete
 			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
 		if(result>0){
-			deleteLogByLokasi(lokasi);	
+			
 		}
 		
 	}
-	
-	public void deleteAllLog(){
-		getDb().delete
-			(LOG_TABLE_NAME, null, null);
-	}
+
 	
 	public void deleteAllLokasi(){
 		getDb().delete
@@ -1029,7 +1021,6 @@ public class DatabaseManager {
 	    	db.execSQL(CREATE_LOCATION);
 			db.execSQL(CREATE_PELANGGARAN);
 			db.execSQL(CREATE_MONITORING);
-			db.execSQL(CREATE_LOG);
 			db.execSQL(CREATE_DATE_MONITORING);
 			db.execSQL(CREATE_DAY_MONITORING);
 	    }
@@ -1039,7 +1030,6 @@ public class DatabaseManager {
 	    	db.execSQL("DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + PELANGGARAN_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + MONITORING_TABLE_NAME);
-			db.execSQL("DROP TABLE IF EXISTS " + LOG_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + DATE_MONITORING_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + DAY_MONITORING_TABLE_NAME);
 			
@@ -1057,7 +1047,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 4;
+	    private static final int DATABASE_VERSION = 5;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1098,7 +1088,8 @@ public class DatabaseManager {
 	    private static final String CREATE_LOCATION = 
 	    		"CREATE TABLE IF NOT EXISTS "+
 	    		LOCATION_TABLE_NAME+" ("+
-	    		COLUMN_ID_LOCATION+" VARCHAR(10) PRIMARY KEY,"+	    	
+	    		COLUMN_ID_LOCATION+" VARCHAR(10) PRIMARY KEY,"+	   
+	    		COLUMN_ANAK_LOCATION+" VARCHAR(10),"+
 	    		COLUMN_LONGITUDE+" REAL,"+
 	    		COLUMN_LATITUDE+" REAL,"+
 	    		COLUMN_TIME+" INTEGER,"+
@@ -1106,12 +1097,6 @@ public class DatabaseManager {
 	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
 	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
 	    
-	    private static final String CREATE_LOG =
-	    		"CREATE TABLE IF NOT EXISTS "+
-	    		LOG_TABLE_NAME+" ("+
-	    		"_id INTEGER PRIMARY KEY,"+
-	    		COLUMN_LOCATION_LOG+" VARCHAR(10),"+
-	    		COLUMN_ANAK_LOG+" VARCHAR(10))";
 	    
 	    private static final String CREATE_DATE_MONITORING = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1181,10 +1166,6 @@ public class DatabaseManager {
     private static final String COLUMN_LATITUDE		= "latitude";
     private static final String COLUMN_TIME			= "time";
     
-    private static final String LOG_TABLE_NAME		=
-    		"log";
-    private static final String COLUMN_LOCATION_LOG	= "location";
-    private static final String COLUMN_ANAK_LOG		= "anak";
     
     private static final String DATE_MONITORING_TABLE_NAME			=
     		"date";

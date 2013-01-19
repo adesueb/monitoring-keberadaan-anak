@@ -28,14 +28,14 @@ public class SenderLogMonak extends ASenderMonak{
 		return lokasis;
 	}
 	
-	private void deleteAllLog(){
+	private void deleteAllLocation(){
 		DatabaseManager db = new DatabaseManager(getContext());
-		db.deleteAllLog();
+		db.deleteAllLokasi();
 	}
 	
 	@Override
 	public void success(int tipeKoneksi) {
-		deleteAllLog();
+		deleteAllLocation();
 	}
 
 	@Override
