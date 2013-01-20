@@ -254,6 +254,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
   	
   	private void findLokasiOrangTua(){
+		overlayControllerMonak.setFirstOverlayOrangTua();
   		gpsManager.searchLokasi();
   	}
   	

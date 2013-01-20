@@ -25,7 +25,7 @@ public class EntityBundleMaker {
 	public static DataMonitoring getDataMonitoringFromBundle(Bundle bundle){
 		
 		
-		if(bundle.getString("id")==null||bundle.getString("id").equals("")){
+		if(bundle==null||bundle.getString("id")==null||bundle.getString("id").equals("")){
 			return null;
 		}
 		

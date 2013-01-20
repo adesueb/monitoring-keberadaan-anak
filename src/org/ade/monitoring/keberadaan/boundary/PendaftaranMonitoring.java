@@ -50,12 +50,15 @@ public class PendaftaranMonitoring extends Activity{
 		
 		isEdit = getIntent().getBooleanExtra(EXTRA_EDIT, false);
 		
+
+	
+		
 		databaseManager = new DatabaseManager(this);
 		dataMonitoring 	= EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
+		mIDGenerator	= new IDGenerator(this,databaseManager);
 		
 		String idMonitoring = "";
 		if(dataMonitoring==null){
-			mIDGenerator	= new IDGenerator(this,databaseManager);
 			dataMonitoring = new DataMonitoring();
 			
 			idMonitoring = mIDGenerator.getIdMonitoring();	
@@ -66,6 +69,14 @@ public class PendaftaranMonitoring extends Activity{
 		TextView textId= (TextView) findViewById(R.id.monitoringTextId);
 		textId.setText(idMonitoring);
 		dataMonitoring.setIdMonitoring(idMonitoring);
+		
+		Bundle bundle = getIntent().getExtras();
+		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
+		if(anak!=null){
+			dataMonitoring.setAnak(anak);
+			TextView txt = (TextView) findViewById(R.id.monitoringTextAnak);
+			txt.setText(anak.getNamaAnak());
+		}
 
 		initAllButton();
 		initSubMenu();
@@ -91,11 +102,11 @@ public class PendaftaranMonitoring extends Activity{
 	}
 
 	private void initAllButton(){
-		LinearLayout buttonAnak 		= (LinearLayout) findViewById(R.id.monitoringButtonAnak);
-		buttonAnak.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {actionPilihAnak();}
-		});
+//		LinearLayout buttonAnak 		= (LinearLayout) findViewById(R.id.monitoringButtonAnak);
+//		buttonAnak.setOnClickListener(new OnClickListener() {
+//			
+//			public void onClick(View v) {actionPilihAnak();}
+//		}); ditutup karena sudah ada anak otomatis...
 		
 		LinearLayout buttonStatus		= (LinearLayout) findViewById(R.id.monitoringButtonStatus);
 		buttonStatus.setOnClickListener(new OnClickListener() {

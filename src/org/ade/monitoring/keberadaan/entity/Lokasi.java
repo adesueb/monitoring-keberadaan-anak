@@ -44,13 +44,18 @@ public class Lokasi {
 	}
 	
 	public Anak getAnak() {
-		anak.setLastLokasi(this);
+		if(anak!=null){
+			anak.setLastLokasi(this);	
+		}
 		return anak;
 	}
 
 	public void setAnak(Anak anak) {
-		anak.setLastLokasi(null);
-		this.anak = anak;
+		if(anak!=null){
+			anak.setLastLokasi(null);
+			this.anak = anak;	
+		}
+		
 	}
 
 	public String toString(){

@@ -52,20 +52,25 @@ public class MonakService extends Service{
         Log.d("background service", "service started");
         
         if(!pref.isAktifTracker()){
+        	Log.d("background service", "track started");
+            	
     		Tracker tracker = new Tracker(this, new HandlerMainReceiveMonitoringLocation(this));
         	tracker.startTracking();
         }
-        
-        Bundle bundle = intent.getExtras();
-        if(bundle!=null){
-        	switch(bundle.getInt(START_CALL)){
-	        case RECEIVER_SMS:{
-	        	receiveSMS(bundle);
-	        	break;
-	        }case RECEIVER_INTERNET:{
-	        	break;
-	        }
-        }	
+        if(intent!=null){
+        	Bundle bundle = intent.getExtras();
+            if(bundle!=null){
+            	switch(bundle.getInt(START_CALL)){
+	    	        case RECEIVER_SMS:{
+	    	        	Log.d("background service", "masuk receiver SMS");
+	    	        	receiveSMS(bundle);
+	    	        	break;
+	    	        }case RECEIVER_INTERNET:{
+	    	        	break;
+	    	        }
+            	}	
+            }
+        	
         }
         
         
@@ -107,9 +112,14 @@ public class MonakService extends Service{
 	private void routeToGateMonak(String str){
 		String[] cvs = str.split(",");
 		int status = 0;
+		Log.d("MonakService", str);
+		
         try{
         	status = Integer.parseInt(cvs[0]);
         }catch(NumberFormatException ex){
+
+			Log.d("MonakService", str);
+			
         	IPesanData pesanData = MonakJsonConverter.convertJsonToPesanData(str);
         	if(pesanData!=null){
 
@@ -151,6 +161,7 @@ public class MonakService extends Service{
 	    		onMonitoring.startService();
 	    		break;
 	    	}case TipePesanMonak.PENDAFTARAN_ANAK:{
+	    		Log.d("backgroundService", "mendapatkan pendaftaran ANaj");
 	    		ReceiverPendaftaranAnak receiver = new ReceiverPendaftaranAnak(this);
 	    		receiver.receivePendaftaranAnak(cvs[2], cvs[1]);
 	    		break;

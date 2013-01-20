@@ -8,6 +8,7 @@ import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.content.Context;
+import android.util.Log;
 
 public class ReceiverPesanData {
 	

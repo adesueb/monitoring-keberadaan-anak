@@ -35,7 +35,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_monak);
 		Intent intent = getIntent();
-		Bundle bundle = intent.getExtras();
+		final Bundle bundle = intent.getExtras();
 		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
 		databaseManager = new DatabaseManager(this);
 		dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
@@ -46,7 +46,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		ivAdd.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				onAdd(null);
+				onAdd(bundle);
 			}
 		});
 		
@@ -65,6 +65,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 
 	public void onAdd(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
+		intent.putExtras(bundle);
 		startActivityForResult(intent, Operation.ADD);
 	}
 

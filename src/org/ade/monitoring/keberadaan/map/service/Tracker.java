@@ -57,7 +57,7 @@ public class Tracker implements LocationListener{
 		LocationProvider high =
 			    mlocManager.getProvider(mlocManager.getBestProvider(createFineCriteria(), true));
 		
-		mlocManager.requestLocationUpdates(high.getName(), 0, 0,
+		mlocManager.requestLocationUpdates(high.getName(), TIME_MIN_UPDATE_LOCATION, DISTANCE_MIN_UPDATE_LOCATION,
 				this);
 		pref.setActiveTracker();
 		
@@ -114,5 +114,9 @@ public class Tracker implements LocationListener{
 	private final Handler 						mHandler;
 	private LocationManager 					mlocManager;
 	private final PreferenceMonitoringManager 	pref;
+	
+	private static final long TIME_MIN_UPDATE_LOCATION = 10000; //in milisecond
+	
+	private static final float DISTANCE_MIN_UPDATE_LOCATION = 40;//in meters;
 
 }

@@ -14,6 +14,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class SenderLokasi extends ASenderMonak{
 	
@@ -52,6 +53,7 @@ public class SenderLokasi extends ASenderMonak{
 		Lokasi lokasi = anak.getLastLokasi();
 		String cvs = tipe+","+lokasi.getlatitude()+","+lokasi.getLongitude()+","+lokasi.getTime()+","+anak.getIdAnak();
 		SenderSMS senderSms = new SenderSMS(getContext(), null);
+		Log.d("senderlokasi", pref.getNoHpOrtu());
 		senderSms.sendSMS(pref.getNoHpOrtu(), cvs);
 	}
 	

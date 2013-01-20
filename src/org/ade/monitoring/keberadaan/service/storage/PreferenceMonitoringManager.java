@@ -108,7 +108,7 @@ public class PreferenceMonitoringManager {
 	}
 	
 	public String getPrefString(String id, String valueDefault){
-		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
+		SharedPreferences pref = mContext.getSharedPreferences(id, Activity.MODE_PRIVATE);
 		return pref.getString(id, valueDefault);
 	}
 	

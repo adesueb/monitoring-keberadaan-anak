@@ -13,6 +13,7 @@ import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class SenderPesanData extends ASenderMonak{
 	
@@ -50,6 +51,7 @@ public class SenderPesanData extends ASenderMonak{
 			Peringatan peringatan = (Peringatan) pesanData;
 			phoneNumber = peringatan.getIdOrtu();
 		}
+		Log.d("Sender Pesan Data", pesanData.getJsonPesanData());
 		senderSMS.sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 	

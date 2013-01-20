@@ -36,10 +36,7 @@ public class OverlayControllerMonak {
   		// TODO : remove all overlays.......
   		for(int i:pilihanOverlay){
   			switch(i){
-  				case VariableEntity.ORANG_TUA:{
-  					setFirstOverlayOrangTua();
-  					break;
-  				}case VariableEntity.DATA_MONITORING:{
+  				case VariableEntity.DATA_MONITORING:{
   					setOverlayDataMonitoring();
   					break;
   				}case VariableEntity.ANAK:{
@@ -56,6 +53,15 @@ public class OverlayControllerMonak {
   	private void setOverlayDataMonitoring(){
   		List<DataMonitoring> dataMonitorings = databaseManager.getAllDataMonitorings(false, true);
   		overlayFactory.makeOverlayDataMonitoring(dataMonitorings);
+  		
+  		if(overlayFactory.anySeharusnya()){
+  			mapView.getOverlays().add(overlayFactory.getSeharusnya());
+  		}
+  		
+  		if(overlayFactory.anyTerlarang()){
+  			mapView.getOverlays().add(overlayFactory.getTerlarang());
+  		}
+  		
   		for(DataMonitoring dataMonitoring:dataMonitorings){
   			
   			if(dataMonitoring.getStatus()==DataMonitoring.SEHARUSNYA){
@@ -71,19 +77,29 @@ public class OverlayControllerMonak {
   	}
   	
   	public void setOverlayLogLocationAnak(String idAnak, List<Lokasi> lokasis){
+  		
   		Anak anak = databaseManager.getAnakById(idAnak, false, false);
   		overlayFactory.makeOverlayLogAnak(anak, lokasis);
+  		
+  		if(overlayFactory.anyLog()){
+  			mapView.getOverlays().add(overlayFactory.getLog());
+  		}
+  		
   		int size = lokasis.size();
   		if(size>0){
   			anak.setLastLokasi(lokasis.get(size-1));		
   		}
   		setOverlayAnak(anak);
+  		
   	}
   	
   	public void setOverlayAnak(Anak anak){
   		Lokasi lokasi = anak.getLastLokasi();
   		if(lokasi!=null){
   	  		overlayFactory.makeOverlayAnak(anak);
+	  	  	if(overlayFactory.anyAnak()){
+	  			mapView.getOverlays().add(overlayFactory.getAnak());	
+	  		}
   			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
   			mapView.getOverlays().add(anakOverlay);  			
   		}
@@ -98,7 +114,12 @@ public class OverlayControllerMonak {
   			Log.d("Peta", "lokasi dari anak adalah : "+anak.getLastLokasi().getlatitude()+","+anak.getLastLokasi().getLongitude());
   		}
   		
+  		
   		overlayFactory.makeOverlayAnaks(anaks, lokasis);
+  		if(overlayFactory.anyAnak()){
+  			mapView.getOverlays().add(overlayFactory.getAnak());	
+  		}
+  		
   		for(Lokasi lokasi:lokasis){
   			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
   			mapView.getOverlays().add(anakOverlay);
@@ -109,8 +130,13 @@ public class OverlayControllerMonak {
 		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
   		int size = pelanggarans.size();
 		if(size>0){
+			
 			Pelanggaran pelanggaran = pelanggarans.get(size-1);
 			overlayFactory.makeOverlayNewPelanggaran(pelanggaran);
+			if(overlayFactory.anyPelanggaran()){
+	  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
+	  		}
+			
   			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
   	  		mapView.getOverlays().add(pelanggaranOverlay);
   	  		Message message = new Message();
@@ -124,13 +150,18 @@ public class OverlayControllerMonak {
   	public void setOverlayPelanggarans(){
   		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
   		overlayFactory.makeOverlayPelanggarans(pelanggarans);
+  		
+  		if(overlayFactory.anyPelanggaran()){
+  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
+  		}
+  		
   		for(Pelanggaran pelanggaran : pelanggarans){
   			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
   			mapView.getOverlays().add(pelanggaranOverlay);
   		}
   	}
   	
-  	private void setFirstOverlayOrangTua(){
+  	public void setFirstOverlayOrangTua(){
   		if(gpsManager!=null){
   			Lokasi lokasi 	= gpsManager.getLastLokasi();
   			

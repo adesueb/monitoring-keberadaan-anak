@@ -56,6 +56,10 @@ public class MonitoringOverlayFactory {
 		return monitoringOverlays.get(ORANG_TUA)!=null;
 	}
 	
+	public boolean anyLog(){
+		return monitoringOverlays.get(LOG)!=null;
+	}
+	
 	public void makeOverlayAnak(Anak anak){
 		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
 		Lokasi lokasi = anak.getLastLokasi();
@@ -198,6 +202,10 @@ public class MonitoringOverlayFactory {
 		return monitoringOverlays.get(ORANG_TUA);
 	}
 	
+	public MonitoringOverlay getLog(){
+		return monitoringOverlays.get(LOG);
+	}
+	
 	
 	private Map<Integer,MonitoringOverlay> monitoringOverlays = 
 			new HashMap<Integer, MonitoringOverlay>();
@@ -205,7 +213,7 @@ public class MonitoringOverlayFactory {
 	private final Context mContext;
 	private final Handler mHandler;
 	
-	public final static int ANAK		= R.drawable.anak;
+	public final static int ANAK		= R.drawable.anakkecil;
 	public final static int SEHARUSNYA 	= R.drawable.seharusnya;
 	public final static int TERLARANG	= R.drawable.terlarang;
 	public final static int PELANGGARAN	= R.drawable.pelanggaran;

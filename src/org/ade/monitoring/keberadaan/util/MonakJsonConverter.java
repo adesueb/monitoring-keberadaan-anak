@@ -53,23 +53,30 @@ public class MonakJsonConverter {
 			dataMonitoring.setWaktuSelesai(object.getLong(SELESAI));
 			
 			List<DayMonitoring> haris = new ArrayList<DayMonitoring>();
-			JSONArray arrHaris = object.getJSONArray(HARIS);
-			for(int i=0;i<arrHaris.length();i++){
-				DayMonitoring hari = new DayMonitoring();
-				hari.setHari(arrHaris.getInt(i));
-				hari.setDataMonitoring(dataMonitoring);
-				haris.add(hari);
+			if(!object.isNull(HARIS)){
+				JSONArray arrHaris = object.getJSONArray(HARIS);
+				if(arrHaris!=null){
+					for(int i=0;i<arrHaris.length();i++){
+						DayMonitoring hari = new DayMonitoring();
+						hari.setHari(arrHaris.getInt(i));
+						hari.setDataMonitoring(dataMonitoring);
+						haris.add(hari);
+					}
+					dataMonitoring.setHaris(haris);	
+				}	
 			}
-			dataMonitoring.setHaris(haris);
 			
-			List<DateMonitoring> tanggals = new ArrayList<DateMonitoring>();
-			JSONArray arrTanggals = object.getJSONArray(TANGGALS);
-			for(int i=0;i<arrTanggals.length();i++){
-				DateMonitoring tanggal = new DateMonitoring();
-				tanggal.setDataMonitoring(dataMonitoring);
-				tanggals.add(tanggal);
+			else if(!object.isNull(TANGGALS)){
+				List<DateMonitoring> tanggals = new ArrayList<DateMonitoring>();
+				JSONArray arrTanggals = object.getJSONArray(TANGGALS);
+				for(int i=0;i<arrTanggals.length();i++){
+					DateMonitoring tanggal = new DateMonitoring();
+					tanggal.setDataMonitoring(dataMonitoring);
+					tanggals.add(tanggal);
+				}
+				dataMonitoring.setTanggals(tanggals);	
 			}
-			dataMonitoring.setTanggals(tanggals);
+			
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -84,9 +91,10 @@ public class MonakJsonConverter {
 			JSONObject object = new JSONObject(json);
 			int tipe = object.getInt(TIPE);
 			if(tipe==TipePesanMonak.DATAMONITORING_BARU){
-				pesanData=convertJsonToDataMonitoring(object.getJSONObject(DATAMONITORING).toString());
+				pesanData=convertJsonToDataMonitoring(
+						object.getString(DATAMONITORING));
 			}else{
-				pesanData=convertJsonToPeringatan(object.getJSONObject(PERINGATAN).toString());
+				pesanData=convertJsonToPeringatan(object.getString(PERINGATAN));
 			}
 
 			pesanData.setTipe(object.getInt(TIPE));
@@ -162,17 +170,23 @@ public class MonakJsonConverter {
 				object.put(NO_HP_ANAK, phoneNumber);
 				object.put(KETERANGAN, keterangan);
 				
-				JSONArray arrayHaris = new JSONArray();
-				for(DayMonitoring hari : haris){
-					arrayHaris.put(hari.getHari());
+				if(haris!=null){
+					JSONArray arrayHaris = new JSONArray();
+					for(DayMonitoring hari : haris){
+						arrayHaris.put(hari.getHari());
+					}
+					object.put(HARIS, arrayHaris);	
 				}
-				object.put(HARIS, arrayHaris);
 				
-				JSONArray arrayTanggals = new JSONArray();
-				for(DateMonitoring tanggal : tanggals){
-					arrayTanggals.put(tanggal.getDate());
+				
+				if(tanggals!=null){
+					JSONArray arrayTanggals = new JSONArray();
+					for(DateMonitoring tanggal : tanggals){
+						arrayTanggals.put(tanggal.getDate());
+					}
+					object.put(TANGGALS, arrayTanggals);	
 				}
-				object.put(TANGGALS, arrayTanggals);
+				
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
