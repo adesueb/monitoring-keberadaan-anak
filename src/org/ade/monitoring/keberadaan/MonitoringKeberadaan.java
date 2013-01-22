@@ -3,6 +3,7 @@ package org.ade.monitoring.keberadaan;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
+import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +19,7 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_utama);
-        
+                
         ImageView menuDaftarAnak 		= (ImageView) findViewById(R.id.menuDaftarAnak);
         menuDaftarAnak.setOnClickListener(this);
         
@@ -43,6 +44,9 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
     }
     
     private static void goToHelp(Context context){
+    	 DatabaseManager databaseManager = new DatabaseManager(context);
+         databaseManager.deleteAllLokasi();
+         databaseManager.deleteAllDataMonitoring();
     	// TODO : to help activity......
     }
 

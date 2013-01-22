@@ -11,7 +11,7 @@ public class BundleEntityMaker {
 
 	public static Bundle makeBundleFromAnak(Anak anak){
 		Bundle bundle = new Bundle();
-		bundle.putString("id", anak.getIdAnak());
+		bundle.putString("idAnak", anak.getIdAnak());
 		bundle.putString("nama", anak.getNamaAnak());
 		bundle.putString("orangTua", anak.getIdOrtu());
 		bundle.putString("noHp", anak.getNoHpAnak());
@@ -23,7 +23,7 @@ public class BundleEntityMaker {
 	
 	public static Bundle makeBundleFromDataMonitoring(DataMonitoring dataMonitoring){
 		Bundle bundle = new Bundle();
-		bundle.putString("id", dataMonitoring.getIdMonitoring());
+		bundle.putString("idMonitoring", dataMonitoring.getIdMonitoring());
 		
 		return bundle;
 	}

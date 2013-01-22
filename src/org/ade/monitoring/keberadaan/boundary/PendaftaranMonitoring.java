@@ -19,6 +19,7 @@ import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
@@ -544,6 +545,7 @@ public class PendaftaranMonitoring extends Activity{
 			}case LOKASI:{
 				Lokasi lokasi = tandaLokasi.getLokasi();
 				lokasi.setId(mIDGenerator.getIdLocation());
+				LogMonakFileManager.debug("pendaftaranMonitoring dengan lokasi id : "+lokasi.getId());
 				dataMonitoring.setLokasi(lokasi);
 
 				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);

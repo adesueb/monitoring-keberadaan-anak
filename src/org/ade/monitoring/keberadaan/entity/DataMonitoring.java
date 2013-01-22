@@ -12,7 +12,7 @@ public class DataMonitoring implements IPesanData, IEntity{
 	public DataMonitoring () { };
       
     public Lokasi getLokasi() {
-		return lokasi;
+    	return lokasi;
 	}
 
 	public void setLokasi(Lokasi lokasi) {
@@ -88,18 +88,38 @@ public class DataMonitoring implements IPesanData, IEntity{
 	}
 	
 	public List<DayMonitoring> getHaris() {
+		if(haris!=null){
+			for(DayMonitoring hari:haris){
+				hari.setDataMonitoring(this);
+			}
+		}
 		return haris;
 	}
 
 	public void setHaris(List<DayMonitoring> haris) {
+		if(haris!=null){
+			for(DayMonitoring hari:haris){
+				hari.setDataMonitoring(null);
+			}
+		}
 		this.haris = haris;
 	}
 
 	public List<DateMonitoring> getTanggals() {
+		if(tanggals!=null){
+			for(DateMonitoring date:tanggals){
+				date.setDataMonitoring(this);
+			}
+		}
 		return tanggals;
 	}
 
 	public void setTanggals(List<DateMonitoring> tanggals) {
+		if(tanggals!=null){
+			for(DateMonitoring date:tanggals){
+				date.setDataMonitoring(null);
+			}
+		}
 		this.tanggals = tanggals;
 	}
 

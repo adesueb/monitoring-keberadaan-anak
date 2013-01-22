@@ -39,6 +39,12 @@ public class DatabaseManager {
 	    		"FROM "+ANAK_TABLE_NAME+" m, "+PELANGGARAN_TABLE_NAME+" p " +
 	    		"WHERE m."+COLUMN_ID_ANAK+" != p."+COLUMN_ANAK_PELANGGARAN);
 		List<Anak> anaks = getAnaksFromCursor(cursor, true, true);
+		if(cursor!=null && !cursor.isClosed()){
+			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
+		}
 		return anaks;
 	}
 	
@@ -51,6 +57,13 @@ public class DatabaseManager {
 		
 		List<DataMonitoring> dataMonitorings = getDataMonitoringsFromCursor(cursor, true, true);
 		
+		if(cursor!=null && !cursor.isClosed()){
+			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
+		}
+		
 		return dataMonitorings;
 	}
 	//.....................................................................
@@ -60,8 +73,11 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
 		String id = getLastIdFromCursor(cursor);
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		return id;
 	}
@@ -69,8 +85,11 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+LOCATION_TABLE_NAME+" order by "+COLUMN_ID_LOCATION+" DESC limit 1");
 		String id = getLastIdFromCursor(cursor);
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		
 		return id;
@@ -79,8 +98,11 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
 		String id = getLastIdFromCursor(cursor);
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		
 		return id;
@@ -88,8 +110,11 @@ public class DatabaseManager {
 	public String getLastIdPelanggaran(){
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		String id = getLastIdFromCursor(cursor);
 		return id;
@@ -100,13 +125,19 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(LOCATION_TABLE_NAME,null,COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<Lokasi> lokasis = getAllLokasiFromCursor(cursor);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return lokasis;
 		}
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		return null;
 	}
@@ -115,13 +146,19 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(LOCATION_TABLE_NAME,null,null);
 		if(cursor!=null && cursor.getCount()>0){
 			List<Lokasi> lokasis = getAllLokasiFromCursor(cursor);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return lokasis;
 		}
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		return null;
 	}
@@ -130,13 +167,19 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
 			List<Anak> anaks = getAnaksFromCursor(cursor, withPelanggaran, withMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return anaks;
 		}
-		if(cursor!=null){
+		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
 		}
 		return null;
 	}
@@ -145,15 +188,21 @@ public class DatabaseManager {
 	
 	public Anak getAnakById(String idAnak, boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null,COLUMN_ID_ANAK+"='"+idAnak+"'");
-		if(cursor!=null && cursor.getCount()>0){			
+		if(cursor!=null && cursor.getCount()>0 && cursor.moveToFirst()){			
 			Anak anak = getAnakFromCursor(cursor, withPelanggaran, withMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return anak;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -165,14 +214,20 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null,null);
 		if(cursor != null && cursor.getCount()>0){
 			List<DataMonitoring> dataMonitorings = 
-					getDataMonitoringsFromCursor(cursor, withAnak, withWaktuMonitoring);;
-			if(cursor!=null){
+					getDataMonitoringsFromCursor(cursor, withAnak, withWaktuMonitoring);
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dataMonitorings;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -182,16 +237,22 @@ public class DatabaseManager {
 	public DataMonitoring getDataMonitoringByIdMonitoring
 		(String idDataMonitoring, boolean withAnak, boolean withWaktuMonitoring){
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ID_MONITORING+"='"+idDataMonitoring+"'");
-		if(cursor!=null && cursor.getCount()>0){
+		if(cursor!=null && cursor.getCount()>0 && cursor.moveToFirst()){
 			DataMonitoring dataMonitoring = 
 					getDataMonitoringFromCursor(cursor, withAnak, withWaktuMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dataMonitoring;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -201,13 +262,19 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(MONITORING_TABLE_NAME, null, COLUMN_ANAK_MONITORING+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<DataMonitoring> dataMonitorings = getDataMonitoringsFromCursor(cursor, false, true);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dataMonitorings;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -217,13 +284,19 @@ public class DatabaseManager {
 		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, COLUMN_ANAK_PELANGGARAN+"='"+idAnak+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<Pelanggaran> pelanggarans = getPelanggaransFromCursor(cursor, false, false);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return pelanggarans;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -234,13 +307,19 @@ public class DatabaseManager {
 		if(cursor!=null && cursor.getCount()>0){
 			List<Pelanggaran> pelanggarans = 
 					getPelanggaransFromCursor(cursor, withAnak, withMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return pelanggarans;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -259,17 +338,22 @@ public class DatabaseManager {
 
 			Log.d("database manager", "dapetin lokasi dari cursor dengan count : "+cursor.getCount());
 			
-			if(cursor!=null && cursor.getCount()>0){
-				cursor.moveToFirst();
+			if(cursor!=null && cursor.getCount()>0 && cursor.moveToFirst()){
 				Lokasi lokasi = 
 						getLokasiFromCursor(cursor);
-				if(cursor!=null){
+				if(cursor!=null && !cursor.isClosed()){
 					cursor.close();
+					if(getDb().isOpen()){
+						getDb().close();
+					}
 				}
 				return lokasi;
 			}else{
-				if(cursor!=null){
+				if(cursor!=null && !cursor.isClosed()){
 					cursor.close();
+					if(getDb().isOpen()){
+						getDb().close();
+					}
 				}
 				return null;
 			}
@@ -283,13 +367,19 @@ public class DatabaseManager {
 		if(cursor!=null && cursor.getCount()>0){
 			List<DateMonitoring> dateMonitoring = 
 					getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dateMonitoring;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -300,13 +390,19 @@ public class DatabaseManager {
 				actionQuery(DATE_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
 			List<DateMonitoring> dateMonitorings = getTanggalsMonitoringsFromCursor(cursor, withDataMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dateMonitorings;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -317,13 +413,19 @@ public class DatabaseManager {
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"='"+idMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
 			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dayMonitorings;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -334,13 +436,19 @@ public class DatabaseManager {
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
 			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return dayMonitorings;
 		}else{
-			if(cursor!=null){
+			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
 			}
 			return null;
 		}
@@ -362,7 +470,7 @@ public class DatabaseManager {
 		long result = getDb().delete
 			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
 		if(result>0){
-			
+			LocationFileManager.clearLocation();
 		}
 		
 	}
@@ -429,6 +537,8 @@ public class DatabaseManager {
 		if(lokasi!=null){
 			deleteLokasi(lokasi);
 		}
+		
+		DataMonitoringFileManager.clearDataMonitoring();
 	}
 	
 	public void deleteAnak(Anak anak){
@@ -616,8 +726,15 @@ public class DatabaseManager {
 			cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
 			cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());			
 			cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
+			cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
+			cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
+			cv.put(COLUMN_LOCATION_MONITORING, dataMonitoring.getLokasi().getId());
+			LogMonakFileManager.debug(dataMonitoring.getIdMonitoring());
+
+			LogMonakFileManager.debug(dataMonitoring.getLokasi().getId());
 			if(dataMonitoring.getAnak()!=null){
 				cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
+				LogMonakFileManager.debug(dataMonitoring.getAnak().getIdAnak());
 			}
 			long result = getDb().insert(MONITORING_TABLE_NAME, null, cv);	
 			if(result>0 && dataMonitoring.getTanggals()!=null){
@@ -631,6 +748,8 @@ public class DatabaseManager {
 					addLokasi(dataMonitoring.getLokasi());
 				}
 			}
+			
+			DataMonitoringFileManager.addDataMonitoring(dataMonitoring);
 		}
 	}
 	
@@ -706,6 +825,10 @@ public class DatabaseManager {
 	public void addLokasi(Lokasi lokasi){
 		if(lokasi!=null){
 			ContentValues cv = new ContentValues();
+			if(lokasi.getId()==null||lokasi.getId().equals("")){
+				IDGenerator idGenerator = new IDGenerator(context, this);
+				lokasi.setId(idGenerator.getIdLocation());
+			}
 			cv.put(COLUMN_ID_LOCATION, lokasi.getId());
 			Anak anak = lokasi.getAnak();
 			if(anak!=null){
@@ -717,6 +840,7 @@ public class DatabaseManager {
 			
 			long result = getDb().insert(LOCATION_TABLE_NAME, null, cv);
 			if(result>0){
+				LocationFileManager.addLocation(lokasi);
 				Log.d("DatabaseManager", "insert anak successfully with id : "+lokasi.getId());
 			}
 		}
@@ -850,8 +974,8 @@ public class DatabaseManager {
 			int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
 			int indexTolerancy				= cursor.getColumnIndex(COLUMN_TOLERANCY_MONITORING);
 			
-			dataMonitoring.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationMonitoring)));
 			dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
+			dataMonitoring.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationMonitoring)));
 			dataMonitoring.setKeterangan(cursor.getString(indexKetMonitoring));
 			dataMonitoring.setWaktuMulai(cursor.getLong(indexDateMulaiMonitoring));
 			dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
@@ -1005,7 +1129,10 @@ public class DatabaseManager {
 		return cursor;
 	}
 	  
-	private SQLiteDatabase getDb(){
+	private static SQLiteDatabase getDb(){
+		if(mDatabaseHelper.getWritableDatabase().isOpen()){
+			mDatabaseHelper.getWritableDatabase().close();
+		}
 		return mDatabaseHelper.getWritableDatabase();
 	}
 	  
@@ -1047,7 +1174,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 5;
+	    private static final int DATABASE_VERSION = 6;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1092,10 +1219,7 @@ public class DatabaseManager {
 	    		COLUMN_ANAK_LOCATION+" VARCHAR(10),"+
 	    		COLUMN_LONGITUDE+" REAL,"+
 	    		COLUMN_LATITUDE+" REAL,"+
-	    		COLUMN_TIME+" INTEGER,"+
-	    		COLUMN_MONITORING_DATE_MONITORING+ " VARCHAR(10),"+			
-	    		"FOREIGN KEY("+COLUMN_MONITORING_DATE_MONITORING+") REFERENCES "+
-	    		MONITORING_TABLE_NAME+"("+COLUMN_ID_MONITORING+"))";
+	    		COLUMN_TIME+" INTEGER)";
 	    
 	    
 	    private static final String CREATE_DATE_MONITORING = 
@@ -1120,7 +1244,7 @@ public class DatabaseManager {
 	
 	private final Context context;
 	
-	private DatabaseHelper mDatabaseHelper = null;
+	private static DatabaseHelper mDatabaseHelper = null;
 	
 	    
 	

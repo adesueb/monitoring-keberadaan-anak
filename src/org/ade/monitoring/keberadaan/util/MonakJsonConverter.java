@@ -44,7 +44,7 @@ public class MonakJsonConverter {
 			dataMonitoring.setLokasi(lokasi);
 			
 			Anak anak = new Anak();
-			anak.setNoHpAnak(object.getString(NO_HP_ANAK));
+			anak.setIdAnak(object.getString(ID_ANAK));
 			anak.setIdOrtu(object.getString(ID_ORTU));
 			dataMonitoring.setAnak(anak);
 			
@@ -153,9 +153,9 @@ public class MonakJsonConverter {
 			List<DayMonitoring> 	haris 		= dataMonitoring.getHaris();
 			List<DateMonitoring> 	tanggals 	= dataMonitoring.getTanggals();
 			int toleransi = dataMonitoring.getTolerancy();
+			String idAnak = dataMonitoring.getAnak().getIdAnak();
 			String idOrtu = dataMonitoring.getAnak().getIdOrtu();
 			String keterangan = dataMonitoring.getKeterangan();
-			String phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
 			
 			JSONObject object = new JSONObject();
 			try {
@@ -167,7 +167,7 @@ public class MonakJsonConverter {
 				object.put(STATUS, status);
 				object.put(TOLERANSI, toleransi);
 				object.put(ID_ORTU, idOrtu);
-				object.put(NO_HP_ANAK, phoneNumber);
+				object.put(ID_ANAK, idAnak);
 				object.put(KETERANGAN, keterangan);
 				
 				if(haris!=null){
@@ -209,7 +209,7 @@ public class MonakJsonConverter {
 	private final static String SELESAI			= "selesai";
 	private final static String TOLERANSI		= "toleransi";
 	private final static String ID_ORTU			= "idOrtu";
-	private final static String NO_HP_ANAK		= "noHpAnak";
+	private final static String ID_ANAK			= "idAnak";
 	private final static String HARIS			= "haris";
 	private final static String TANGGALS		= "tanggals";
 	

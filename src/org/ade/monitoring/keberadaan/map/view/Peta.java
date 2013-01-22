@@ -131,7 +131,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		
 		findLokasiOrangTua();
 		
-		requestAllAnakLocations();
+//		requestAllAnakLocations();
 		
 		
 		mapController.setZoom(12);
