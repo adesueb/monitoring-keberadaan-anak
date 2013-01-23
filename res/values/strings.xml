@@ -38,4 +38,9 @@
     <string name="sampai_tanggal">sampai tanggal</string>
     <string name="nama_anak">nama anak</string>
     <string name="seharusnya">Seharusnya</string>
+    <string name="set_detik_monitoring">Detik Monitoring</string>
+    <string name="set_meter_monitoring">Meter Monitoring</string>
+    <string name="set_detik_tracking">Detik Tracking</string>
+    <string name="max_log">Max Log</string>
+    <string name="belum_ada_response_anak">Belum Ada Response Anak</string>
 </resources>

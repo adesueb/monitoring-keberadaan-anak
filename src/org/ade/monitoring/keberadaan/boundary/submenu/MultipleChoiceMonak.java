@@ -29,13 +29,22 @@ public abstract class MultipleChoiceMonak extends Dialog{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.multiple_choice);
-		Button buttonDetail = (Button) findViewById(R.id.multipleDetail);
-		buttonDetail.setOnClickListener(new View.OnClickListener() {
+		Button buttonLog	= (Button) findViewById(R.id.multipleLog);
+		buttonLog.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				onDetail(bundle);
+				onLog(bundle);
 			}
-		});Button buttonEdit 	= (Button) findViewById(R.id.multipleEdit);
+		});
+		
+		Button buttonTrack	= (Button) findViewById(R.id.multipleTrack);
+		buttonTrack.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				onTrack(bundle);
+			}
+		});
+		Button buttonEdit 	= (Button) findViewById(R.id.multipleEdit);
 		buttonEdit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -51,8 +60,8 @@ public abstract class MultipleChoiceMonak extends Dialog{
 		});
 		
 		if(!isAnak){
-			buttonDetail.setVisibility(View.INVISIBLE);
-			
+			buttonLog.setVisibility(View.INVISIBLE);
+			buttonTrack.setVisibility(View.INVISIBLE);
 		}
 	}
 	
@@ -62,7 +71,6 @@ public abstract class MultipleChoiceMonak extends Dialog{
 	
 	protected abstract void onDelete(Bundle bundle);
 	protected abstract void onEdit(Bundle bundle);
-	protected abstract void onDetail(Bundle bundle);
 	protected abstract void onLog(Bundle bundle);
 	protected abstract void onTrack(Bundle bundle);
 	

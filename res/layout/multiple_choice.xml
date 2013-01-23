@@ -15,12 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/delete" />
-
-    <Button
-        android:id="@+id/multipleDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/detail" />
     
      <Button
         android:id="@+id/multipleLog"

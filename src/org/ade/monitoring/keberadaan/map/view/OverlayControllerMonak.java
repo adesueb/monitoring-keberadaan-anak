@@ -10,6 +10,7 @@ import org.ade.monitoring.keberadaan.entity.Lokasi;
 import org.ade.monitoring.keberadaan.entity.Pelanggaran;
 import org.ade.monitoring.keberadaan.map.service.GpsManager;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 

@@ -51,10 +51,7 @@ public class Lokasi {
 	}
 
 	public void setAnak(Anak anak) {
-		if(anak!=null){
-			anak.setLastLokasi(null);
-			this.anak = anak;	
-		}
+		this.anak = anak;	
 		
 	}
 

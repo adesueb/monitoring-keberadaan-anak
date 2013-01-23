@@ -15,6 +15,7 @@ import org.ade.monitoring.keberadaan.map.service.LocationMonitorUtil;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderLokasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -23,9 +24,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-public class HandlerMainReceiveMonitoringLocation extends Handler{
+public class MainMonitoring extends Handler{
 
-	public HandlerMainReceiveMonitoringLocation(Context context){
+	public MainMonitoring(Context context){
 		this.context 	= context;
 		dataMonitorings 	= new DatabaseManager(context).getAllDataMonitorings(false,true);
 		locationMonitorUtil = new LocationMonitorUtil();
@@ -46,11 +47,13 @@ public class HandlerMainReceiveMonitoringLocation extends Handler{
 				anak.setIdAnak(pref.getIdAnak());
 				anak.setLastLokasi(lokasiHp);
 				senderLokasi.sendLocationModeTracking(anak);
+				LogMonakFileManager.debug("dapet lokasi pada mode monitoring : latitude"+lokasiHp.getlatitude());
 			}
 			
 			if(dataMonitorings != null && locationMonitorUtil != null){
 				for(DataMonitoring dataMonitoring:dataMonitorings){
 					Calendar cal = Calendar.getInstance();
+					LogMonakFileManager.debug("Melakukan proses monitoring : dataMonitoring"+dataMonitoring.getIdMonitoring());
 					
 					Date	now 	= cal.getTime();	
 					int		hari 	= cal.get(Calendar.DAY_OF_WEEK);

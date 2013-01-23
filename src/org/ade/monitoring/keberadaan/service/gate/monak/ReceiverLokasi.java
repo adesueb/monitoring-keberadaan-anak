@@ -52,7 +52,8 @@ public class ReceiverLokasi{
         	Bundle data = new Bundle();
         	data.putDouble("latitude", Double.parseDouble(cvs[1]));
         	data.putDouble("longitude", Double.parseDouble(cvs[2]));
-        	data.putString("idAnak", cvs[3]);
+        	data.putLong("time", Long.parseLong(cvs[3]));
+        	data.putString("idAnak", cvs[4]);
         	message.setData(data);
         	message.what = Status.SUCCESS;
         	

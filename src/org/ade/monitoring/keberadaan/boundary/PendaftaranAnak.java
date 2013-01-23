@@ -89,7 +89,7 @@ public class PendaftaranAnak extends Dialog{
 				Handler handler = mPendaftaranAnak.getHandler();
 				if(handler!=null){
 					Bundle bundle = new Bundle();
-					bundle.putString("id", 		mPendaftaranAnak.getId());
+					bundle.putString("idAnak", 		mPendaftaranAnak.getId());
 					bundle.putString("nama", 	mPendaftaranAnak.getName());
 					bundle.putString("noHp", 	mPendaftaranAnak.getPhone());
 					mPendaftaranAnak.refresh();

@@ -542,10 +542,20 @@ public class DatabaseManager {
 	}
 	
 	public void deleteAnak(Anak anak){
+		List<DataMonitoring> dataMonitorings = anak.getDataMonitorings();
+		if(dataMonitorings==null){
+			dataMonitorings = getDataMonitoringsByAnak(anak.getIdAnak());
+		}
+		
+		for(DataMonitoring dataMonitoring: dataMonitorings){
+			deleteDataMonitoring(dataMonitoring);
+		}
+		
 		getDb().delete
 		(ANAK_TABLE_NAME, 
 				COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
 		deleteLokasiAnak(anak);
+		
 		
 	}
 	
@@ -622,20 +632,58 @@ public class DatabaseManager {
 		
 	public void updateAnak(Anak anak){
 		
-		if(anak.getLokasis()!=null){
-			updateLokasisAnak(anak);	
+		if(anak!=null){
+			ContentValues cv = new ContentValues();
+			if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
+				cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());	
+			}
+			
+			if(anak.getNoHpAnak()!=null && !anak.getNoHpAnak().equals("")){
+				cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
+			}
+			
+			boolean isDeleteLokasi = true;
+			
+			List<Lokasi> lokasis= anak.getLokasis();
+			
+			if(lokasis!=null && lokasis.size()>0){
+				cv.put(COLUMN_LAST_LOCATION_ANAK, lokasis.get(lokasis.size()-1).getId());
+				isDeleteLokasi = false;
+			}
+			
+			Lokasi lastLokasi = anak.getLastLokasi();
+			
+			if(lastLokasi!=null){
+				if(lastLokasi.getId()==null||lastLokasi.getId().equals("")){
+					IDGenerator idGenerator = new IDGenerator(context, this);
+					lastLokasi.setId(idGenerator.getIdLocation());
+				}
+				cv.put(COLUMN_LAST_LOCATION_ANAK, lastLokasi.getId());
+				isDeleteLokasi = false;
+			}
+			
+			if(isDeleteLokasi){
+				cv.put(COLUMN_LAST_LOCATION_ANAK, "-");
+			}
+			
+			long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+
+			if(result > 0 && anak.getLokasis()!=null){
+				updateLokasisAnak(anak);	
+			}
+			
+			if(result > 0 && anak.getLastLokasi()!=null){
+				updateLastLokasiAnak(anak);	
+			}
+	
 		}
-		
-		if(anak.getLastLokasi()!=null){
-			updateLastLokasiAnak(anak);	
-		}
-		
+				
 	}
 	
 	public void updateLokasisAnak(Anak anak){
 		
 		ContentValues cv = new ContentValues();
-		
+		LogMonakFileManager.debug("on edit anak, dengan nama anak : "+anak.getNamaAnak());
 		if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
 			cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());	
 		}
@@ -702,6 +750,7 @@ public class DatabaseManager {
 	// add...............................................................
 	
 	public void addLastLokasiAnak(Anak anak){
+		
 		updateLastLokasiAnak(anak);
 	}
 	
@@ -729,12 +778,9 @@ public class DatabaseManager {
 			cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
 			cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
 			cv.put(COLUMN_LOCATION_MONITORING, dataMonitoring.getLokasi().getId());
-			LogMonakFileManager.debug(dataMonitoring.getIdMonitoring());
-
-			LogMonakFileManager.debug(dataMonitoring.getLokasi().getId());
+		
 			if(dataMonitoring.getAnak()!=null){
 				cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
-				LogMonakFileManager.debug(dataMonitoring.getAnak().getIdAnak());
 			}
 			long result = getDb().insert(MONITORING_TABLE_NAME, null, cv);	
 			if(result>0 && dataMonitoring.getTanggals()!=null){
@@ -744,12 +790,13 @@ public class DatabaseManager {
 				addHariMonitorings(dataMonitoring.getHaris());
 			}
 			if(result>0){
+
+				DataMonitoringFileManager.addDataMonitoring(dataMonitoring);
 				if(dataMonitoring.getLokasi()!=null){
 					addLokasi(dataMonitoring.getLokasi());
 				}
 			}
 			
-			DataMonitoringFileManager.addDataMonitoring(dataMonitoring);
 		}
 	}
 	
@@ -768,7 +815,7 @@ public class DatabaseManager {
 		}
 		
 		if(result <=0 || anak.getLastLokasi()==null){
-			
+			cv.put(COLUMN_LAST_LOCATION_ANAK, "-");
 		}else{
 			Log.d("insert_anak", "lokasi dari anak adalah : "+anak.getLastLokasi().getlatitude()+","+anak.getLastLokasi().getLongitude());
 			Anak anakLokasi = new Anak();
@@ -1174,7 +1221,7 @@ public class DatabaseManager {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 6;
+	    private static final int DATABASE_VERSION = 7;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1208,9 +1255,7 @@ public class DatabaseManager {
 	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_DATE_SELESAI_MONITORING+" INTEGER,"+
 	    		COLUMN_STATUS_MONITORING+" INTEGER,"+	    		
-	    		COLUMN_TOLERANCY_MONITORING+" INTEGER,"+
-	    		"FOREIGN KEY("+COLUMN_ANAK_MONITORING+") REFERENCES "+
-	    		ANAK_TABLE_NAME+"("+COLUMN_ID_ANAK+"))";
+	    		COLUMN_TOLERANCY_MONITORING+" INTEGER)";
 	    
 	    private static final String CREATE_LOCATION = 
 	    		"CREATE TABLE IF NOT EXISTS "+

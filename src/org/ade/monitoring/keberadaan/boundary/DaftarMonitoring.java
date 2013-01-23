@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DaftarMonitoring extends ListActivity implements IFormOperation{
@@ -177,6 +178,16 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				keterangan.setText(dataMonitoring.getKeterangan());
 						
 				rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));
+				
+				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
+				if(position%2==0){
+
+					llBackground.setBackgroundResource(R.drawable.back_menu_green);
+				}else{
+
+					llBackground.setBackgroundResource(R.drawable.back_menu);
+				}
+				
 				
 				return rowView;
 			}else{

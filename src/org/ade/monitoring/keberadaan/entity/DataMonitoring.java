@@ -97,11 +97,6 @@ public class DataMonitoring implements IPesanData, IEntity{
 	}
 
 	public void setHaris(List<DayMonitoring> haris) {
-		if(haris!=null){
-			for(DayMonitoring hari:haris){
-				hari.setDataMonitoring(null);
-			}
-		}
 		this.haris = haris;
 	}
 
@@ -115,12 +110,8 @@ public class DataMonitoring implements IPesanData, IEntity{
 	}
 
 	public void setTanggals(List<DateMonitoring> tanggals) {
-		if(tanggals!=null){
-			for(DateMonitoring date:tanggals){
-				date.setDataMonitoring(null);
-			}
-		}
 		this.tanggals = tanggals;
+		
 	}
 
 	public boolean isTerlarang(){

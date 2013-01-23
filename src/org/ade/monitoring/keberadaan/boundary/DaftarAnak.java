@@ -15,6 +15,7 @@ import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPendaftaranAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
@@ -110,9 +111,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	
-	
-	
-	
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -124,9 +122,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 													Context.BIND_AUTO_CREATE);
 		
 	}
-
-
-
 
 
 	private void setPendaftaranAnak(){
@@ -145,10 +140,17 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 
 		showDialog(Operation.ADD);
 	}
+	
+	public void onDetail(Bundle bundle){
+		Intent intent = new Intent(this, DaftarMonitoring.class);
+		intent.putExtras(bundle);
+		startActivity(intent);
+		
+	}
 
 	public void onEdit(Bundle bundle) {
-		
-		pendaftaranAnak.setId(bundle.getString("id"));
+
+		pendaftaranAnak.setId(bundle.getString("idAnak"));
 		pendaftaranAnak.setName(bundle.getString("nama"));
 		pendaftaranAnak.setPhone(bundle.getString("noHp"));
 		pendaftaranAnak.setHandler(new HandlerEdit(this));			
@@ -186,26 +188,37 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		switch (status) {
 			case Operation.ADD:{
 				Anak anak = new Anak();
-				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdAnak	(bundle.getString("idAnak"));
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
 				Log.d("DaftarAnak", "add anak");
 				databaseManager.addAnak(anak);
-				sendRequestLocationAnak(anak);
+				sendRequestLocationAnak(anak,false);
 				break;
 			}case Operation.EDIT:{
+
 				Anak anak = new Anak();
-				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdAnak	(bundle.getString("idAnak"));
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+				databaseManager.deleteLokasiAnak(anak);
 				databaseManager.updateAnak(anak);
-				sendRequestLocationAnak(anak);
+				for(Anak anakFor:anaks){
+					if(anakFor.getIdAnak().equals(anak.getIdAnak())){
+						anakFor.setLastLokasi(null);
+						anakFor.setNamaAnak(anak.getNamaAnak());
+						anakFor.setNoHpAnak(anak.getNoHpAnak());
+					}
+				}
+				daftarAnakAdapter.notifyDataSetChanged();
+				sendRequestLocationAnak(anak, true);
+				
 				break;
 			}case Operation.DELETE:{
 				Anak anak = new Anak();
-				anak.setIdAnak	(bundle.getString("id"));
+				anak.setIdAnak	(bundle.getString("idAnak"));
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
@@ -224,11 +237,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
-	private void sendRequestLocationAnak(Anak anak){	
-		senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak));
+	private void sendRequestLocationAnak(Anak anak, boolean isEdit){	
+		senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, isEdit));
 		senderAnak.sendAnak(anak);				
 		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
-		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak));	
+		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, isEdit));	
 	}
 	
 	@Override
@@ -302,6 +315,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				
 				name.setText(anak.getNamaAnak());
 				phone.setText(anak.getNoHpAnak());
+				
 				List<Pelanggaran> pelanggarans = anak.getPelanggarans();
 				if(pelanggarans!=null){
 					pelanggaran.setText(pelanggarans.size()+"");				
@@ -309,7 +323,18 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 					pelanggaran.setText("0");
 				}
 				
+				rowView.setOnClickListener(new DaftarAnakClick(daftarAnak, anak));
+				
 				rowView.setOnLongClickListener(new DaftarAnakLongClick(daftarAnak, anak));
+				
+				LinearLayout llResponse = (LinearLayout) rowView.findViewById(R.id.daftarAnakItemResponse);
+				if(anak.getLastLokasi()==null){
+					llResponse.setVisibility(View.VISIBLE);
+					LogMonakFileManager.debug("masuk visible");
+				}else{
+					LogMonakFileManager.debug("masuk gone");
+					llResponse.setVisibility(View.GONE);
+				}
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
 				if(position%2==0){
@@ -332,6 +357,22 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
+	private final static class DaftarAnakClick implements View.OnClickListener{
+
+		public DaftarAnakClick(DaftarAnak daftarAnak, Anak anak){
+			mDaftarAnak = daftarAnak;
+			mAnak 		= anak;
+		}
+		public void onClick(View v) {
+			mDaftarAnak.onDetail(BundleEntityMaker.makeBundleFromAnak(mAnak));
+		}
+		
+
+		private final Anak mAnak;
+		private final DaftarAnak mDaftarAnak;
+		
+	}
+	
 	private final static class DaftarAnakLongClick implements View.OnLongClickListener{
 
 		public DaftarAnakLongClick(DaftarAnak daftarAnak, Anak anak){
@@ -340,6 +381,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		}
 		public boolean onLongClick(View arg0) {
 			(new MultipleChoiceAnak(mDaftarAnak, BundleEntityMaker.makeBundleFromAnak(mAnak))).show();
+			
 			return false;
 		}
 		private final Anak mAnak;
@@ -347,9 +389,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	private final static class SendingLocationHandler extends Handler{
-		public SendingLocationHandler(DaftarAnak daftarAnak, Anak anak){
+		public SendingLocationHandler(DaftarAnak daftarAnak, Anak anak, boolean isEdit){
 			this.daftarAnak = daftarAnak;
 			this.anak 		= anak;
+			this.isEdit		= isEdit;
 		}
 		
 		public void handleMessage(Message msg) {
@@ -363,7 +406,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {  
-						daftarAnak.sendRequestLocationAnak(anak);
+						daftarAnak.sendRequestLocationAnak(anak, isEdit);
 						dialog.dismiss();
 						return;                  
 			        }  
@@ -385,13 +428,15 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 
 		private final DaftarAnak daftarAnak;
 		private final Anak anak;
+		private final boolean isEdit;
 	}
 	
 	private final static class WaitingLocationHandler extends Handler{
 
-		public WaitingLocationHandler(DaftarAnak daftarAnak, Anak anak){
+		public WaitingLocationHandler(DaftarAnak daftarAnak, Anak anak, boolean isEdit){
 			this.daftarAnak = daftarAnak;
 			this.anak		= anak;
+			this.isEdit		= isEdit;
 		}
 		
 		@Override
@@ -402,23 +447,22 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				Lokasi lokasi = new Lokasi();
 				lokasi.setLatitude(data.getDouble("latitude"));
 				lokasi.setLongitude(data.getDouble("longitude"));
-				Lokasi lokasiAnak = anak.getLastLokasi();
+				String idAnak = data.getString("idAnak");
 				
-				if(anak.getIdAnak()!=null&&anak.getIdAnak().equals("")){
-					lokasi.setId(lokasiAnak.getId());
+				if(anak.getIdAnak()!=null && anak.getIdAnak().equals(idAnak)){
 					anak.setLastLokasi(lokasi);
-					for(Anak anakFor:daftarAnak.anaks){
-						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-							anakFor.setNamaAnak(anak.getNamaAnak());
-							anakFor.setNoHpAnak(anak.getNoHpAnak());
-						}
+					if(isEdit){
+						for(Anak anakFor:daftarAnak.anaks){
+							if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+								anakFor.setNamaAnak(anak.getNamaAnak());
+								anakFor.setNoHpAnak(anak.getNoHpAnak());
+								anakFor.setLastLokasi(lokasi);
+							}
+						}						
+					}else{
+						daftarAnak.anaks.add(anak);
 					}
 
-				}else{
-					IDGenerator id = new IDGenerator(daftarAnak, daftarAnak.databaseManager);
-					lokasi.setId(id.getIdLocation());
-					anak.setLastLokasi(lokasi);
-					daftarAnak.anaks.add(anak);
 				}
 				
 				
@@ -428,11 +472,17 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 		private final DaftarAnak daftarAnak;
 		private final Anak anak;
+		private final boolean isEdit;
 		
 	}
 
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
 		handlerBinder =binderHandlerMonak;
+		for(Anak anak :anaks ){
+			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, true));	
+		}
+			
+
 	}
 
 	public void setBound(boolean bound) {

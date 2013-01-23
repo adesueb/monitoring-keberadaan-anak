@@ -61,10 +61,7 @@ public class Anak implements IEntity{
 	}
 
 	public void setLastLokasi(Lokasi lastLokasi) {
-		if(lastLokasi!=null){
-			lastLokasi.setAnak(null);
-			this.lastLokasi = lastLokasi;			
-		}
+		this.lastLokasi = lastLokasi;
 
 	}
 

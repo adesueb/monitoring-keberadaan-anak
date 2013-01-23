@@ -28,16 +28,6 @@ public class MultipleChoiceAnak extends MultipleChoiceMonak{
 	}
 
 	@Override
-	protected void onDetail(Bundle bundle) {
-		//TODO : go to dataMonitoring....
-		Intent intent = new Intent(getActivity(), DaftarMonitoring.class);
-		intent.putExtras(getBundle());
-		getActivity().startActivity(intent);
-		this.dismiss();
-		getActivity().finish();
-	}
-
-	@Override
 	protected void onLog(Bundle bundle) {
 		Intent intent = new Intent(getActivity(), Peta.class);
 		bundle.putInt(Peta.EXTRA_ACTION, Peta.EXTRA_LOG);

@@ -54,7 +54,7 @@ public class MonakService extends Service{
         if(!pref.isAktifTracker()){
         	Log.d("background service", "track started");
             	
-    		Tracker tracker = new Tracker(this, new HandlerMainReceiveMonitoringLocation(this));
+    		Tracker tracker = new Tracker(this, new MainMonitoring(this));
         	tracker.startTracking();
         }
         if(intent!=null){

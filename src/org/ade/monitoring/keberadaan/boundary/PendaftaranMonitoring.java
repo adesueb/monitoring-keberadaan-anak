@@ -545,7 +545,6 @@ public class PendaftaranMonitoring extends Activity{
 			}case LOKASI:{
 				Lokasi lokasi = tandaLokasi.getLokasi();
 				lokasi.setId(mIDGenerator.getIdLocation());
-				LogMonakFileManager.debug("pendaftaranMonitoring dengan lokasi id : "+lokasi.getId());
 				dataMonitoring.setLokasi(lokasi);
 
 				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);

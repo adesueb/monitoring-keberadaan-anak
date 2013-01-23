@@ -115,8 +115,8 @@ public class Tracker implements LocationListener{
 	private LocationManager 					mlocManager;
 	private final PreferenceMonitoringManager 	pref;
 	
-	private static final long TIME_MIN_UPDATE_LOCATION = 10000; //in milisecond
+	private static final long TIME_MIN_UPDATE_LOCATION = 1000; //in milisecond
 	
-	private static final float DISTANCE_MIN_UPDATE_LOCATION = 40;//in meters;
+	private static final float DISTANCE_MIN_UPDATE_LOCATION = 1;//in meters;
 
 }
