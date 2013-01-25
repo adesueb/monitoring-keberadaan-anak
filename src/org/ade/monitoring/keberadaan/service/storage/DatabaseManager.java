@@ -412,7 +412,10 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"='"+idMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
+			LogMonakFileManager.debug("hari berisi data dnegan banyak data adalah : "+cursor.getCount());
 			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
+			LogMonakFileManager.debug("hari berisi data dnegan banyak data2 adalah : "+dayMonitorings.size());
+			
 			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
 				if(getDb().isOpen()){
@@ -575,13 +578,13 @@ public class DatabaseManager {
 	public void updateDateMonitoring(DateMonitoring tanggalMonitoring){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
-		getDb().update(DATE_MONITORING_TABLE_NAME, cv, "_id='"+tanggalMonitoring.getId()+"'", null);
+		getDb().update(DATE_MONITORING_TABLE_NAME, cv, "_id='"+tanggalMonitoring.getDataMonitoring().getIdMonitoring()+"'", null);
 	}
 	
 	public void updateDayMonitoring(DayMonitoring hariMonitoring){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_DAY_DAY_MONITORING, hariMonitoring.getHari());
-		getDb().update(DAY_MONITORING_TABLE_NAME, cv, "_id='"+hariMonitoring.getId()+"'", null);
+		getDb().update(DAY_MONITORING_TABLE_NAME, cv, "_id='"+hariMonitoring.getDataMonitoring().getIdMonitoring()+"'", null);
 	}
 	
 	public void updateLokasi(Lokasi lokasi){
@@ -608,6 +611,22 @@ public class DatabaseManager {
 		cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
 		cv.put(COLUMN_DATE_MULAI_MONITORING, dataMonitoring.getWaktuMulai());
 		cv.put(COLUMN_DATE_SELESAI_MONITORING, dataMonitoring.getWaktuSelesai());
+		String idLokasi = dataMonitoring.getLokasi().getId();
+		if(idLokasi==null || idLokasi.equals("")){
+			IDGenerator idGenerator = new IDGenerator(context, this);
+			idLokasi = idGenerator.getIdLocation();
+			dataMonitoring.getLokasi().setId(idLokasi);
+		}
+		
+		
+		Lokasi lokasi = getLokasiByIdLokasi(idLokasi);
+		if(lokasi==null){
+			DataMonitoring datamonitoringLokasi = getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), false, false);
+			deleteLokasi(datamonitoringLokasi.getLokasi());
+		}
+		
+		cv.put(COLUMN_LOCATION_MONITORING, idLokasi);			
+		
 		long result = getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
 		if(result>0){
 			List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
@@ -683,7 +702,6 @@ public class DatabaseManager {
 	public void updateLokasisAnak(Anak anak){
 		
 		ContentValues cv = new ContentValues();
-		LogMonakFileManager.debug("on edit anak, dengan nama anak : "+anak.getNamaAnak());
 		if(anak.getNamaAnak()!=null && !anak.getNamaAnak().equals("")){
 			cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());	
 		}
@@ -777,7 +795,14 @@ public class DatabaseManager {
 			cv.put(COLUMN_STATUS_MONITORING, dataMonitoring.getStatus());
 			cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
 			cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
-			cv.put(COLUMN_LOCATION_MONITORING, dataMonitoring.getLokasi().getId());
+			
+			String idLokasi = dataMonitoring.getLokasi().getId();
+			if(idLokasi==null || idLokasi.equals("")){
+				IDGenerator idGenerator = new IDGenerator(context, this);
+				idLokasi = idGenerator.getIdLocation();			
+				dataMonitoring.getLokasi().setId(idLokasi);
+			}
+			cv.put(COLUMN_LOCATION_MONITORING, idLokasi);
 		
 			if(dataMonitoring.getAnak()!=null){
 				cv.put(COLUMN_ANAK_MONITORING, dataMonitoring.getAnak().getIdAnak());	
@@ -906,7 +931,7 @@ public class DatabaseManager {
 		if(tanggalMonitoring!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
-			cv.put(COLUMN_MONITORING_DATE_MONITORING, tanggalMonitoring.getId());
+			cv.put(COLUMN_MONITORING_DATE_MONITORING, tanggalMonitoring.getDataMonitoring().getIdMonitoring());
 			
 			getDb().insert(DATE_MONITORING_TABLE_NAME, null, cv);	
 		}
@@ -925,7 +950,7 @@ public class DatabaseManager {
 		if(dayMonitoring!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_DAY_DAY_MONITORING, dayMonitoring.getHari());
-			cv.put(COLUMN_MONITORING_DAY_MONITORING, dayMonitoring.getId());
+			cv.put(COLUMN_MONITORING_DAY_MONITORING, dayMonitoring.getDataMonitoring().getIdMonitoring());
 			
 			getDb().insert(DAY_MONITORING_TABLE_NAME, null, cv);	
 		}
@@ -1032,6 +1057,7 @@ public class DatabaseManager {
 				dataMonitoring.setTanggals
 					(getTanggalMonitoringsByMonitoring
 							(dataMonitoring.getIdMonitoring(), false));
+				
 				dataMonitoring.setHaris
 					(getHariMonitoringsByMonitoring
 							(dataMonitoring.getIdMonitoring(), false));

@@ -13,7 +13,6 @@ import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class SenderPesanData extends ASenderMonak{
 	
@@ -25,6 +24,18 @@ public class SenderPesanData extends ASenderMonak{
 	}
 	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
 		dataMonitoring.setTipe(TipePesanMonak.DATAMONITORING_BARU);
+		pesanData 		= dataMonitoring;
+		kirimPesanData(pesanData);
+	}
+	
+	public void sendDataMonitoringUpdate(DataMonitoring dataMonitoring){
+		dataMonitoring.setTipe(TipePesanMonak.DATAMONITORING_UPDATE);
+		pesanData 		= dataMonitoring;
+		kirimPesanData(pesanData);
+	}
+	
+	public void sendDataMonitoringDelete(DataMonitoring dataMonitoring){
+		dataMonitoring.setTipe(TipePesanMonak.DATAMONITORING_DELETE);
 		pesanData 		= dataMonitoring;
 		kirimPesanData(pesanData);
 	}
@@ -42,16 +53,22 @@ public class SenderPesanData extends ASenderMonak{
 	}
 	
 	private void kirimPesanData( IPesanData pesanData ){
-		String phoneNumber;
-		if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){
-			DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
-			phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
-			
-		}else{
-			Peringatan peringatan = (Peringatan) pesanData;
-			phoneNumber = peringatan.getIdOrtu();
+		String phoneNumber = "";
+		switch(pesanData.getTipe()){
+			case TipePesanMonak.DATAMONITORING_BARU:{
+			}case TipePesanMonak.DATAMONITORING_UPDATE:{
+			}case TipePesanMonak.DATAMONITORING_DELETE:{
+				DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
+				phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
+				break;
+			}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
+			}case TipePesanMonak.PERINGATAN_TERLARANG:{
+				Peringatan peringatan = (Peringatan) pesanData;
+				phoneNumber = peringatan.getIdOrtu();
+				break;
+			}
 		}
-		Log.d("Sender Pesan Data", pesanData.getJsonPesanData());
+		
 		senderSMS.sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 	

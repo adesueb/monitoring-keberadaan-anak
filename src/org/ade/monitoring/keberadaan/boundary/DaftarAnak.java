@@ -330,9 +330,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				LinearLayout llResponse = (LinearLayout) rowView.findViewById(R.id.daftarAnakItemResponse);
 				if(anak.getLastLokasi()==null){
 					llResponse.setVisibility(View.VISIBLE);
-					LogMonakFileManager.debug("masuk visible");
 				}else{
-					LogMonakFileManager.debug("masuk gone");
 					llResponse.setVisibility(View.GONE);
 				}
 				

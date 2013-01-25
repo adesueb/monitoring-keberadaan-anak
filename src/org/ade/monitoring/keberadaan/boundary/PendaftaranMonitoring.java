@@ -19,7 +19,7 @@ import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
+import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
 
@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -83,10 +84,32 @@ public class PendaftaranMonitoring extends Activity{
 		initSubMenu();
 		
 		if(isEdit){
+			dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
 			initEditMode();
 		}
 		
 
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	
+		switch(requestCode){
+			case LOKASI:{
+				if(resultCode==RESULT_OK && data!=null){
+				
+					Lokasi lokasi = new Lokasi();
+					lokasi.setId(mIDGenerator.getIdLocation());
+					lokasi.setLatitude(data.getDoubleExtra("latitude", 0));
+					lokasi.setLongitude(data.getDoubleExtra("longitude", 0));
+					dataMonitoring.setLokasi(lokasi);
+					
+					TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
+					textLokasi.setText(lokasi.getlatitude()+", "+lokasi.getLongitude());
+				}
+				break;
+			}
+		}
 	}
 	
 	private void initSubMenu(){
@@ -201,7 +224,6 @@ public class PendaftaranMonitoring extends Activity{
 					angkas.add(day.getHari());
 				}
 				pilihMingguan.setHaris(angkas);
-				
 				TextView textHaris = (TextView) findViewById(R.id.monitoringTextMingguan);
 				String stringHari = "";
 				for(int hari:angkas){
@@ -250,9 +272,9 @@ public class PendaftaranMonitoring extends Activity{
 		}
 	}
 	
-	private void actionPilihAnak(){
-		showDialog(ANAK);
-	}
+//	private void actionPilihAnak(){
+//		showDialog(ANAK);
+//	}
 	
 	private void actionPilihStatus() {
 		showDialog(STATUS_LOKASI);
@@ -311,11 +333,13 @@ public class PendaftaranMonitoring extends Activity{
 				return;
 			}
 			
-			// TODO : more filter......
 			if(anak!=null){
-				new SenderPesanData(this,new HandlerSendermonitoring(this))
-					.sendDataMonitoringBaru(dataMonitoring);
-				// FIXME : test pengiriman datamonitoring melalui sms......
+				SenderPesanData sender = new SenderPesanData(this,new HandlerSendermonitoring(this));		
+				if(isEdit){
+					sender.sendDataMonitoringUpdate(dataMonitoring);
+				}else{
+					sender.sendDataMonitoringBaru(dataMonitoring);	
+				}
 				
 			}else{
 				Toast.makeText(this, "pilih anak terlebih dahulu!!!", Toast.LENGTH_SHORT).show();
@@ -325,7 +349,14 @@ public class PendaftaranMonitoring extends Activity{
 	}
 	
 	private void save(){
-		databaseManager.addDataMonitoring(dataMonitoring);
+		if(isEdit){
+			databaseManager.updateDataMonitoring(dataMonitoring);
+		}else{
+			databaseManager.addDataMonitoring(dataMonitoring);	
+		}
+		Intent intent = new Intent();
+		intent.putExtras(BundleEntityMaker.makeBundleFromDataMonitoring(dataMonitoring));
+		setResult(RESULT_OK, intent);
 		finish();
 	}
 	
@@ -359,26 +390,7 @@ public class PendaftaranMonitoring extends Activity{
 		tandaLokasi.actionTandaiLokasi();
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	
-		switch(requestCode){
-			case LOKASI:{
-				if(resultCode==RESULT_OK && data!=null){
-				
-					Lokasi lokasi = new Lokasi();
-					lokasi.setId(mIDGenerator.getIdLocation());
-					lokasi.setLatitude(data.getDoubleExtra("latitude", 0));
-					lokasi.setLongitude(data.getDoubleExtra("longitude", 0));
-					dataMonitoring.setLokasi(lokasi);
-					
-					TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
-					textLokasi.setText(lokasi.getlatitude()+", "+lokasi.getLongitude());
-				}
-				break;
-			}
-		}
-	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {

@@ -8,18 +8,27 @@ import org.ade.monitoring.keberadaan.service.Notifikasi;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 
 import android.content.Context;
-import android.util.Log;
 
 public class ReceiverPesanData {
 	
 	
 	public void menerimaPesanData(Context context, IPesanData pesanData){
 		if(pesanData!=null){
-			if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){
-				new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
-			}else{
-				new Notifikasi(context).tampilkanNotifikasiPeringatan((Peringatan) pesanData);
-				
+			switch(pesanData.getTipe()){
+				case TipePesanMonak.DATAMONITORING_BARU:{
+					new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
+					break;
+				}case TipePesanMonak.DATAMONITORING_UPDATE:{
+					new DatabaseManager(context).updateDataMonitoring((DataMonitoring) pesanData);
+					break;
+				}case TipePesanMonak.DATAMONITORING_DELETE:{
+					new DatabaseManager(context).deleteDataMonitoring((DataMonitoring) pesanData);
+					break;
+				}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
+				}case TipePesanMonak.PERINGATAN_TERLARANG:{
+					new Notifikasi(context).tampilkanNotifikasiPeringatan((Peringatan) pesanData);
+					break;
+				}
 			}
 		}
 	}

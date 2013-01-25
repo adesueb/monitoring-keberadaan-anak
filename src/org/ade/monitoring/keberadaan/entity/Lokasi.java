@@ -56,7 +56,7 @@ public class Lokasi {
 	}
 
 	public String toString(){
-		return time+","+mLatitude+","+mLongitude;
+		return id+","+time+","+mLatitude+","+mLongitude;
 	}
 
 	private String id;

@@ -60,8 +60,9 @@ public abstract class MultipleChoiceMonak extends Dialog{
 		});
 		
 		if(!isAnak){
-			buttonLog.setVisibility(View.INVISIBLE);
-			buttonTrack.setVisibility(View.INVISIBLE);
+			buttonEdit.setVisibility(View.GONE);
+			buttonLog.setVisibility(View.GONE);
+			buttonTrack.setVisibility(View.GONE);
 		}
 	}
 	

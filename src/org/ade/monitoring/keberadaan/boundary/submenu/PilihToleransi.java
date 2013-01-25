@@ -16,11 +16,12 @@ public class PilihToleransi extends Dialog{
 	public PilihToleransi(Context context, final Handler handler) {
 		super(context);
 		mHandler = handler;
+		setContentView(R.layout.monitoring_toleransi);
+		
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.monitoring_toleransi);
 		setTitle("Toleransi : ");
 		Button buttonOk = (Button) findViewById(R.id.monitoringToleransiOk);
 		buttonOk.setOnClickListener(new View.OnClickListener() {
@@ -38,7 +39,7 @@ public class PilihToleransi extends Dialog{
 		this.toleransi = toleransi;
 		if(toleransi!=0){
 			EditText textNumber = (EditText) findViewById(R.id.monitoringToleransiTextNumber);	
-			textNumber.setText(toleransi);
+			textNumber.setText(toleransi+"");
 		}
 	}
 	

@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
 import org.ade.monitoring.keberadaan.Variable.Operation;
+import org.ade.monitoring.keberadaan.Variable.Status;
 import org.ade.monitoring.keberadaan.boundary.submenu.MultipleChoiceDataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Anak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.map.view.Peta;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
@@ -20,11 +22,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -81,8 +84,45 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		showDialog(Operation.DELETE, bundle);
 	}
 	
+	public void deleteSave(Bundle bundle){
+		DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
+		dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		databaseManager.deleteDataMonitoring(dataMonitoring);
+		for(DataMonitoring dataMonitoringFor:dataMonitorings){
+			if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
+				dataMonitorings.remove(dataMonitoringFor);
+			}
+		}
+		daftarMonitoringAdapter.notifyDataSetChanged();
+		dismissDialog(Operation.DELETE);
+	}
 	
-	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		DataMonitoring dataMonitoring = null;
+		if(resultCode==RESULT_OK){
+			Bundle bundle = data.getExtras();
+			dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
+			dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), false, false);
+			switch(requestCode){
+				case Operation.ADD:{
+					break;
+				}case Operation.EDIT:{
+					for(DataMonitoring forDataMonitoring:dataMonitorings){
+						if(forDataMonitoring.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
+							dataMonitorings.remove(forDataMonitoring);
+							break;
+						}
+					}
+					break;
+				}
+			}	
+
+			dataMonitorings.add(dataMonitoring);
+		}
+		
+	}
+
 	@Override
 	protected Dialog onCreateDialog(int id, final Bundle bundle) {
 		switch(id){
@@ -91,26 +131,15 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			}case Operation.DELETE:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
-				alert.setMessage("Anda mau menghapus Data Monitoring\ndengan id : "+bundle.getString("id")+"?");                
-
-				final EditText input = new EditText(this); 
-				input.setSingleLine(false);
-			    input.setLines(3);
-				alert.setView(input);
+				alert.setMessage("Anda mau menghapus Data Monitoring\ndengan id : "+bundle.getString("idMonitoring")+"?");                
 
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
-						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
-						databaseManager.deleteDataMonitoring(dataMonitoring);
-						for(DataMonitoring dataMonitoringFor:dataMonitorings){
-							if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
-								dataMonitorings.remove(dataMonitoringFor);
-							}
-						}
-						daftarMonitoringAdapter.notifyDataSetChanged();
-						dialog.dismiss();
+						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);	
+						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
+						sender.sendDataMonitoringDelete(dataMonitoring);
 						return;                  
 			         }  
 			     });  
@@ -176,7 +205,8 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				
 				TextView keterangan	= (TextView) rowView.findViewById(R.id.daftarMonitoringText);
 				keterangan.setText(dataMonitoring.getKeterangan());
-						
+				
+				rowView.setOnClickListener(new DaftarMonitoringClick(daftarMonitoring, dataMonitoring));
 				rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
@@ -198,6 +228,22 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		private final DaftarMonitoring daftarMonitoring;
 		private final int resource;
 		private List<DataMonitoring> dataMonitorings;
+		
+	}
+	
+	private final static class DaftarMonitoringClick implements View.OnClickListener{
+
+		public DaftarMonitoringClick(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+			mDaftarMonitoring 	= daftarMonitoring;
+			mDataMonitoring 	= dataMonitoring;
+		}
+		public void onClick(View v) {
+			mDaftarMonitoring.onEdit(BundleEntityMaker.makeBundleFromDataMonitoring(mDataMonitoring));
+		}
+		
+
+		private final DataMonitoring mDataMonitoring;
+		private final DaftarMonitoring mDaftarMonitoring;
 		
 	}
 	
@@ -226,6 +272,27 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 
 	public void onSave(Bundle bundle, int status) {
 		
+	}
+	
+	private final static class HandlerSendermonitoring extends Handler{
+
+		public HandlerSendermonitoring(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+			this.daftarMonitoring 	= daftarMonitoring;
+			this.dataMonitoring		= dataMonitoring;
+		}
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+				case Status.SUCCESS:{
+					daftarMonitoring.deleteSave(BundleEntityMaker.makeBundleFromDataMonitoring(dataMonitoring));
+					break;
+				}case Status.FAILED:{
+					break;
+				}
+			}
+		}
+		private final DaftarMonitoring 	daftarMonitoring;
+		private final DataMonitoring 	dataMonitoring;
 	}
 	
 	

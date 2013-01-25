@@ -13,4 +13,6 @@ public class TipePesanMonak {
 	public final static int REQUEST_STOP_TRACKING	= 10;
 	public final static int REQUEST_ON_MONITORING	= 11;
 	public final static int PENDAFTARAN_ANAK		= 12;
+	public final static int DATAMONITORING_UPDATE	= 13;
+	public final static int DATAMONITORING_DELETE	= 14;
 }

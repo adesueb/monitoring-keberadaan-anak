@@ -90,13 +90,21 @@ public class MonakJsonConverter {
 		try {
 			JSONObject object = new JSONObject(json);
 			int tipe = object.getInt(TIPE);
-			if(tipe==TipePesanMonak.DATAMONITORING_BARU){
-				pesanData=convertJsonToDataMonitoring(
-						object.getString(DATAMONITORING));
-			}else{
-				pesanData=convertJsonToPeringatan(object.getString(PERINGATAN));
+			
+			switch(tipe){
+				case TipePesanMonak.DATAMONITORING_BARU:{
+				}case TipePesanMonak.DATAMONITORING_UPDATE:{
+				}case TipePesanMonak.DATAMONITORING_DELETE:{
+					pesanData=convertJsonToDataMonitoring(
+							object.getString(DATAMONITORING));
+					break;
+				}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
+				}case TipePesanMonak.PERINGATAN_TERLARANG:{
+					pesanData=convertJsonToPeringatan(object.getString(PERINGATAN));
+					break;
+				}
 			}
-
+			
 			pesanData.setTipe(object.getInt(TIPE));
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -110,13 +118,25 @@ public class MonakJsonConverter {
 		try {
 			JSONObject jsonPesanData = new JSONObject();
 			jsonPesanData.put(TIPE, pesanData.getTipe());
-			if(pesanData.getTipe()==TipePesanMonak.DATAMONITORING_BARU){				
-				jsonPesanData.put(DATAMONITORING, 
-						MonakJsonConverter.convertDataMonitoringToJson((DataMonitoring) pesanData));	
-			}else{
-				jsonPesanData.put(PERINGATAN, convertPeringatanToJson((Peringatan) pesanData));
+			
+			switch(pesanData.getTipe()){
+				case TipePesanMonak.DATAMONITORING_BARU:{
+				}case TipePesanMonak.DATAMONITORING_UPDATE:{
+				}case TipePesanMonak.DATAMONITORING_DELETE:{
+					jsonPesanData.put(DATAMONITORING, 
+							MonakJsonConverter.convertDataMonitoringToJson((DataMonitoring) pesanData));	
+		
+					break;
+				}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
+				}case TipePesanMonak.PERINGATAN_TERLARANG:{
+					jsonPesanData.put(PERINGATAN, convertPeringatanToJson((Peringatan) pesanData));
+					break;
+				}
 			}
+			
+			
 			jsonTextResult = jsonPesanData.toString();
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -15,11 +15,13 @@ public class MultipleChoiceDataMonitoring extends MultipleChoiceMonak{
 	@Override
 	protected void onDelete(Bundle bundle) {
 		daftarMonitoring.onDelete(bundle);
+		this.dismiss();
 	}
 
 	@Override
 	protected void onEdit(Bundle bundle) {
 		daftarMonitoring.onEdit(bundle);
+		this.dismiss();
 	}
 	
 	@Override

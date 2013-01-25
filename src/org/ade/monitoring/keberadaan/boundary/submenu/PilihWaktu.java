@@ -21,7 +21,8 @@ public class PilihWaktu extends Dialog{
 		super(context);
 		mHandler = handler;
 		setTitle("Pilih Waktu : ");
-		
+
+		setContentView(R.layout.monitoring_waktu);
 	}
 	
 	public void setWaktus(List<Long> waktus){
@@ -29,7 +30,7 @@ public class PilihWaktu extends Dialog{
 		if(waktus!=null && waktus.size()>0){
 			
 			Calendar cal = Calendar.getInstance();
-			
+
 			TimePicker time1 = (TimePicker) findViewById(R.id.monitoringTime1);
 			long waktu1 = waktus.get(0);
 			cal.setTimeInMillis(waktu1);
@@ -45,7 +46,6 @@ public class PilihWaktu extends Dialog{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.monitoring_waktu);
 		Button buttonOk = (Button) findViewById(R.id.monitoringWaktuBtnOk);
 		
 		buttonOk.setOnClickListener( new View.OnClickListener() {

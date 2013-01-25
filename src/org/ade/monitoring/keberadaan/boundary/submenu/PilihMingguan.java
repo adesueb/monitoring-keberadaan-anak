@@ -22,14 +22,10 @@ public class PilihMingguan extends Dialog{
 		super(context);
 		mHandler = handler;
 		setTitle("Pilih Mingguan : ");
-	}
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+
 		setContentView(R.layout.list_general);
-		
+
 		listView = (ListView) findViewById(R.id.listGeneral);
-		
 		String[] arrHari = new String[]{"Minggu","Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu"};
 		
 		ArrayAdapter<String>listAdapter = 
@@ -53,6 +49,13 @@ public class PilihMingguan extends Dialog{
 			}
 		});
 		
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		
+		
+
 		
 		
 	}
@@ -61,7 +64,7 @@ public class PilihMingguan extends Dialog{
 		this.haris = haris;
 		if(haris!=null&&haris.size()>0){
 			for(int hari:haris){
-				listView.setItemChecked(hari, true);
+				listView.setItemChecked(hari-1, true);
 			}
 		}
 	}
