@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
@@ -42,7 +43,15 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		final Bundle bundle = intent.getExtras();
 		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
 		databaseManager = new DatabaseManager(this);
-		dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
+		if(anak==null){
+			dataMonitorings	= databaseManager.getAllDataMonitorings(true, true);
+			justView = true;
+		}else{
+			dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
+		}
+		if(dataMonitorings==null){
+			dataMonitorings = new ArrayList<DataMonitoring>();
+		}
 		daftarMonitoringAdapter	= 
 				new AdapterDaftarMonitoring(this, R.layout.daftar_monitoring_item, dataMonitorings);
 		
@@ -63,6 +72,11 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			}
 		});
 		
+		if(justView){
+			ivAdd.setVisibility(View.GONE);
+			ivMap.setVisibility(View.GONE);
+		}
+		
 		getListView().setAdapter(daftarMonitoringAdapter);
 		
 	}
@@ -76,6 +90,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	public void onEdit(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
 		bundle.putBoolean(PendaftaranMonitoring.EXTRA_EDIT, true);
+		if(justView){
+			bundle.putBoolean(PendaftaranMonitoring.EXTRA_JUST_VIEW, true);
+		}
 		intent.putExtras(bundle);
 		startActivityForResult(intent, Operation.EDIT);
 	}
@@ -163,6 +180,8 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	private AdapterDaftarMonitoring daftarMonitoringAdapter;
 	private List<DataMonitoring>	dataMonitorings;
 	
+	private boolean justView = false;
+	
 	private final static class AdapterDaftarMonitoring extends ArrayAdapter<DataMonitoring>{
 
 		public AdapterDaftarMonitoring(DaftarMonitoring daftarMonitoring,
@@ -207,7 +226,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				keterangan.setText(dataMonitoring.getKeterangan());
 				
 				rowView.setOnClickListener(new DaftarMonitoringClick(daftarMonitoring, dataMonitoring));
-				rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));
+				if(!daftarMonitoring.justView){
+					rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));	
+				}
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
 				if(position%2==0){

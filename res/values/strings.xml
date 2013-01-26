@@ -7,7 +7,7 @@
     <string name="pilih_mingguan">Pilih Mingguan</string>
     <string name="set_tolerancy">Set Toleransi</string>
     <string name="monitoring">MONITORING</string>
-    <string name="kosong">...</string>
+    <string name="kosong">…</string>
     <string name="ok">OK</string>
     <string name="pilih_waktu">Pilih Waktu</string>
     <string name="m">Meters</string>
@@ -42,5 +42,9 @@
     <string name="set_meter_monitoring">Meter Monitoring</string>
     <string name="set_detik_tracking">Detik Tracking</string>
     <string name="max_log">Max Log</string>
+    <string name="view_all_monitoring">View All Monitoring</string>
+    <string name="view_all_lokasi">View All Lokasi</string>
+    <string name="clear_all_Lokasi_Monitoring">Clear All Lokasi &amp; Monitoring</string>
     <string name="belum_ada_response_anak">Belum Ada Response Anak</string>
+    <string name="setting">SETTING</string>
 </resources>

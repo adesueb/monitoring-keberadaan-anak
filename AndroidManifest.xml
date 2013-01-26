@@ -68,6 +68,16 @@
             </intent-filter>
         </activity>
         
+         <activity android:name=".boundary.AdminActivity"
+                  android:label="@string/app_name" 
+                  android:exported="false"
+				  android:configChanges="orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
         <activity android:name=".map.view.Peta"
                   android:label="@string/app_name" 
                   android:exported="false"

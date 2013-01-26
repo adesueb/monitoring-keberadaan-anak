@@ -470,18 +470,19 @@ public class DatabaseManager {
 
 	
 	public void deleteLokasi(Lokasi lokasi){
-		long result = getDb().delete
+		getDb().delete
 			(LOCATION_TABLE_NAME, COLUMN_ID_LOCATION+"='"+lokasi.getId()+"'", null);
-		if(result>0){
-			LocationFileManager.clearLocation();
-		}
+		
 		
 	}
 
 	
 	public void deleteAllLokasi(){
-		getDb().delete
+		long result = getDb().delete
 			(LOCATION_TABLE_NAME, null, null);
+		if(result>0){
+			LocationFileManager.clearLocation();
+		}
 	}
 	
 	public void deleteDateMonitoringByIdIdDate(String id){
@@ -511,7 +512,10 @@ public class DatabaseManager {
 	}
 	
 	public void deleteAllDataMonitoring(){
-		getDb().delete(MONITORING_TABLE_NAME, null, null);
+		long result = getDb().delete(MONITORING_TABLE_NAME, null, null);
+		if(result>0){
+			DataMonitoringFileManager.clearDataMonitoring();			
+		}
 	}
 	
 	public void deleteAllAnak(){
@@ -541,7 +545,6 @@ public class DatabaseManager {
 			deleteLokasi(lokasi);
 		}
 		
-		DataMonitoringFileManager.clearDataMonitoring();
 	}
 	
 	public void deleteAnak(Anak anak){
@@ -550,14 +553,17 @@ public class DatabaseManager {
 			dataMonitorings = getDataMonitoringsByAnak(anak.getIdAnak());
 		}
 		
-		for(DataMonitoring dataMonitoring: dataMonitorings){
-			deleteDataMonitoring(dataMonitoring);
+		if(dataMonitorings!=null){
+			for(DataMonitoring dataMonitoring: dataMonitorings){
+				deleteDataMonitoring(dataMonitoring);
+			}
 		}
 		
 		getDb().delete
-		(ANAK_TABLE_NAME, 
+			(ANAK_TABLE_NAME, 
 				COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
 		deleteLokasiAnak(anak);
+		
 		
 		
 	}

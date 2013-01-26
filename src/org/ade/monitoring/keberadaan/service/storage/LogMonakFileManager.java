@@ -48,7 +48,10 @@ public class LogMonakFileManager {
 	
 	public final static void clearLog(){
 		File file = createFile();
-		file.delete();
+		if(file.exists()){
+			file.delete();	
+		}
+		
 	}
 	
 	private final static String PATH = "/MonakLog.txt";

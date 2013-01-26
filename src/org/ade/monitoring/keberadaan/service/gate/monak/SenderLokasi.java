@@ -25,7 +25,7 @@ public class SenderLokasi extends ASenderMonak{
 	}
 	
 	public void sendLocationSingleRequest(String id){
-		GpsManager gpsManager = new GpsManager(getContext(), new LocationReceiverHandler(this));
+		GpsManager gpsManager = new GpsManager(getContext(), new LocationReceiverHandler(this, id));
     	Lokasi lokasi = gpsManager.getLastLokasi();
     	if(lokasi!=null){
     		sendLocationSingleRequest(lokasi, id);	
@@ -72,9 +72,11 @@ public class SenderLokasi extends ASenderMonak{
 	
 	private static class LocationReceiverHandler extends Handler{
 
-		public LocationReceiverHandler(SenderLokasi senderLokasi){
-			this.senderLokasi = senderLokasi;
+		public LocationReceiverHandler(SenderLokasi senderLokasi, String idAnak){
+			this.senderLokasi 	= senderLokasi;
+			this.idAnak			= idAnak;
 		}
+		
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -95,8 +97,8 @@ public class SenderLokasi extends ASenderMonak{
 			}
 			
 		}
-		private final SenderLokasi senderLokasi;
-		
+		private final SenderLokasi 	senderLokasi;
+		private final String 		idAnak;
 	}
 	
 	

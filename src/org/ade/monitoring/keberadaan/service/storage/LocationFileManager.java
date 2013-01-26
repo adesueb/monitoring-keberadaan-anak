@@ -113,7 +113,10 @@ public class LocationFileManager {
 	
 	public final static void clearLocation(){
 		File file = createFile();
-		file.delete();
+		if(file.exists()){
+			file.delete();	
+		}
+		
 	}
 	
 	private final static String PATH = "/MonaklocationTracking.txt";

@@ -29,13 +29,13 @@
         android:layout_height="wrap_content">
         
         <ImageView
-            android:id="@+id/menuMap"
+            android:id="@+id/menuSetting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top"
             android:layout_margin="20dip"
             android:layout_weight="1"
-            android:src="@drawable/map" >
+            android:src="@drawable/setting" >
 
         	</ImageView>
        
@@ -50,6 +50,22 @@
 
         	</ImageView>
     
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2" >
+
+        <ImageView
+            android:id="@+id/menuMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="20dip"
+            android:layout_weight="1"
+            android:src="@drawable/map" />
     </LinearLayout>
 
     <LinearLayout
