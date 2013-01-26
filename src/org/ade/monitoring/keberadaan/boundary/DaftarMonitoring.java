@@ -103,11 +103,16 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	
 	public void deleteSave(Bundle bundle){
 		DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
+		
 		dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		if(dataMonitoring==null){
+			return;
+		}
 		databaseManager.deleteDataMonitoring(dataMonitoring);
 		for(DataMonitoring dataMonitoringFor:dataMonitorings){
 			if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
 				dataMonitorings.remove(dataMonitoringFor);
+				break;
 			}
 		}
 		daftarMonitoringAdapter.notifyDataSetChanged();
@@ -123,6 +128,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), false, false);
 			switch(requestCode){
 				case Operation.ADD:{
+					
 					break;
 				}case Operation.EDIT:{
 					for(DataMonitoring forDataMonitoring:dataMonitorings){
@@ -136,6 +142,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			}	
 
 			dataMonitorings.add(dataMonitoring);
+			daftarMonitoringAdapter.notifyDataSetChanged();
 		}
 		
 	}
@@ -155,7 +162,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
 						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);	
-						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
+						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerDeleteSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
 						sender.sendDataMonitoringDelete(dataMonitoring);
 						return;                  
 			         }  
@@ -295,9 +302,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		
 	}
 	
-	private final static class HandlerSendermonitoring extends Handler{
+	private final static class HandlerDeleteSendermonitoring extends Handler{
 
-		public HandlerSendermonitoring(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+		public HandlerDeleteSendermonitoring(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
 			this.daftarMonitoring 	= daftarMonitoring;
 			this.dataMonitoring		= dataMonitoring;
 		}

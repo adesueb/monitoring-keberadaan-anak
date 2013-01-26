@@ -15,7 +15,6 @@ import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPendaftaranAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
@@ -205,14 +204,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				anak.setNoHpAnak(bundle.getString("noHp"));
 				databaseManager.deleteLokasiAnak(anak);
 				databaseManager.updateAnak(anak);
-				for(Anak anakFor:anaks){
-					if(anakFor.getIdAnak().equals(anak.getIdAnak())){
-						anakFor.setLastLokasi(null);
-						anakFor.setNamaAnak(anak.getNamaAnak());
-						anakFor.setNoHpAnak(anak.getNoHpAnak());
-					}
-				}
-				daftarAnakAdapter.notifyDataSetChanged();
+				
 				sendRequestLocationAnak(anak, true);
 				
 				break;
@@ -238,9 +230,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	private void sendRequestLocationAnak(Anak anak, boolean isEdit){	
-		senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, isEdit));
+		SenderPendaftaranAnak senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, isEdit));
 		senderAnak.sendAnak(anak);				
-		Log.d("DaftarAnak", "no hp anak : "+ anak.getIdEntity());
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, isEdit));	
 	}
 	
@@ -256,6 +247,16 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		bound = false;
 	}
 
+	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
+		handlerBinder =binderHandlerMonak;
+		for(Anak anak :anaks ){
+			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, true));	
+		}
+	}
+
+	public void setBound(boolean bound) {
+		this.bound = bound;
+	}
 
 	private ServiceMonakConnection serviceConnection;
 	private IDGenerator			idGenerator;
@@ -265,7 +266,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	private List<Anak> 			anaks;
 	private List<Anak> 			anaksFull;
 	private BinderHandlerMonak	handlerBinder;
-	private SenderPendaftaranAnak		senderAnak;
 	
 	private boolean				bound;
 	
@@ -395,11 +395,28 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 		public void handleMessage(Message msg) {
 			if(msg.what==Status.SUCCESS){
-				//TODO : what're u gonna do?
+
+				if(anak.getIdAnak()!=null && !anak.getIdAnak().equals("")){
+					if(isEdit){
+						for(Anak anakFor:daftarAnak.anaks){
+							if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+								anakFor.setNamaAnak(anak.getNamaAnak());
+								anakFor.setNoHpAnak(anak.getNoHpAnak());
+								anakFor.setLastLokasi(null);
+							}
+						}						
+					}else{
+						daftarAnak.anaks.add(anak);
+					}
+
+				}
+				
+				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+				
 			}else if(msg.what==Status.FAILED){
 				AlertDialog.Builder alert = new AlertDialog.Builder(daftarAnak);                 
 				alert.setTitle("Perhatian !!!");  
-				alert.setMessage("gagal memverifikasi no HP anak... \ncoba lagi?");                
+				alert.setMessage("gagal mengirim verifikasi no HP anak... \ncoba lagi?");                
 
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
@@ -445,8 +462,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				Lokasi lokasi = new Lokasi();
 				lokasi.setLatitude(data.getDouble("latitude"));
 				lokasi.setLongitude(data.getDouble("longitude"));
+				//cek apakah anak ini yang mau di update datanya...
 				String idAnak = data.getString("idAnak");
-				
+				//.................................................
 				if(anak.getIdAnak()!=null && anak.getIdAnak().equals(idAnak)){
 					anak.setLastLokasi(lokasi);
 					if(isEdit){
@@ -472,20 +490,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		private final Anak anak;
 		private final boolean isEdit;
 		
-	}
-
-	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
-		handlerBinder =binderHandlerMonak;
-		for(Anak anak :anaks ){
-			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, true));	
-		}
-			
-
-	}
-
-	public void setBound(boolean bound) {
-		this.bound = bound;
-	}
-	
+	}	
 	
 }

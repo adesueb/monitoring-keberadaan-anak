@@ -85,6 +85,7 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+LOCATION_TABLE_NAME+" order by "+COLUMN_ID_LOCATION+" DESC limit 1");
 		String id = getLastIdFromCursor(cursor);
+
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
 			if(getDb().isOpen()){
@@ -412,9 +413,7 @@ public class DatabaseManager {
 		Cursor cursor = 
 				actionQuery(DAY_MONITORING_TABLE_NAME, null, COLUMN_MONITORING_DAY_MONITORING+"='"+idMonitoring+"'");
 		if(cursor!=null && cursor.getCount()>0){
-			LogMonakFileManager.debug("hari berisi data dnegan banyak data adalah : "+cursor.getCount());
 			List<DayMonitoring> dayMonitorings = getHarisMonitoringsFromCursor(cursor, withDataMonitoring);
-			LogMonakFileManager.debug("hari berisi data dnegan banyak data2 adalah : "+dayMonitorings.size());
 			
 			if(cursor!=null && !cursor.isClosed()){
 				cursor.close();
@@ -527,6 +526,9 @@ public class DatabaseManager {
 	}
 	
 	public void deleteDataMonitoring(DataMonitoring dataMonitoring){
+		
+		dataMonitoring = getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		
 		getDb().delete
 			(MONITORING_TABLE_NAME, 
 					COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
@@ -539,6 +541,7 @@ public class DatabaseManager {
 		if(haris!=null){
 			deleteDayMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring());
 		}
+		
 		
 		Lokasi lokasi = dataMonitoring.getLokasi();
 		if(lokasi!=null){
@@ -581,17 +584,21 @@ public class DatabaseManager {
 	//...................................................................
 	
 	// update............................................................
-	public void updateDateMonitoring(DateMonitoring tanggalMonitoring){
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
-		getDb().update(DATE_MONITORING_TABLE_NAME, cv, "_id='"+tanggalMonitoring.getDataMonitoring().getIdMonitoring()+"'", null);
+	public void updateAllDateMonitoringsByMonitoring(List<DateMonitoring> tanggals){
+		if(tanggals.size()>0){
+			deleteDateMonitoringByIdMonitoring(tanggals.get(0).getDataMonitoring().getIdMonitoring());
+			addTanggalMonitorings(tanggals);		
+		}
+	
 	}
 	
-	public void updateDayMonitoring(DayMonitoring hariMonitoring){
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_DAY_DAY_MONITORING, hariMonitoring.getHari());
-		getDb().update(DAY_MONITORING_TABLE_NAME, cv, "_id='"+hariMonitoring.getDataMonitoring().getIdMonitoring()+"'", null);
+	public void updateAllDayMonitoringsByMonitoring(List<DayMonitoring> haris){
+		if(haris.size()>0){
+			deleteDayMonitoringByIdMonitoring(haris.get(0).getDataMonitoring().getIdMonitoring());
+			addHariMonitorings(haris);
+		}
 	}
+
 	
 	public void updateLokasi(Lokasi lokasi){
 		ContentValues cv = new ContentValues();
@@ -634,24 +641,21 @@ public class DatabaseManager {
 		cv.put(COLUMN_LOCATION_MONITORING, idLokasi);			
 		
 		long result = getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
+		
+		List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
+		if(tanggals!=null){
+			updateAllDateMonitoringsByMonitoring(tanggals);
+		}
+		
+		List<DayMonitoring> haris = dataMonitoring.getHaris();
+		if(haris!=null){
+			updateAllDayMonitoringsByMonitoring(haris);
+		}
+		
 		if(result>0){
-			List<DateMonitoring> tanggals = dataMonitoring.getTanggals();
-			if(tanggals!=null){
-				for(DateMonitoring tanggal : tanggals){
-					updateDateMonitoring(tanggal);
-				}
-			}
-			
-			List<DayMonitoring> haris = dataMonitoring.getHaris();
-			if(tanggals!=null){
-				for(DayMonitoring hari : haris){
-					updateDayMonitoring(hari);
-				}
-			}
 			if(dataMonitoring.getLokasi()!=null){
 				updateLokasi(dataMonitoring.getLokasi());
 			}
-			
 		}
 	}
 		
@@ -753,7 +757,7 @@ public class DatabaseManager {
 		if(lastLokasi!=null){
 			if(lastLokasi.getId()==null||lastLokasi.getId().equals("")){
 				IDGenerator idGenerator = new IDGenerator(context, this);
-				lastLokasi.setId(idGenerator.getIdLocation());				
+				lastLokasi.setId(idGenerator.getIdLocation());		
 			}
 			cv.put(COLUMN_LAST_LOCATION_ANAK, lastLokasi.getId());	
 		}

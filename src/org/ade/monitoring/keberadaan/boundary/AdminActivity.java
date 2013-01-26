@@ -3,11 +3,8 @@ package org.ade.monitoring.keberadaan.boundary;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
-import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Lokasi;
-import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class AdminActivity extends Activity{
 
@@ -59,7 +57,7 @@ public class AdminActivity extends Activity{
 	protected Dialog onCreateDialog(int id) {
 		switch(id){
 			case DIALOG_LOKASI:{
-				return makeDialogLogAnak();		
+				return makeDialogLokasi();		
 			}case DIALOG_DELETE_ALL:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
@@ -92,7 +90,7 @@ public class AdminActivity extends Activity{
 
 
 
-	private Dialog makeDialogLogAnak(){
+	private Dialog makeDialogLokasi(){
 		final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.list_general);
 		
@@ -100,6 +98,10 @@ public class AdminActivity extends Activity{
 		
 		DatabaseManager databaseManager = new DatabaseManager(this);
 		final List<Lokasi> lokasis = databaseManager.getAllLokasi();
+		if(lokasis==null){
+			Toast.makeText(this, "tidak ada lokasi", Toast.LENGTH_SHORT).show();
+			return null;
+		}
 		String [] idLokasis = new String[lokasis.size()];
 		for(int i=0;i<lokasis.size();i++){
 			idLokasis[i] = lokasis.get(i).getId();

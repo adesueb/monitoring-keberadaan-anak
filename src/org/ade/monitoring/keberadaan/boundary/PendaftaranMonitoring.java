@@ -270,6 +270,15 @@ public class PendaftaranMonitoring extends Activity{
 	    		
 	    	}
 	    	
+	    	int status = dataMonitoring.getStatus();
+	    	
+	    	TextView textStatus= (TextView) findViewById(R.id.monitoringTextStatus);
+			if(status== DataMonitoring.SEHARUSNYA){
+				textStatus.setText("Seharusnya");
+			}else{
+				textStatus.setText("Terlarang");
+			}
+			
 			Lokasi lokasi = dataMonitoring.getLokasi();
 			if(lokasi!=null){
 				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
