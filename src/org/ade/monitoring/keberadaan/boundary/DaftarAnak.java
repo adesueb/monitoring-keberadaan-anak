@@ -14,6 +14,8 @@ import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPendaftaranAnak;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderStartMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderStopMonitoring;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
@@ -39,10 +41,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DaftarAnak extends ListActivity implements IFormOperation, IBindMonakServiceConnection{
 
@@ -96,7 +100,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 						anaks.add(anak);
 					}
 				}
-				Log.d("searching", "masuk searching");
 				daftarAnakAdapter.notifyDataSetChanged();
 			}
 			
@@ -229,17 +232,26 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
+	private void startAnakMonitoring(Anak anak){
+		SenderStartMonitoring sender = new SenderStartMonitoring(this);
+		sender.sendStartMonitoring(anak);
+		Toast.makeText(this, "monitoring pada anak :"+anak.getNamaAnak()+" akan diaktifkan", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void stopAnakMonitoring(Anak anak){
+		SenderStopMonitoring sender = new SenderStopMonitoring(this);
+		sender.sendStopMonitoring(anak);
+		Toast.makeText(this, "monitoring pada anak :"+anak.getNamaAnak()+" akan dinonaktifkan", Toast.LENGTH_SHORT).show();
+	}
+	
 	private void sendRequestLocationAnak(Anak anak, boolean isEdit){	
 		SenderPendaftaranAnak senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, isEdit));
 		senderAnak.sendAnak(anak);				
-		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, isEdit));	
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Log.d("daftar anak", "status dari bound adalah : "+bound);
-		
 		if(bound){
 			handlerBinder.unBindUIHandlerWaitingLocation();
 			unbindService(serviceConnection);
@@ -248,10 +260,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
-		handlerBinder =binderHandlerMonak;
-		for(Anak anak :anaks ){
-			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this, anak, true));	
-		}
+		handlerBinder = binderHandlerMonak;
+		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this));	
+		handlerBinder.bindUIHandlerWaitingKonfirmasiAktif(new WaitingKonfirmasiHandler(this));
 	}
 
 	public void setBound(boolean bound) {
@@ -327,20 +338,43 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				
 				rowView.setOnLongClickListener(new DaftarAnakLongClick(daftarAnak, anak));
 				
-				LinearLayout llResponse = (LinearLayout) rowView.findViewById(R.id.daftarAnakItemResponse);
-				if(anak.getLastLokasi()==null){
-					llResponse.setVisibility(View.VISIBLE);
-				}else{
-					llResponse.setVisibility(View.GONE);
-				}
+				Button btnStart = (Button) rowView.findViewById(R.id.daftarAnakButtonStart);
+				btnStart.setOnClickListener(new BtnStartOnClick(daftarAnak, anak));
+				
+				Button btnStop = (Button) rowView.findViewById(R.id.daftarAnakButtonStop);				
+				btnStop.setOnClickListener(new BtnStopOnClick(daftarAnak, anak));
+				
+				LinearLayout llAktif = (LinearLayout) rowView.findViewById(R.id.daftarAnakStatusAktif);
+				LinearLayout llDeAktif = (LinearLayout) rowView.findViewById(R.id.daftarAnakStatusDeaktif);
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
-				if(position%2==0){
-
+				
+				if(anak.isAktif()){
 					llBackground.setBackgroundResource(R.drawable.back_menu_green);
+					
+					llAktif.setVisibility(View.VISIBLE);					
+					llDeAktif.setVisibility(View.GONE);
+					
 				}else{
-
 					llBackground.setBackgroundResource(R.drawable.back_menu);
+					
+					llAktif.setVisibility(View.GONE);
+					llDeAktif.setVisibility(View.VISIBLE);
+					
+				}
+				
+				TextView txtAktif = (TextView) rowView.findViewById(R.id.daftarAnakTextStatusAktif);
+				TextView txtDeAktif = (TextView) rowView.findViewById(R.id.daftarAnakTextStatusDeaktif);
+				if(anak.getLastLokasi()==null){
+					btnStart.setEnabled(false);
+					btnStop.setEnabled(false);
+					txtAktif.setText(rowView.getResources().getString(R.string.registrasi_anak));
+					txtDeAktif.setText(rowView.getResources().getString(R.string.registrasi_anak));
+				}else{
+					btnStart.setEnabled(true);
+					btnStop.setEnabled(true);
+					txtAktif.setText(rowView.getResources().getString(R.string.monitoring_aktif));
+					txtDeAktif.setText(rowView.getResources().getString(R.string.monitoring_deaktif));
 				}
 				
 				return rowView;
@@ -403,6 +437,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 								anakFor.setNamaAnak(anak.getNamaAnak());
 								anakFor.setNoHpAnak(anak.getNoHpAnak());
 								anakFor.setLastLokasi(null);
+								anakFor.setAktif(false);
 							}
 						}						
 					}else{
@@ -448,10 +483,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	
 	private final static class WaitingLocationHandler extends Handler{
 
-		public WaitingLocationHandler(DaftarAnak daftarAnak, Anak anak, boolean isEdit){
+		public WaitingLocationHandler(DaftarAnak daftarAnak){
 			this.daftarAnak = daftarAnak;
-			this.anak		= anak;
-			this.isEdit		= isEdit;
 		}
 		
 		@Override
@@ -465,30 +498,79 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				//cek apakah anak ini yang mau di update datanya...
 				String idAnak = data.getString("idAnak");
 				//.................................................
-				if(anak.getIdAnak()!=null && anak.getIdAnak().equals(idAnak)){
-					anak.setLastLokasi(lokasi);
-					if(isEdit){
-						for(Anak anakFor:daftarAnak.anaks){
-							if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-								anakFor.setNamaAnak(anak.getNamaAnak());
-								anakFor.setNoHpAnak(anak.getNoHpAnak());
-								anakFor.setLastLokasi(lokasi);
-							}
-						}						
-					}else{
-						daftarAnak.anaks.add(anak);
+				for(Anak anakFor:daftarAnak.anaks){
+					if(anakFor.getIdAnak().equals(idAnak)){
+						anakFor.setLastLokasi(lokasi);
+						anakFor.setAktif(true);
 					}
-
-				}
-				
+				}		
 				
 				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
 			}
 		}
 		
 		private final DaftarAnak daftarAnak;
-		private final Anak anak;
-		private final boolean isEdit;
+		
+	}	
+	
+	private static final class BtnStartOnClick implements View.OnClickListener{
+
+		public BtnStartOnClick(DaftarAnak daftarAnak, Anak anak){
+			this.daftarAnak = daftarAnak;
+			this.anak		= anak;
+		}
+		public void onClick(View v) {
+			daftarAnak.startAnakMonitoring(anak);
+		}
+		
+		private final DaftarAnak 	daftarAnak;
+		private final Anak 			anak;
+		
+	}
+	
+	private static final class BtnStopOnClick implements View.OnClickListener{
+
+		public BtnStopOnClick(DaftarAnak daftarAnak, Anak anak){
+			this.daftarAnak = daftarAnak;
+			this.anak		= anak;
+		}
+		public void onClick(View v) {
+			daftarAnak.stopAnakMonitoring(anak);
+		}
+		
+		private final DaftarAnak 	daftarAnak;
+		private final Anak 			anak;
+		
+	}
+	
+	private final static class WaitingKonfirmasiHandler extends Handler{
+
+		public WaitingKonfirmasiHandler(DaftarAnak daftarAnak){
+			this.daftarAnak = daftarAnak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle data = msg.getData();
+				
+				//cek apakah anak ini yang mau di update datanya...
+				String idAnak = data.getString("idAnak");
+				//.................................................
+				
+				for(Anak anakFor:daftarAnak.anaks){
+					if(anakFor.getIdAnak().equals(idAnak)){
+						anakFor.setAktif(data.getBoolean("aktif"));
+					}
+				}		
+				
+				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+				
+				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+			}
+		}
+		
+		private final DaftarAnak daftarAnak;
 		
 	}	
 	

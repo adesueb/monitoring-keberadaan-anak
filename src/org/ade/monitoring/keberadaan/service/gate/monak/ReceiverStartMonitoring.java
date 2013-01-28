@@ -4,8 +4,8 @@ import org.ade.monitoring.keberadaan.service.StartUpService;
 
 import android.content.Context;
 
-public class ReceiverRequestOnMonitoring {
-	public ReceiverRequestOnMonitoring(Context context){
+public class ReceiverStartMonitoring {
+	public ReceiverStartMonitoring(Context context){
 		this.context = context;
 	}
 	

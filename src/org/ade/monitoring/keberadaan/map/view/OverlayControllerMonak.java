@@ -52,7 +52,7 @@ public class OverlayControllerMonak {
   	}
 	
   	private void setOverlayDataMonitoring(){
-  		List<DataMonitoring> dataMonitorings = databaseManager.getAllDataMonitorings(false, true);
+  		List<DataMonitoring> dataMonitorings = databaseManager.getAllDataMonitorings(true, true);
   		overlayFactory.makeOverlayDataMonitoring(dataMonitorings);
   		
   		if(overlayFactory.anySeharusnya()){
@@ -62,6 +62,8 @@ public class OverlayControllerMonak {
   		if(overlayFactory.anyTerlarang()){
   			mapView.getOverlays().add(overlayFactory.getTerlarang());
   		}
+  		
+  		LogMonakFileManager.debug("lumayan kalau sudah masuk sini");
   		
   		for(DataMonitoring dataMonitoring:dataMonitorings){
   			

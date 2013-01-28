@@ -26,6 +26,11 @@ public class SenderSMS{
 	    String SENT = "SMS_SENT";
 	    String DELIVERED = "SMS_DELIVERED";
 
+	    // menghentikan pengiriman sms saat melakukan sms ke nomor yg g da....
+	    if(phoneNumber==null||phoneNumber.equals("")){
+	    	return;
+	    }
+	    //....................................................................
 	    PendingIntent sentPI = PendingIntent.getBroadcast(mContext, 0,
 	        new Intent(SENT), 0);
 
