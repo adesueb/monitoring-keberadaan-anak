@@ -58,6 +58,7 @@ public class ReceiverPesanData {
 		pelanggaran.setAnak(anak);
 		
 		Lokasi lokasi = peringatan.getLokasiAnak();
+		lokasi.setId(idGenerator.getIdLocation());
 		
 		Calendar cal = Calendar.getInstance();
 		long timeMilis = cal.getTimeInMillis();
@@ -66,6 +67,8 @@ public class ReceiverPesanData {
 		
 		pelanggaran.setLokasi(lokasi);
 		pelanggaran.setWaktuPelanggaran(timeMilis);
+		
+		databaseManager.addPelanggaran(pelanggaran);
 		
 	}
 	

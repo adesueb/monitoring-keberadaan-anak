@@ -11,7 +11,6 @@ import org.ade.monitoring.keberadaan.service.MonakService;
 import org.ade.monitoring.keberadaan.service.BinderHandlerMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
-import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.service.util.IBindMonakServiceConnection;
 import org.ade.monitoring.keberadaan.service.util.ServiceMonakConnection;
@@ -97,6 +96,9 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	    }
 		overlayControllerMonak = new OverlayControllerMonak(this, overlayFactory, mapView, gpsManager);
 		
+
+		findLokasiOrangTua();
+		
 		if(isPelanggaran){
 			overlayControllerMonak.setOverlayNewPelanggaran(new HandlerPetaCenter(this));
 		}
@@ -130,7 +132,6 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		
 		setMenuAmbilLokasi();
 		
-		findLokasiOrangTua();
 		
 //		requestAllAnakLocations();
 		

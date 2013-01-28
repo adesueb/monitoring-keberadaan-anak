@@ -158,9 +158,13 @@ public class MonitoringOverlayFactory {
 			}
 			
 		}
+		if(petaOverlaySeharusnya.size()>0){
+			monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);		
+		}
 		
-		monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);
-		monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);
+		if(petaOverlayTerlarang.size()>0){
+			monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);			
+		}
 	}
 	
 	private OverlayItem makeOverlayItemSinggleDataMonitoring(DataMonitoring dataMonitoring){

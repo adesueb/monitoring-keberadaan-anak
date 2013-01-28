@@ -11,6 +11,7 @@ import org.ade.monitoring.keberadaan.service.StopperService;
 import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderInternet;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
 import android.content.Context;
@@ -73,7 +74,7 @@ public class SenderPesanData extends ASenderMonak{
 				break;
 			}
 		}
-		
+		LogMonakFileManager.debug("siap kirim peringatan");
 		senderSMS.sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 	

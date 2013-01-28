@@ -18,7 +18,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -114,7 +113,6 @@ public class OverlayControllerMonak {
   		List<Lokasi> lokasis = new ArrayList<Lokasi>();
   		for(Anak anak:anaks){
   			lokasis.add(anak.getLastLokasi());
-  			Log.d("Peta", "lokasi dari anak adalah : "+anak.getLastLokasi().getlatitude()+","+anak.getLastLokasi().getLongitude());
   		}
   		
   		
@@ -130,7 +128,7 @@ public class OverlayControllerMonak {
   	}
   	
 	public void setOverlayNewPelanggaran(Handler handler){
-		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
+		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(true, true);
   		int size = pelanggarans.size();
 		if(size>0){
 			
@@ -151,7 +149,7 @@ public class OverlayControllerMonak {
 	}
 	
   	public void setOverlayPelanggarans(){
-  		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(false, false);
+  		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(true, true);
   		overlayFactory.makeOverlayPelanggarans(pelanggarans);
   		
   		if(overlayFactory.anyPelanggaran()){

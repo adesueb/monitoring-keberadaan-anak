@@ -49,12 +49,12 @@ public class SenderSMS{
 	                    break;
 	                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_NO_SERVICE:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_NULL_PDU:
@@ -64,10 +64,11 @@ public class SenderSMS{
 	                	break;
 	                case SmsManager.RESULT_ERROR_RADIO_OFF:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	            }
+        		mContext.unregisterReceiver(this);
 	        }
 	    }, new IntentFilter(SENT));
 
@@ -84,10 +85,11 @@ public class SenderSMS{
 	                	break;
 	                case Activity.RESULT_CANCELED:
 	                	if(mHandler!=null){
-		                	mHandler.sendEmptyMessage(Status.FAILED);	                		
+		                	mHandler.sendEmptyMessage(Status.FAILED);	 
 	                	}
 	                    break;                        
 	            }
+        		mContext.unregisterReceiver(this);
 	        }
 	    }, new IntentFilter(DELIVERED));   
 	    

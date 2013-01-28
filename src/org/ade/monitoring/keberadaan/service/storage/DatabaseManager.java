@@ -111,13 +111,14 @@ public class DatabaseManager {
 	public String getLastIdPelanggaran(){
 		Cursor cursor = 
 				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
+		
+		String id = getLastIdFromCursor(cursor);
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
 			if(getDb().isOpen()){
 				getDb().close();
 			}
 		}
-		String id = getLastIdFromCursor(cursor);
 		return id;
 	}
 	//.....................................................................
@@ -533,24 +534,33 @@ public class DatabaseManager {
 	}
 	
 	public void deleteAllDataMonitoring(){
-		long result = getDb().delete(MONITORING_TABLE_NAME, null, null);
-		if(result>0){
-			DataMonitoringFileManager.clearDataMonitoring();			
+		List<DataMonitoring> dataMonitorings = getAllDataMonitorings(true, true);
+		for(DataMonitoring dataMonitoring:dataMonitorings){
+			deleteDataMonitoring(dataMonitoring);
 		}
+		
 	}
 	
 	public void deleteAllAnak(){
 		getDb().delete(ANAK_TABLE_NAME, null, null);
 	}
 	
-	public void deletePelanggaran(){
+	public void deleteAllPelanggarans(){
 		getDb().delete(PELANGGARAN_TABLE_NAME, null, null);
+	}
+	
+	public void deleteAllPelanggaranByMonitoring(DataMonitoring dataMonitoring){
+		getDb().delete(PELANGGARAN_TABLE_NAME, 
+				COLUMN_MONITORING_PELANGGARAN+"='"+dataMonitoring.getIdMonitoring()+"'", 
+				null);
 	}
 	
 	public void deleteDataMonitoring(DataMonitoring dataMonitoring){
 		
 		dataMonitoring = getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
-		
+		if(dataMonitoring==null){
+			return;
+		}
 		getDb().delete
 			(MONITORING_TABLE_NAME, 
 					COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
@@ -564,6 +574,7 @@ public class DatabaseManager {
 			deleteDayMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring());
 		}
 		
+		deleteAllPelanggaranByMonitoring(dataMonitoring);
 		
 		Lokasi lokasi = dataMonitoring.getLokasi();
 		if(lokasi!=null){
@@ -943,7 +954,9 @@ public class DatabaseManager {
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_ID_PELANGGARAN, pelanggaran.getIdPelanggaran());
 			cv.put(COLUMN_DATE_PELANGGARAN, pelanggaran.getWaktuPelanggaran());
-			
+			if(pelanggaran.getLokasi()!=null){
+				cv.put(COLUMN_LOCATION_PELANGGARAN, pelanggaran.getLokasi().getId());	
+			}
 			if(pelanggaran.getDataMonitoring()!=null){
 				cv.put(COLUMN_MONITORING_PELANGGARAN, pelanggaran.getDataMonitoring().getIdMonitoring());
 			}

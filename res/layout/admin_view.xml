@@ -184,8 +184,10 @@
 		                 android:textAppearance="?android:attr/textAppearanceLarge" />
 		         </LinearLayout>
 		         
+		     
+		         
 		         <LinearLayout
-		             android:id="@+id/adminButtonClear"
+		             android:id="@+id/adminButtonClearMonitoring"
 		             android:layout_width="match_parent"
 		             android:layout_height="wrap_content"
 		             android:background="@drawable/back_menu_green"
@@ -195,7 +197,37 @@
 		                 android:layout_width="wrap_content"
 		                 android:layout_height="wrap_content"
 		                 android:padding="10dip"
-		                 android:text="@string/clear_all_Lokasi_Monitoring"
+		                 android:text="@string/clear_all_monitoring"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		         <LinearLayout
+		             android:id="@+id/adminButtonClearLokasi"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_lokasi"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		          <LinearLayout
+		             android:id="@+id/adminButtonClearPelanggaran"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_pelanggaran"
 		                 android:textAppearance="?android:attr/textAppearanceLarge" />
 		         </LinearLayout>
 		      

@@ -238,7 +238,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				}
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
-				if(position%2==0){
+				if(dataMonitoring.isSeharusnya()){
 
 					llBackground.setBackgroundResource(R.drawable.back_menu_green);
 				}else{

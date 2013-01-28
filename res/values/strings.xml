@@ -44,7 +44,10 @@
     <string name="max_log">Max Log</string>
     <string name="view_all_monitoring">View All Monitoring</string>
     <string name="view_all_lokasi">View All Lokasi</string>
-    <string name="clear_all_Lokasi_Monitoring">Clear All Lokasi &amp; Monitoring</string>
+    <string name="clear_all_lokasi">Clear All Lokasi</string>
+    
+    <string name="clear_all_monitoring">Clear All Monitoring</string>
+    <string name="clear_all_pelanggaran">Clear All Pelanggaran</string>
     <string name="registrasi_anak">Registrasi Anak</string>
     <string name="monitoring_aktif">Monitoring sedang Aktif</string>
     <string name="monitoring_deaktif">Monitoring sedang tidak Aktif</string>

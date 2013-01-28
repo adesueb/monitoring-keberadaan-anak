@@ -42,11 +42,27 @@ public class AdminActivity extends Activity{
 			}
 		});
 		
-		LinearLayout buttonViewClear = (LinearLayout) findViewById(R.id.adminButtonClear);
-		buttonViewClear.setOnClickListener(new View.OnClickListener() {
+		LinearLayout buttonViewClearLokasi = (LinearLayout) findViewById(R.id.adminButtonClearLokasi);
+		buttonViewClearLokasi.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				showDialog(DIALOG_DELETE_ALL);
+				showDialog(DIALOG_CLEAR_LOKASI);
+			}
+		});
+		
+		LinearLayout buttonViewClearMonitoring = (LinearLayout) findViewById(R.id.adminButtonClearMonitoring);
+		buttonViewClearMonitoring.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				showDialog(DIALOG_CLEAR_MONITORING);
+			}
+		});
+		
+		LinearLayout buttonViewClearPelanggaran = (LinearLayout) findViewById(R.id.adminButtonClearPelanggaran);
+		buttonViewClearPelanggaran.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				showDialog(DIALOG_CLEAR_PELANGGARAN);
 			}
 		});
 	}
@@ -58,7 +74,7 @@ public class AdminActivity extends Activity{
 		switch(id){
 			case DIALOG_LOKASI:{
 				return makeDialogLokasi();		
-			}case DIALOG_DELETE_ALL:{
+			}case DIALOG_CLEAR_LOKASI:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
 				alert.setMessage("Anda mau menghapus Semua Data Monitoring dan Lokasi?");                
@@ -68,7 +84,54 @@ public class AdminActivity extends Activity{
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
 				        databaseManager.deleteAllLokasi();
-				        databaseManager.deleteAllDataMonitoring();
+				        return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+
+						dialog.dismiss();
+						return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				return alertDialog;
+			}case DIALOG_CLEAR_PELANGGARAN:{
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+				alert.setTitle("Perhatian !!!");  
+				alert.setMessage("Anda mau menghapus Semua Pelanggaran?");                
+
+				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {
+						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
+				        databaseManager.deleteAllPelanggarans();				       
+						return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+
+						dialog.dismiss();
+						return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				return alertDialog;
+			}case DIALOG_CLEAR_MONITORING:{
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+				alert.setTitle("Perhatian !!!");  
+				alert.setMessage("Anda mau menghapus Semua Pelanggaran?");                
+
+				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {
+						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
+						databaseManager.deleteAllDataMonitoring();
 						return;                  
 			         }  
 			     });  
@@ -123,8 +186,10 @@ public class AdminActivity extends Activity{
 		
 	}
 	
-	private static final int DIALOG_LOKASI	= 0;
-	private static final int DIALOG_DELETE_ALL		= 1;
+	private static final int DIALOG_LOKASI				= 0;
+	private static final int DIALOG_CLEAR_LOKASI		= 1;
+	private static final int DIALOG_CLEAR_PELANGGARAN	= 2;
+	private static final int DIALOG_CLEAR_MONITORING	= 3;
 	
 
 }
