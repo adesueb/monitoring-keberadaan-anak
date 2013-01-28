@@ -19,6 +19,7 @@ import org.ade.monitoring.keberadaan.map.service.TandaLokasiSendiri;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderPesanData;
 import org.ade.monitoring.keberadaan.service.storage.DatabaseManager;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.util.BundleEntityMaker;
 import org.ade.monitoring.keberadaan.util.EntityBundleMaker;
 import org.ade.monitoring.keberadaan.util.IDGenerator;
@@ -350,6 +351,7 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void save(){
 		if(isEdit){
+			LogMonakFileManager.debug("is edit action... update dataMonitoring");
 			databaseManager.updateDataMonitoring(dataMonitoring);
 		}else{
 			databaseManager.addDataMonitoring(dataMonitoring);	
