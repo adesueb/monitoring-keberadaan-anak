@@ -1,7 +1,6 @@
 package org.ade.monitoring.keberadaan.service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
@@ -39,7 +38,6 @@ public class MainMonitoring extends Handler{
 	public void handleMessage(Message msg) {
 		super.handleMessage(msg);
 		Lokasi 	lokasiHp = EntityBundleMaker.getLokasiFromBundle(msg.getData());
-		
 		if(lokasiHp!=null){
 			
 			if(pref.isAktifTrackingMode()){
@@ -47,21 +45,26 @@ public class MainMonitoring extends Handler{
 				anak.setIdAnak(pref.getIdAnak());
 				anak.setLastLokasi(lokasiHp);
 				senderLokasi.sendLocationModeTracking(anak);
-				LogMonakFileManager.debug("dapet lokasi pada mode monitoring : latitude"+lokasiHp.getlatitude());
 			}
 			
 			if(dataMonitorings != null && locationMonitorUtil != null){
 				for(DataMonitoring dataMonitoring:dataMonitorings){
 					Calendar cal = Calendar.getInstance();
-					LogMonakFileManager.debug("Melakukan proses monitoring : dataMonitoring"+dataMonitoring.getIdMonitoring());
 					
-					Date	now 	= cal.getTime();	
 					int		hari 	= cal.get(Calendar.DAY_OF_WEEK);
 					int 	tanggal	= cal.get(Calendar.DAY_OF_MONTH);
-				
-					Date mulai 		= dataMonitoring.getWaktuMulaiInDate();
-					Date selesai 	= dataMonitoring.getWaktuSelesaiInDate();
-				
+					
+					int hourNow = cal.get(Calendar.HOUR_OF_DAY);
+					int minuteNow = cal.get(Calendar.MINUTE);
+					
+					cal.setTimeInMillis(dataMonitoring.getWaktuMulai());
+					int hourMulai = cal.get(Calendar.HOUR_OF_DAY);
+					int minuteMulai = cal.get(Calendar.MINUTE);
+					
+					cal.setTimeInMillis(dataMonitoring.getWaktuSelesai());
+					int hourSelesai = cal.get(Calendar.HOUR_OF_DAY);
+					int minuteSelesai = cal.get(Calendar.MINUTE);
+							
 					cal = null;
 					
 					boolean then = false;
@@ -87,53 +90,73 @@ public class MainMonitoring extends Handler{
 					}
 					
 					if(then){
-						if((now.getHours()>mulai.getHours() && now.getHours()<selesai.getHours())
-								||now==null){
-							if((now.getMinutes()>mulai.getMinutes() && now.getMinutes()<selesai.getMinutes())
-									||now==null){
-								Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
-								
+						if((hourNow>hourMulai && hourNow<hourSelesai)){
+							LogMonakFileManager.debug("sama jamnya");
+							cekToleransi(dataMonitoring, lokasiHp);
 							
-								
-								int		tolerancy			= dataMonitoring.getTolerancy();
-								locationMonitorUtil.setCurrentLocation(lokasiHp);
-								locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
-								if(tolerancy!=0){
-									locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
-								}
-								if(locationMonitorUtil.isInTolerancy()){
-									if(dataMonitoring.isTerlarang()){
-										//TODO : mengirim peringatan
-										Peringatan peringatan = new Peringatan();
-										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
-										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanMonak.PERINGATAN_TERLARANG);
-										peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
-										senderMonitoring.sendPeringatanTerlarang(peringatan);
-									}						
-								}else{
-									if(dataMonitoring.isSeharusnya()){
-										//TODO : mengirim peringatan
-										Peringatan peringatan = new Peringatan();
-										peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
-										peringatan.setLokasiAnak(lokasiHp);
-										peringatan.setTipe(TipePesanMonak.PERINGATAN_SEHARUSNYA);
-										peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
-										senderMonitoring.sendPeringatanSeharusnya(peringatan);
-									}
-								}
+						}else if(hourNow==hourMulai){
+							if(minuteNow>=minuteMulai){
+								cekToleransi(dataMonitoring, lokasiHp);
 							}
-							
+						}else if(hourNow==hourSelesai){
+							if( minuteNow<=minuteSelesai){
+								cekToleransi(dataMonitoring, lokasiHp);
+							}
 						}
 					}
-					
-
 				}
 			}
-			
 		}
+	}
+	
+	private void cekToleransi(DataMonitoring dataMonitoring, Lokasi lokasiHp){
+		Lokasi 	lokasiMonitoring 	= dataMonitoring.getLokasi();
+		
+		int		tolerancy			= dataMonitoring.getTolerancy();
+		locationMonitorUtil.setCurrentLocation(lokasiHp);
+		locationMonitorUtil.setMonitorLocation(lokasiMonitoring);
+		if(tolerancy!=0){
+			locationMonitorUtil.setTolerancy(dataMonitoring.getTolerancy());
+		}
+		if(locationMonitorUtil.isInTolerancy()){
+			if(dataMonitoring.isTerlarang()){
+				sendPeringatanTerlarang(dataMonitoring, lokasiHp);
+				pref.setTrackMeters(tolerancy);
+			}						
+		}else{
+			if(dataMonitoring.isSeharusnya()){
+				sendPeringatanSeharusnya(dataMonitoring, lokasiHp);
+				pref.setTrackMeters(tolerancy);
+			}
+		}
+	}
+	
+	private void sendPeringatanSeharusnya(DataMonitoring dataMonitoring, Lokasi lokasiHp){
+		//TODO : mengirim peringatan
+
+		Peringatan peringatan = new Peringatan();
+		peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
+		peringatan.setLokasiAnak(lokasiHp);
+		peringatan.setTipe(TipePesanMonak.PERINGATAN_SEHARUSNYA);
+		peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
+		senderMonitoring.sendPeringatanSeharusnya(peringatan);
 		
 	}
+	
+	private void sendPeringatanTerlarang(DataMonitoring dataMonitoring, Lokasi lokasiHp){
+		//TODO : mengirim peringatan
+		Peringatan peringatan = new Peringatan();
+		peringatan.setIdMonitoring(dataMonitoring.getIdMonitoring());
+		peringatan.setLokasiAnak(lokasiHp);
+		peringatan.setTipe(TipePesanMonak.PERINGATAN_TERLARANG);
+		peringatan.setIdOrtu(new IDGenerator(context, null).getIdOrangTua());
+		senderMonitoring.sendPeringatanTerlarang(peringatan);
+	}
+	
+	private void saveLogLocation(Lokasi lokasi){
+		
+	}
+	
 	private final Context context;
 	
 	private SenderPesanData			senderMonitoring	= null;

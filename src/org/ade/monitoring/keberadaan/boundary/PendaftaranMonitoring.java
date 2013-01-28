@@ -53,9 +53,8 @@ public class PendaftaranMonitoring extends Activity{
 		
 		isEdit = getIntent().getBooleanExtra(EXTRA_EDIT, false);
 		
-
+		justView = getIntent().getBooleanExtra(EXTRA_JUST_VIEW, false);
 	
-		
 		databaseManager = new DatabaseManager(this);
 		dataMonitoring 	= EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
 		mIDGenerator	= new IDGenerator(this,databaseManager);
@@ -81,7 +80,15 @@ public class PendaftaranMonitoring extends Activity{
 			txt.setText(anak.getNamaAnak());
 		}
 
-		initAllButton();
+		if(justView){
+			Button buttonOk 	= (Button) findViewById(R.id.monitoringButtonOk);
+			Button buttonClear = (Button) findViewById(R.id.monitoringButtonClear);
+			buttonOk.setEnabled(false);
+			buttonClear.setEnabled(false);
+		}else{
+			initAllButton();
+		}
+		
 		initSubMenu();
 		
 		if(isEdit){
@@ -264,6 +271,15 @@ public class PendaftaranMonitoring extends Activity{
 	    		
 	    	}
 	    	
+	    	int status = dataMonitoring.getStatus();
+	    	
+	    	TextView textStatus= (TextView) findViewById(R.id.monitoringTextStatus);
+			if(status== DataMonitoring.SEHARUSNYA){
+				textStatus.setText("Seharusnya");
+			}else{
+				textStatus.setText("Terlarang");
+			}
+			
 			Lokasi lokasi = dataMonitoring.getLokasi();
 			if(lokasi!=null){
 				TextView textLokasi = (TextView) findViewById(R.id.monitoringTextLokasi);
@@ -598,8 +614,10 @@ public class PendaftaranMonitoring extends Activity{
 	private DataMonitoring dataMonitoring;
 	
 	private boolean isEdit;
+	private boolean justView;
 	
 	public final static String EXTRA_EDIT		= "isEdit";
+	public final static String EXTRA_JUST_VIEW	= "justView";
 	
 	public final static int ANAK			= 0;
 	public final static int KETERANGAN		= 1;

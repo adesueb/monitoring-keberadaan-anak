@@ -54,15 +54,23 @@ public class Lokasi {
 		this.anak = anak;	
 		
 	}
+	public boolean isLog() {
+		return log;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
+	}
 
 	public String toString(){
 		return id+","+time+","+mLatitude+","+mLongitude;
 	}
 
-	private String id;
-	private double mLatitude;
-	private double mLongitude;
-	private long   time;
+	private String 	id;
+	private double 	mLatitude;
+	private double 	mLongitude;
+	private long   	time;
+	private boolean log;
 	
 	private Anak anak;
 }

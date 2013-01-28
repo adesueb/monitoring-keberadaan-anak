@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan;
 
+import org.ade.monitoring.keberadaan.boundary.AdminActivity;
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 import org.ade.monitoring.keberadaan.service.MonakService;
@@ -20,15 +21,17 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_utama);
                 
-        ImageView menuDaftarAnak 		= (ImageView) findViewById(R.id.menuDaftarAnak);
+        ImageView menuDaftarAnak 	= (ImageView) findViewById(R.id.menuDaftarAnak);
         menuDaftarAnak.setOnClickListener(this);
         
         ImageView menuMap 			= (ImageView) findViewById(R.id.menuMap);
         menuMap.setOnClickListener(this);
         
-        ImageView menuHelp 				= (ImageView) findViewById(R.id.menuHelp);
+        ImageView menuHelp 			= (ImageView) findViewById(R.id.menuHelp);
         menuHelp.setOnClickListener(this);
         
+        ImageView menuSetting		= (ImageView) findViewById(R.id.menuSetting);
+        menuSetting.setOnClickListener(this);
         startService(new Intent(MonakService.MONAK_SERVICE));
         Log.d("Monitoring keberadaan", "starting service");
     }
@@ -44,10 +47,12 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
     }
     
     private static void goToHelp(Context context){
-    	 DatabaseManager databaseManager = new DatabaseManager(context);
-         databaseManager.deleteAllLokasi();
-         databaseManager.deleteAllDataMonitoring();
-    	// TODO : to help activity......
+    	
+    }
+    
+    private static void goToSetting(Context context){
+    	Intent intent = new Intent(context, AdminActivity.class);
+    	context.startActivity(intent);
     }
 
 	public void onClick(View v) {
@@ -55,12 +60,14 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
 			case R.id.menuDaftarAnak:{
 				goToDaftarAnak(this);
 				break;
-			
 			}case R.id.menuMap:{
 				goToMap(this);
 				break;
 			}case R.id.menuHelp:{
 				goToHelp(this);
+				break;
+			}case R.id.menuSetting:{
+				goToSetting(this);
 				break;
 			}
 		}

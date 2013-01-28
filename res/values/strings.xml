@@ -7,7 +7,7 @@
     <string name="pilih_mingguan">Pilih Mingguan</string>
     <string name="set_tolerancy">Set Toleransi</string>
     <string name="monitoring">MONITORING</string>
-    <string name="kosong">...</string>
+    <string name="kosong">…</string>
     <string name="ok">OK</string>
     <string name="pilih_waktu">Pilih Waktu</string>
     <string name="m">Meters</string>
@@ -29,10 +29,10 @@
     <string name="id_anak">ID Anak</string>
     <string name="id_monitoring">ID Monitoring</string>
     <string name="detail">detail</string>
-    <string name="log">view logs</string>
-    <string name="track">track this</string>
-    <string name="edit">edit</string>
-    <string name="delete">delete</string>
+    <string name="log">lihat historis</string>
+    <string name="track">track lokasi</string>
+    <string name="edit">registrasi</string>
+    <string name="delete">hapus</string>
     <string name="pelanggaran">pelanggaran</string>
     <string name="mulai_tanggal">mulai tanggal</string>
     <string name="sampai_tanggal">sampai tanggal</string>
@@ -42,5 +42,16 @@
     <string name="set_meter_monitoring">Meter Monitoring</string>
     <string name="set_detik_tracking">Detik Tracking</string>
     <string name="max_log">Max Log</string>
-    <string name="belum_ada_response_anak">Belum Ada Response Anak</string>
+    <string name="view_all_monitoring">View All Monitoring</string>
+    <string name="view_all_lokasi">View All Lokasi</string>
+    <string name="clear_all_lokasi">Clear All Lokasi</string>
+    
+    <string name="clear_all_monitoring">Clear All Monitoring</string>
+    <string name="clear_all_pelanggaran">Clear All Pelanggaran</string>
+    <string name="registrasi_anak">Registrasi Anak</string>
+    <string name="monitoring_aktif">Monitoring sedang Aktif</string>
+    <string name="monitoring_deaktif">Monitoring sedang tidak Aktif</string>
+    <string name="setting">SETTING</string>
+    <string name="start">start</string>
+    <string name="stop">stop</string>
 </resources>

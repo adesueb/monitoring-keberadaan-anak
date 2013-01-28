@@ -26,6 +26,11 @@ public class SenderSMS{
 	    String SENT = "SMS_SENT";
 	    String DELIVERED = "SMS_DELIVERED";
 
+	    // menghentikan pengiriman sms saat melakukan sms ke nomor yg g da....
+	    if(phoneNumber==null||phoneNumber.equals("")){
+	    	return;
+	    }
+	    //....................................................................
 	    PendingIntent sentPI = PendingIntent.getBroadcast(mContext, 0,
 	        new Intent(SENT), 0);
 
@@ -44,12 +49,12 @@ public class SenderSMS{
 	                    break;
 	                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_NO_SERVICE:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	                case SmsManager.RESULT_ERROR_NULL_PDU:
@@ -59,10 +64,11 @@ public class SenderSMS{
 	                	break;
 	                case SmsManager.RESULT_ERROR_RADIO_OFF:
 	                	if(mHandler!=null){
-	                		mHandler.sendEmptyMessage(Status.FAILED);	
+	                		mHandler.sendEmptyMessage(Status.FAILED);
 	                	}
 	                	break;
 	            }
+        		mContext.unregisterReceiver(this);
 	        }
 	    }, new IntentFilter(SENT));
 
@@ -79,10 +85,11 @@ public class SenderSMS{
 	                	break;
 	                case Activity.RESULT_CANCELED:
 	                	if(mHandler!=null){
-		                	mHandler.sendEmptyMessage(Status.FAILED);	                		
+		                	mHandler.sendEmptyMessage(Status.FAILED);	 
 	                	}
 	                    break;                        
 	            }
+        		mContext.unregisterReceiver(this);
 	        }
 	    }, new IntentFilter(DELIVERED));   
 	    

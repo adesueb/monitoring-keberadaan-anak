@@ -1,5 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monitoring.keberadaan.R;
@@ -42,7 +43,15 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		final Bundle bundle = intent.getExtras();
 		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
 		databaseManager = new DatabaseManager(this);
-		dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
+		if(anak==null){
+			dataMonitorings	= databaseManager.getAllDataMonitorings(true, true);
+			justView = true;
+		}else{
+			dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
+		}
+		if(dataMonitorings==null){
+			dataMonitorings = new ArrayList<DataMonitoring>();
+		}
 		daftarMonitoringAdapter	= 
 				new AdapterDaftarMonitoring(this, R.layout.daftar_monitoring_item, dataMonitorings);
 		
@@ -63,6 +72,11 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			}
 		});
 		
+		if(justView){
+			ivAdd.setVisibility(View.GONE);
+			ivMap.setVisibility(View.GONE);
+		}
+		
 		getListView().setAdapter(daftarMonitoringAdapter);
 		
 	}
@@ -76,6 +90,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	public void onEdit(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
 		bundle.putBoolean(PendaftaranMonitoring.EXTRA_EDIT, true);
+		if(justView){
+			bundle.putBoolean(PendaftaranMonitoring.EXTRA_JUST_VIEW, true);
+		}
 		intent.putExtras(bundle);
 		startActivityForResult(intent, Operation.EDIT);
 	}
@@ -86,11 +103,16 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	
 	public void deleteSave(Bundle bundle){
 		DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
+		
 		dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		if(dataMonitoring==null){
+			return;
+		}
 		databaseManager.deleteDataMonitoring(dataMonitoring);
 		for(DataMonitoring dataMonitoringFor:dataMonitorings){
 			if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
 				dataMonitorings.remove(dataMonitoringFor);
+				break;
 			}
 		}
 		daftarMonitoringAdapter.notifyDataSetChanged();
@@ -106,6 +128,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), false, false);
 			switch(requestCode){
 				case Operation.ADD:{
+					
 					break;
 				}case Operation.EDIT:{
 					for(DataMonitoring forDataMonitoring:dataMonitorings){
@@ -119,6 +142,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 			}	
 
 			dataMonitorings.add(dataMonitoring);
+			daftarMonitoringAdapter.notifyDataSetChanged();
 		}
 		
 	}
@@ -138,7 +162,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
 						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);	
-						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
+						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerDeleteSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
 						sender.sendDataMonitoringDelete(dataMonitoring);
 						return;                  
 			         }  
@@ -162,6 +186,8 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 	private DatabaseManager 		databaseManager;
 	private AdapterDaftarMonitoring daftarMonitoringAdapter;
 	private List<DataMonitoring>	dataMonitorings;
+	
+	private boolean justView = false;
 	
 	private final static class AdapterDaftarMonitoring extends ArrayAdapter<DataMonitoring>{
 
@@ -207,10 +233,12 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				keterangan.setText(dataMonitoring.getKeterangan());
 				
 				rowView.setOnClickListener(new DaftarMonitoringClick(daftarMonitoring, dataMonitoring));
-				rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));
+				if(!daftarMonitoring.justView){
+					rowView.setOnLongClickListener(new DaftarMonitoringLongClick(daftarMonitoring, dataMonitoring));	
+				}
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
-				if(position%2==0){
+				if(dataMonitoring.isSeharusnya()){
 
 					llBackground.setBackgroundResource(R.drawable.back_menu_green);
 				}else{
@@ -274,9 +302,9 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		
 	}
 	
-	private final static class HandlerSendermonitoring extends Handler{
+	private final static class HandlerDeleteSendermonitoring extends Handler{
 
-		public HandlerSendermonitoring(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+		public HandlerDeleteSendermonitoring(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
 			this.daftarMonitoring 	= daftarMonitoring;
 			this.dataMonitoring		= dataMonitoring;
 		}

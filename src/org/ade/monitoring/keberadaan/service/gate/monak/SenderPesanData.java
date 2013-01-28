@@ -6,11 +6,16 @@ import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.DataMonitoring;
 import org.ade.monitoring.keberadaan.entity.Peringatan;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
+import org.ade.monitoring.keberadaan.service.MonakService;
+import org.ade.monitoring.keberadaan.service.StopperService;
 import org.ade.monitoring.keberadaan.service.gate.ASenderMonak;
 import org.ade.monitoring.keberadaan.service.gate.SenderInternet;
 import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
+import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
@@ -63,12 +68,13 @@ public class SenderPesanData extends ASenderMonak{
 				break;
 			}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
 			}case TipePesanMonak.PERINGATAN_TERLARANG:{
-				Peringatan peringatan = (Peringatan) pesanData;
-				phoneNumber = peringatan.getIdOrtu();
+				StopperService.stopService(getContext());
+				PreferenceMonitoringManager pref = new PreferenceMonitoringManager(getContext());
+				phoneNumber = pref.getNoHpOrtu();
 				break;
 			}
 		}
-		
+		LogMonakFileManager.debug("siap kirim peringatan");
 		senderSMS.sendSMS(phoneNumber, pesanData.getJsonPesanData());
 	}
 	
@@ -79,7 +85,6 @@ public class SenderPesanData extends ASenderMonak{
 	public void success(int tipeKoneksi){
 		if(handler==null) return;
 		handler.sendEmptyMessage(Status.SUCCESS);	
-		
 		
 	}
 	

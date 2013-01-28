@@ -6,8 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingBottom="50dip" >
+        android:orientation="vertical" >
 
         <LinearLayout
             
@@ -17,21 +16,13 @@
             android:layout_marginTop="5dip"
             android:gravity="center" >
             
-            <ImageView 
-        		android:layout_width="30dip"
-        	 	android:layout_height="30dip"
-            	android:id="@+id/imageView2" 
-            	android:src="@drawable/add">
-                
-            </ImageView>
-            
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dip"
                 android:textAppearance="?android:attr/textAppearanceLarge" 
-                android:text="@string/monitoring" 
+                android:text="@string/setting" 
                 android:textStyle="bold"/>
 
         </LinearLayout>
@@ -160,44 +151,91 @@
 		             	android:text="@string/kosong"></TextView>
 		
 		        </LinearLayout>
-		
 		        
+		         <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" 
+		            android:background="@drawable/back_menu_green" 
+		            android:id="@+id/adminButtonViewMonitoring"
+		            android:gravity="center_horizontal">
+		
+		            <TextView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dip"
+		                android:text="@string/view_all_monitoring"
+		                android:textAppearance="?android:attr/textAppearanceLarge" />
+		
+		
+		        </LinearLayout>
+
+		         <LinearLayout
+		             android:id="@+id/adminButtonViewLokasi"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/view_all_lokasi"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		     
+		         
+		         <LinearLayout
+		             android:id="@+id/adminButtonClearMonitoring"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_monitoring"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		         <LinearLayout
+		             android:id="@+id/adminButtonClearLokasi"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_lokasi"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		          <LinearLayout
+		             android:id="@+id/adminButtonClearPelanggaran"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu_green"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_pelanggaran"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
 		      
         	</LinearLayout>
 
    		</ScrollView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_gravity="bottom"
-        android:background="#aa000000"
-        android:gravity="center" >
-
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center"
-	        android:gravity="center" 
-	        android:paddingTop = "5dip"
-	        android:paddingBottom = "5dip"
-	        
-	        android:paddingLeft = "30dip"
-	        android:paddingRight = "30dip"
-	        android:background="#aa000000">
-
-	
-	        <Button
-
-	            android:id="@+id/monitoringButtonOk"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:text="@string/ok" />
-
-	    </LinearLayout>
-
-    </LinearLayout>
+   
 
 </FrameLayout>

@@ -56,7 +56,10 @@ public class DataMonitoringFileManager {
 	
 	public final static void clearDataMonitoring(){
 		File file = createFile();
-		file.delete();
+		if(file.exists()){
+			file.delete();	
+		}
+		
 	}
 	
 	private final static String PATH = "/MonakDataMonitoring.txt";

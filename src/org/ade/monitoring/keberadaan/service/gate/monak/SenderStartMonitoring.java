@@ -7,16 +7,16 @@ import org.ade.monitoring.keberadaan.service.gate.SenderSMS;
 
 import android.content.Context;
 
-public class SenderRequestOnMonitoring extends ASenderMonak{
+public class SenderStartMonitoring extends ASenderMonak{
 
-	public SenderRequestOnMonitoring(Context context){
+	public SenderStartMonitoring(Context context){
 		super(context);
 		this.senderSms = getSenderSMS();
 
 	}
 	
-	public void sendRequestLocation(Anak anak){
-		this.senderSms.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_ON_MONITORING+","+anak.getIdAnak());
+	public void sendStartMonitoring(Anak anak){
+		this.senderSms.sendSMS(anak.getNoHpAnak(), TipePesanMonak.START_MONITORING+","+anak.getIdAnak());
 	}
 	
 	@Override

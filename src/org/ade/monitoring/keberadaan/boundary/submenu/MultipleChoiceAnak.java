@@ -1,7 +1,6 @@
 package org.ade.monitoring.keberadaan.boundary.submenu;
 
 import org.ade.monitoring.keberadaan.boundary.DaftarAnak;
-import org.ade.monitoring.keberadaan.boundary.DaftarMonitoring;
 import org.ade.monitoring.keberadaan.map.view.Peta;
 
 import android.content.Intent;

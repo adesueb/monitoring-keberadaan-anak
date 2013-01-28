@@ -22,14 +22,12 @@ public class Tracker implements LocationListener{
 		mContext	= context;
 		mLokasi		= lokasi;
 		mHandler	= handler;
-		pref		= new PreferenceMonitoringManager(context);
 	}
 	
 	public Tracker(Context context, Handler handler){
 		mContext	= context;
 		mLokasi		= new Lokasi();
 		mHandler	= handler;
-		pref		= new PreferenceMonitoringManager(context);
 	}
 	
 	
@@ -43,29 +41,30 @@ public class Tracker implements LocationListener{
 			    mlocManager.getProvider(mlocManager.getBestProvider(createFineCriteria(), true));
 		
 		mlocManager.requestSingleUpdate(high.getName(), this, mHandler.getLooper());
+		
 	}
 	
 
 	
 	public void startTracking(){
 		mlocManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-		
-		 if (!mlocManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-			 return ;
-		 }
-		
+		if (!mlocManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+			 
+				
+			return ;
+		}
 		LocationProvider high =
 			    mlocManager.getProvider(mlocManager.getBestProvider(createFineCriteria(), true));
 		
-		mlocManager.requestLocationUpdates(high.getName(), TIME_MIN_UPDATE_LOCATION, DISTANCE_MIN_UPDATE_LOCATION,
+		PreferenceMonitoringManager pref = new PreferenceMonitoringManager(mContext);
+		mlocManager.requestLocationUpdates(high.getName(), pref.getTrackMiliseconds(), pref.getTrackMeters(),
 				this);
-		pref.setActiveTracker();
-		
+		startMonitoring = true;
 	}
 	
 	public void stopTracking(){
 		mlocManager.removeUpdates(this);
-		pref.setInActiveTracker();
+		startMonitoring = false;
 	}
 	
 	public Lokasi getLokasi(){
@@ -109,14 +108,18 @@ public class Tracker implements LocationListener{
 
 	}
 	
+	 
+	
+	public boolean isStartMonitoring() {
+		return startMonitoring;
+	}
+
+
+
 	private final Lokasi 						mLokasi;	
 	private final Context 						mContext;
 	private final Handler 						mHandler;
 	private LocationManager 					mlocManager;
-	private final PreferenceMonitoringManager 	pref;
+	private boolean								startMonitoring = false;
 	
-	private static final long TIME_MIN_UPDATE_LOCATION = 1000; //in milisecond
-	
-	private static final float DISTANCE_MIN_UPDATE_LOCATION = 1;//in meters;
-
 }

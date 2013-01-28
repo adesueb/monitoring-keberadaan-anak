@@ -49,13 +49,16 @@ public class ReceiverLogMonak{
 			
 			lokasi.setId(idGenerator.getIdLocation());
 			lokasi.setAnak(anak);
+			lokasi.setLog(true);
 			
 			databaseManager.addLokasi(lokasi);
 			
 		}
 		
 		anak.setLastLokasi(lokasis.get(lokasis.size()-1));
+		anak.setAktif(true);
 		databaseManager.updateLastLokasiAnak(anak);
+		databaseManager.setAktifAnak(anak);
 		
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
 		if(handler!=null){

@@ -37,12 +37,14 @@ public class ReceiverLokasi{
 		
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[4]);
+		anak.setAktif(true);
 		anak.setLastLokasi(lokasi);
 		
 		lokasi.setAnak(anak);
 		
 		DatabaseManager databaseManager = new DatabaseManager(context);
 		databaseManager.addLastLokasiAnak(anak);
+		databaseManager.setAktifAnak(anak);
 		
 		if(binderHandlerMonak==null)return;
     	
@@ -59,6 +61,17 @@ public class ReceiverLokasi{
         	
         	handlerUI.sendMessage(message);
     	}
+    	
+    	Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
+		if(handler!=null){
+			Message message = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("aktif", true);
+			bundle.putString("idAnak", cvs[1]);
+			message.setData(bundle);
+			message.what = Status.SUCCESS;
+			handler.sendMessage(message);
+		}
 	}
 	
 	private BinderHandlerMonak binderHandlerMonak;

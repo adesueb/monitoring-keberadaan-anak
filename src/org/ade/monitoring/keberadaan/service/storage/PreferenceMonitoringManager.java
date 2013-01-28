@@ -44,18 +44,18 @@ public class PreferenceMonitoringManager {
 		editor.commit();
 	}
 	
-	public boolean isAktifTracker(){
-		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 	
-		return pref.getBoolean(TRACKER_STATUS, false);
-	}
-	
-	public void setActiveTracker(){
-		setPrefBool(TRACKER_STATUS, true);
-	}
-	
-	public void setInActiveTracker(){
-		setPrefBool(TRACKER_STATUS, false);
-	}
+//	public boolean isAktifTracker(){
+//		SharedPreferences pref = mContext.getSharedPreferences(TRACKER_STATUS, Activity.MODE_PRIVATE); 	
+//		return pref.getBoolean(TRACKER_STATUS, false);
+//	}
+//	
+//	public void setActiveTracker(){
+//		setPrefBool(TRACKER_STATUS, true);
+//	}
+//	
+//	public void setInActiveTracker(){
+//		setPrefBool(TRACKER_STATUS, false);
+//	}
 	
 	public boolean isAktifTrackingMode(){
 		SharedPreferences pref = mContext.getSharedPreferences(TRACKING_MODE, Activity.MODE_PRIVATE); 	
@@ -95,12 +95,37 @@ public class PreferenceMonitoringManager {
 		setPrefString(NO_HP_ORTU, noHp);
 	}
 	
-	public void setIdAnak(String idAnak){
-		setPrefString(ID_ANAK, idAnak);
-	}
-	
+
 	public String getNoHpOrtu(){
 		return getPrefString(NO_HP_ORTU, null);
+	}
+	
+	public void setTrackMiliseconds(int miliseconds){
+		setPrefString(MONITORING_MILISECONDS, miliseconds+"");
+	}
+	
+	public int getTrackMiliseconds(){
+		return Integer.parseInt(getPrefString(MONITORING_MILISECONDS, ""+30000));
+	}
+	
+	public void setTrackMeters(int meters){
+		setPrefString(MONITORING_METERS, meters+"");
+	}
+	
+	public int getTrackMeters(){
+		return Integer.parseInt(getPrefString(MONITORING_METERS, ""+0));
+	}
+	
+	public void setMaxLogs(int maxLogs){
+		setPrefString(MAX_LOGS, maxLogs+"");
+	}
+	
+	public int getMaxLogs(){
+		return Integer.parseInt(getPrefString(MAX_LOGS, ""+0));
+	}
+	
+	public void setIdAnak(String idAnak){
+		setPrefString(ID_ANAK, idAnak);
 	}
 	
 	public String getIdAnak(){
@@ -133,8 +158,12 @@ public class PreferenceMonitoringManager {
     private static final String URL_IP			= "url_ip";
     private static final String	URL_PORT		= "url_port";
     private static final String SERVICE_STATUS	= "service";
-    private static final String TRACKER_STATUS	= "tracker_status";
+//    private static final String TRACKER_STATUS	= "tracker_status";
     private static final String TRACKING_MODE	= "tracking_mode";
     private static final String NO_HP_ORTU		= "no_hp_ortu";
     private static final String ID_ANAK			= "id_anak";
+    private static final String MONITORING_MILISECONDS	= "monitoring_miliseconds";
+    private static final String MONITORING_METERS		= "monitoring_meters";
+    private static final String MAX_LOGS		= "maxLogs";
+    
 }

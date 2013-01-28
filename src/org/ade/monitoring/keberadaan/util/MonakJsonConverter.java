@@ -149,7 +149,7 @@ public class MonakJsonConverter {
 			JSONObject object = new JSONObject();
 			try {
 				object.put(ID_MONITORING, peringatan.getIdMonitoring());
-				Lokasi lokasi = new Lokasi();
+				Lokasi lokasi = peringatan.getLokasiAnak();
 				object.put(LATITUDE, lokasi.getlatitude());
 				object.put(LONGITUDE, lokasi.getLongitude());
 			} catch (JSONException e) {

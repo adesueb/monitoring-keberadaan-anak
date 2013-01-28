@@ -3,14 +3,18 @@ package org.ade.monitoring.keberadaan.service;
 import org.ade.monitoring.keberadaan.Variable.TipePesanMonak;
 import org.ade.monitoring.keberadaan.entity.IPesanData;
 import org.ade.monitoring.keberadaan.map.service.Tracker;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverKonfirmasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLogMonak;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverLokasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverPendaftaranAnak;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverPesanData;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestLogMonak;
-import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverRequestOnMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverStartMonitoring;
+import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverStopMonitoring;
 import org.ade.monitoring.keberadaan.service.gate.monak.ReceiverTrackingMode;
+import org.ade.monitoring.keberadaan.service.gate.monak.SenderKonfirmasi;
 import org.ade.monitoring.keberadaan.service.gate.monak.SenderLokasi;
+import org.ade.monitoring.keberadaan.service.storage.LogMonakFileManager;
 import org.ade.monitoring.keberadaan.service.storage.PreferenceMonitoringManager;
 import org.ade.monitoring.keberadaan.util.MonakJsonConverter;
 
@@ -33,13 +37,21 @@ public class MonakService extends Service{
 //		daftarSmsReceiver();
 
 		handlerMonakBinder = new BinderHandlerMonak();
+
+		SenderKonfirmasi sender = new SenderKonfirmasi(this);
+		sender.sendKonformasiAktifMonitoring();
 	}
 
 	
 	
 	@Override
 	public void onDestroy() {
+		SenderKonfirmasi sender = new SenderKonfirmasi(this);
+		sender.sendKonfirmasiDeAktifMonitoring();
+		tracker.stopTracking();
+		tracker = null;
 		pref.setInActiveService();
+//		pref.setInActiveTracker();
 //		if(receiver!=null){
 //			unregisterReceiver(receiver);	
 //		}
@@ -51,12 +63,14 @@ public class MonakService extends Service{
 	public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("background service", "service started");
         
-        if(!pref.isAktifTracker()){
-        	Log.d("background service", "track started");
-            	
-    		Tracker tracker = new Tracker(this, new MainMonitoring(this));
+        if(tracker==null){
+        	tracker = new Tracker(this, new MainMonitoring(this));
+        }
+        
+        if(!tracker.isStartMonitoring()){
         	tracker.startTracking();
         }
+        
         if(intent!=null){
         	Bundle bundle = intent.getExtras();
             if(bundle!=null){
@@ -72,8 +86,7 @@ public class MonakService extends Service{
             }
         	
         }
-        
-        
+                
 		return START_STICKY;
 	}
 
@@ -91,6 +104,7 @@ public class MonakService extends Service{
 		}
 		return handlerMonakBinder;
 	}
+	
 	
 	private void receiveSMS(Bundle bundle){
 		SmsMessage[] msgs = null;
@@ -156,14 +170,25 @@ public class MonakService extends Service{
 	    		ReceiverLokasi receiverLokasi = new ReceiverLokasi(this, getBinderHandlerMonak());
 	    		receiverLokasi.menerimaLokasi(cvs);
 	    		break;
-	    	}case TipePesanMonak.REQUEST_ON_MONITORING:{
-	    		ReceiverRequestOnMonitoring onMonitoring = new ReceiverRequestOnMonitoring(this);
+	    	}case TipePesanMonak.START_MONITORING:{
+	    		ReceiverStartMonitoring onMonitoring = new ReceiverStartMonitoring(this);
 	    		onMonitoring.startService();
 	    		break;
 	    	}case TipePesanMonak.PENDAFTARAN_ANAK:{
-	    		Log.d("backgroundService", "mendapatkan pendaftaran ANaj");
 	    		ReceiverPendaftaranAnak receiver = new ReceiverPendaftaranAnak(this);
 	    		receiver.receivePendaftaranAnak(cvs[2], cvs[1]);
+	    		break;
+	    	}case TipePesanMonak.STOP_MONITORING:{
+	    		ReceiverStopMonitoring receiver = new ReceiverStopMonitoring(this);
+	    		receiver.stopService();
+	    		break;
+	    	}case TipePesanMonak.KONFIRMASI_AKTIF_MONITORING:{
+	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
+	    		receiver.receiveKonfirmasiAktifMonitoring(cvs);
+	    		break;
+	    	}case TipePesanMonak.KONFIRMASI_DEAKTIF_MONITORING:{
+	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
+	    		receiver.receiveKonfirmasiDeAktifMonitoring(cvs);
 	    		break;
 	    	}
 	    }
@@ -183,12 +208,13 @@ public class MonakService extends Service{
 //	private ReceiverSMS receiver;
 	
 	private BinderService binderService;
-	
+	private Tracker tracker;
 	
 	public final static String START_CALL				= "start_call";
 	public final static String MONAK_SERVICE			= "monak_service";
 	public final static String WAITING_LOCATION 		= "waiting_location";
 	public final static String WAITING_LOG_LOCATION		= "waiting_log_location";
+	public final static String WAITING_KONFIRMASI_AKTIF	= "waiting_konfirmasi_aktif";
 	public final static String STORAGE_WAITING_LOCATION = "storage_waiting_location";
 	
 	public final static int RECEIVER_SMS 				= 1;
