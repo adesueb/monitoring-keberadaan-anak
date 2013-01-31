@@ -37,7 +37,7 @@ public class ReceiverPesanData {
 					break;
 				}
 			}
-		}
+		} 
 	}
 	
 	private void simpanPelanggaranDariPeringatan(Context context, Peringatan peringatan){
