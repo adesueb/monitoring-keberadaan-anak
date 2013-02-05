@@ -5,7 +5,7 @@ import java.util.List;
 import org.ade.monak.ortu.R;
 import org.ade.monak.ortu.boundary.PendaftaranMonitoring;
 import org.ade.monak.ortu.entity.Anak;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,7 +21,7 @@ import android.widget.ListView;
 
 public class PilihAnak{
 
-	public PilihAnak(Context context, DatabaseManager databaseManager, Handler handler) {
+	public PilihAnak(Context context, DatabaseManagerOrtu databaseManager, Handler handler) {
 		mContext = context;
 		mDatabaseManager = databaseManager;
 		mHandler = handler;
@@ -82,7 +82,7 @@ public class PilihAnak{
 
 
 	private final Handler mHandler;
-	private final DatabaseManager mDatabaseManager;
+	private final DatabaseManagerOrtu mDatabaseManager;
 	
 	private Context mContext;
 	private Anak anak;

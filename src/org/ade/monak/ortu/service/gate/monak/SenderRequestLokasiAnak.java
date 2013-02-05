@@ -5,6 +5,7 @@ import org.ade.monak.ortu.Variable.TipePesanMonak;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
 import org.ade.monak.ortu.service.gate.SenderSMS;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 import android.os.Handler;
@@ -23,7 +24,9 @@ public class SenderRequestLokasiAnak extends ASenderMonak{
 	}
 	
 	private void kirimRequestLokasiAnak(Anak anak) {
-		senderSMS.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOCATION_ANAK+","+anak.getIdAnak());
+
+		IDGenerator idGenerator = new IDGenerator(getContext(), null);
+		senderSMS.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOCATION_ANAK+","+anak.getIdAnak()+","+idGenerator.getIdOrangTua());
 	}
 	
 	

@@ -16,7 +16,7 @@ import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.gate.monak.SenderPendaftaranAnak;
 import org.ade.monak.ortu.service.gate.monak.SenderStartMonitoring;
 import org.ade.monak.ortu.service.gate.monak.SenderStopMonitoring;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
 import org.ade.monak.ortu.service.util.ServiceMonakConnection;
 import org.ade.monak.ortu.util.BundleEntityMaker;
@@ -56,7 +56,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		setContentView(R.layout.list_monak);
 		setTitle("Daftar Anak");
 		
-		databaseManager 	= new DatabaseManager(this);
+		databaseManager 	= new DatabaseManagerOrtu(this);
 		idGenerator 		= new IDGenerator(this, databaseManager);
 //		databaseManager.deleteAllLokasi();
 		anaks				= databaseManager.getAllAnak(true,false);
@@ -196,7 +196,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				anak.setNoHpAnak(bundle.getString("noHp"));
 				Log.d("DaftarAnak", "add anak");
 				databaseManager.addAnak(anak);
-				sendRequestLocationAnak(anak,false);
+				sendRequestLocationAnak(anak,ADD);
 				break;
 			}case Operation.EDIT:{
 
@@ -205,10 +205,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
+		
 				databaseManager.deleteLokasiAnak(anak);
 				databaseManager.updateAnak(anak);
 				
-				sendRequestLocationAnak(anak, true);
+				sendRequestLocationAnak(anak, UPDATE);
 				
 				break;
 			}case Operation.DELETE:{
@@ -217,14 +218,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-				databaseManager.deleteAnak(anak);
-				for(Anak anakFor:anaks){
-					if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-						anaks.remove(anakFor);
-						break;
-					}
-				}
-				daftarAnakAdapter.notifyDataSetChanged();
+
+				databaseManager.deleteLokasiAnak(anak);
+				
+				sendRequestLocationAnak(anak, DELETE);
 				break;
 			}
 			
@@ -244,9 +241,21 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		Toast.makeText(this, "monitoring pada anak :"+anak.getNamaAnak()+" akan dinonaktifkan", Toast.LENGTH_SHORT).show();
 	}
 	
-	private void sendRequestLocationAnak(Anak anak, boolean isEdit){	
-		SenderPendaftaranAnak senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, isEdit));
-		senderAnak.sendAnak(anak);				
+	private void sendRequestLocationAnak(Anak anak, int operation){	
+		SenderPendaftaranAnak senderAnak = new SenderPendaftaranAnak(this, new SendingLocationHandler(this, anak, operation));
+		switch(operation){
+			case ADD :{
+				senderAnak.sendPendaftarAnak(anak);
+				break;
+			}case UPDATE:{
+				senderAnak.sendUpdateAnak(anak);
+				break;
+			}case DELETE:{
+				senderAnak.sendHapusAnak(anak);
+				break;
+			}
+		}
+		
 	}
 	
 	@Override
@@ -254,6 +263,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		super.onStop();
 		if(bound){
 			handlerBinder.unBindUIHandlerWaitingLocation();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiAktif();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -262,7 +273,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
 		handlerBinder = binderHandlerMonak;
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this));	
-		handlerBinder.bindUIHandlerWaitingKonfirmasiAktif(new WaitingKonfirmasiHandler(this));
+		handlerBinder.bindUIHandlerWaitingKonfirmasiAktif(new WaitingKonfirmasiAktifHandler(this));
+		handlerBinder.bindUIHandlerWaitingKonfirmasiHapusAnak(new WaitingKonfirmasiHapusHandler(this));
 	}
 
 	public void setBound(boolean bound) {
@@ -271,7 +283,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 
 	private ServiceMonakConnection serviceConnection;
 	private IDGenerator			idGenerator;
-	private DatabaseManager 	databaseManager;
+	private DatabaseManagerOrtu 	databaseManager;
 	private PendaftaranAnak 	pendaftaranAnak;
 	private ArrayAdapter<Anak>	daftarAnakAdapter;
 	private List<Anak> 			anaks;
@@ -281,6 +293,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	private boolean				bound;
 	
 	public final static String WAITING_LOCATION_STORAGE_HANDLER_ID = "waiting_location_storage_handler";
+	
+	private final static int ADD 	= 0;
+	private final static int UPDATE = 1;
+	private final static int DELETE = 2;
 	
 	private final static class AdapterDaftarAnak extends ArrayAdapter<Anak>{
 
@@ -421,33 +437,37 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	private final static class SendingLocationHandler extends Handler{
-		public SendingLocationHandler(DaftarAnak daftarAnak, Anak anak, boolean isEdit){
+		public SendingLocationHandler(DaftarAnak daftarAnak, Anak anak, int operation){
 			this.daftarAnak = daftarAnak;
 			this.anak 		= anak;
-			this.isEdit		= isEdit;
+			this.operation  = operation;
 		}
 		
 		public void handleMessage(Message msg) {
 			if(msg.what==Status.SUCCESS){
 
 				if(anak.getIdAnak()!=null && !anak.getIdAnak().equals("")){
-					if(isEdit){
-						for(Anak anakFor:daftarAnak.anaks){
-							if(anak.getIdAnak().equals(anakFor.getIdAnak())){
-								anakFor.setNamaAnak(anak.getNamaAnak());
-								anakFor.setNoHpAnak(anak.getNoHpAnak());
-								anakFor.setLastLokasi(null);
-								anakFor.setAktif(false);
-							}
-						}						
-					}else{
-						daftarAnak.anaks.add(anak);
+					switch(operation){
+						case ADD :{
+							daftarAnak.anaks.add(anak);
+							break;
+						}case UPDATE:{
+							for(Anak anakFor:daftarAnak.anaks){
+								if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+									anakFor.setNamaAnak(anak.getNamaAnak());
+									anakFor.setNoHpAnak(anak.getNoHpAnak());
+									anakFor.setLastLokasi(null);
+									anakFor.setAktif(false);
+								}
+							}				
+							break;
+						}case DELETE:{			
+							break;
+						}
 					}
-
+					
+					daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
 				}
-				
-				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
-				
 			}else if(msg.what==Status.FAILED){
 				AlertDialog.Builder alert = new AlertDialog.Builder(daftarAnak);                 
 				alert.setTitle("Perhatian !!!");  
@@ -456,7 +476,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {  
-						daftarAnak.sendRequestLocationAnak(anak, isEdit);
+						daftarAnak.sendRequestLocationAnak(anak, operation);
 						dialog.dismiss();
 						return;                  
 			        }  
@@ -474,11 +494,12 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				AlertDialog alertDialog = alert.create();
 				alertDialog.show();
 			}
+			
 		}
 
 		private final DaftarAnak daftarAnak;
 		private final Anak anak;
-		private final boolean isEdit;
+		private final int operation;
 	}
 	
 	private final static class WaitingLocationHandler extends Handler{
@@ -543,9 +564,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
-	private final static class WaitingKonfirmasiHandler extends Handler{
+	
+	
+	private final static class WaitingKonfirmasiAktifHandler extends Handler{
 
-		public WaitingKonfirmasiHandler(DaftarAnak daftarAnak){
+		public WaitingKonfirmasiAktifHandler(DaftarAnak daftarAnak){
 			this.daftarAnak = daftarAnak;
 		}
 		
@@ -562,9 +585,34 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 					if(anakFor.getIdAnak().equals(idAnak)){
 						anakFor.setAktif(data.getBoolean("aktif"));
 					}
-				}		
-				
+				}						
 				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+			}
+		}
+		
+		private final DaftarAnak daftarAnak;
+		
+	}	
+	
+	private final static class WaitingKonfirmasiHapusHandler extends Handler{
+
+		public WaitingKonfirmasiHapusHandler(DaftarAnak daftarAnak){
+			this.daftarAnak = daftarAnak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle data = msg.getData();
+				
+				//cek apakah anak ini yang mau di update datanya...
+				String idAnak = data.getString("idAnak");
+				//.................................................
+				for(Anak anakFor:daftarAnak.anaks){
+					if(idAnak.equals(anakFor.getIdAnak())){
+						daftarAnak.anaks.remove(anakFor);
+					}
+				}		
 				
 				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
 			}

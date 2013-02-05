@@ -21,4 +21,7 @@ public class TipePesanMonak {
 	public final static int SET_MAX_LOGS_LOCATION			= 18;
 	public final static int KONFIRMASI_AKTIF_MONITORING 	= 19;
 	public final static int KONFIRMASI_DEAKTIF_MONITORING 	= 20;
+	public final static int ANAK_DELETE						= 21;
+	public final static int ANAK_UPDATE						= 22;
+	public final static int KONFIRMASI_HAPUS_ANAK			= 23;
 }

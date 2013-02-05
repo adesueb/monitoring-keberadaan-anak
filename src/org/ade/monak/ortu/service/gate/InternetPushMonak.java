@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,16 +25,13 @@ public class InternetPushMonak implements Runnable{
 	}
 	public void run() {
 		try {
-			PreferenceMonitoringManager pref = new PreferenceMonitoringManager(context);
-			String ip	= pref.getIp();
-			int port	= pref.getPort();
-		
-			socket = new Socket(ip, port);
+			IDGenerator idGenerator = new IDGenerator(context, null);
+			socket = new Socket(IP_SERVER, PORT);
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 			BufferedReader buff = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
 			
 			// TODO : isi dengan id Ortu...................
-			dos.write((""+"\n").getBytes());
+			dos.write((idGenerator.getIdOrangTua()+"\n").getBytes());
 			//.............................................
 			
 			while(startConnection){
@@ -54,6 +52,11 @@ public class InternetPushMonak implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 			if(startConnection){
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 				startConnection();
 			}
 		} finally{
@@ -67,7 +70,7 @@ public class InternetPushMonak implements Runnable{
 	public void startConnection(){
 		if(isNetworkAvailable()){
 			startConnection = true;
-//			new Thread(this).start(); belum TODO:	
+//			new Thread(this).start();	
 		}
 		
 	}
@@ -85,6 +88,8 @@ public class InternetPushMonak implements Runnable{
 	private final Context context;
 	private Socket socket;
 	private boolean startConnection = false;
+	private static final String IP_SERVER = "49.50.8.137";
+	private static final int PORT  = 4444;
 	
 
 }

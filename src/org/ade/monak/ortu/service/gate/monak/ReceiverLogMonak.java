@@ -1,5 +1,6 @@
 package org.ade.monak.ortu.service.gate.monak;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monak.ortu.Variable.Status;
@@ -7,8 +8,9 @@ import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.util.IDGenerator;
+import org.ade.monak.ortu.util.KontrolLog;
 import org.ade.monak.ortu.util.LokasisConverter;
 
 import android.content.Context;
@@ -27,7 +29,7 @@ public class ReceiverLogMonak{
 
 		this.textLogs = "";
 		for(int i=2;i<cvs.length;i++){
-			this.textLogs += cvs[i];
+			this.textLogs += cvs[i]+",";
 		}
 		this.idAnak = idAnak;
 		
@@ -36,8 +38,10 @@ public class ReceiverLogMonak{
 	
 	private void action(){
 		// TODO : test me!!!!
-		DatabaseManager databaseManager = new DatabaseManager(context);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
 		IDGenerator idGenerator = new IDGenerator(context, databaseManager);
+		
+		KontrolLog.kontrolDeleteLogLokasi(databaseManager);
 		
 		List<Lokasi> lokasis = LokasisConverter.covertTextToLokasis(textLogs);
 		if(lokasis.size()<=0)return;
@@ -45,7 +49,24 @@ public class ReceiverLogMonak{
 		Anak anak = new Anak();
 		anak.setIdAnak(idAnak);
 		
+		List<Lokasi> lokasisBaru = new ArrayList<Lokasi>();
+		
+		List<Lokasi>lokasisLama = databaseManager.getAllLokasiAnak(anak);
 		for(Lokasi lokasi:lokasis){
+			boolean sama = false;
+			for(Lokasi lokasiLama:lokasisLama){
+				if(lokasiLama.getlatitude()==lokasi.getlatitude()&&lokasiLama.getLongitude()==lokasi.getLongitude()){
+					sama = true;
+					break;
+				}
+			}
+			if(sama){
+				lokasisBaru.add(lokasi);
+			}
+			
+		}
+		
+		for(Lokasi lokasi:lokasisBaru){
 			
 			lokasi.setId(idGenerator.getIdLocation());
 			lokasi.setAnak(anak);
@@ -54,10 +75,11 @@ public class ReceiverLogMonak{
 			databaseManager.addLokasi(lokasi);
 			
 		}
-		
-		anak.setLastLokasi(lokasis.get(lokasis.size()-1));
+		if(lokasisBaru.size()>0){
+			anak.setLastLokasi(lokasisBaru.get(lokasis.size()-1));		
+			databaseManager.updateLastLokasiAnak(anak);
+		}
 		anak.setAktif(true);
-		databaseManager.updateLastLokasiAnak(anak);
 		databaseManager.setAktifAnak(anak);
 		
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
@@ -74,8 +96,12 @@ public class ReceiverLogMonak{
 		
 	}
 	
+	
+	
+	
 	private BinderHandlerMonak binderHandlerMonak;
 	private final Context context;
 	private String idAnak;
 	private String textLogs;
+	
 }

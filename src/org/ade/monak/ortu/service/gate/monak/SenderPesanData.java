@@ -9,6 +9,7 @@ import org.ade.monak.ortu.service.gate.ASenderMonak;
 import org.ade.monak.ortu.service.gate.SenderInternet;
 import org.ade.monak.ortu.service.gate.SenderSMS;
 import org.ade.monak.ortu.service.storage.LogMonakFileManager;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 import android.os.Handler;
@@ -43,17 +44,19 @@ public class SenderPesanData extends ASenderMonak{
 	
 	private void kirimPesanData( IPesanData pesanData ){
 		String phoneNumber = "";
+		String pesan = "";
 		switch(pesanData.getTipe()){
 			case TipePesanMonak.DATAMONITORING_BARU:{
 			}case TipePesanMonak.DATAMONITORING_UPDATE:{
 			}case TipePesanMonak.DATAMONITORING_DELETE:{
 				DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
 				phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
+				IDGenerator idGenerator = new IDGenerator(getContext(), null);
+				pesan = pesanData.getTipe()+","+pesanData.getJsonPesanData()+","+idGenerator.getIdOrangTua();
 				break;
 			}
 		}
-		LogMonakFileManager.debug("siap kirim peringatan");
-		senderSMS.sendSMS(phoneNumber, pesanData.getJsonPesanData());
+		senderSMS.sendSMS(phoneNumber, pesan);
 	}
 	
 	public void sendInternet(){

@@ -7,7 +7,7 @@ import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.entity.Peringatan;
 import org.ade.monak.ortu.map.view.Peta;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -36,7 +36,7 @@ public class Notifikasi {
 		CharSequence contentTitle 	= "";
 		long when = System.currentTimeMillis();
 		
-		DatabaseManager databaseManager = new DatabaseManager(context);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
 		DataMonitoring 	dataMonitoring 	= 
 				databaseManager.getDataMonitoringByIdMonitoring(peringatan.getIdMonitoring(), true, true);
 

@@ -9,7 +9,7 @@ import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.entity.Pelanggaran;
 import org.ade.monak.ortu.map.service.GpsManager;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 import org.ade.monak.ortu.util.BundleEntityMaker;
@@ -27,7 +27,7 @@ public class OverlayControllerMonak {
 	public OverlayControllerMonak(Context context, MonitoringOverlayFactory overlayFactory, MapView mapView, GpsManager gpsManager){
 		this.context 		= context;
 		this.gpsManager 	= gpsManager;
-		databaseManager 	= new DatabaseManager(context);
+		databaseManager 	= new DatabaseManagerOrtu(context);
 		this.overlayFactory = overlayFactory;
 		this.mapView		= mapView;
 	}
@@ -240,7 +240,7 @@ public class OverlayControllerMonak {
   	
   	private final GpsManager gpsManager;
   	private final Context context;
-  	private final DatabaseManager databaseManager;
+  	private final DatabaseManagerOrtu databaseManager;
   	private final MonitoringOverlayFactory overlayFactory;
   	private final MapView mapView;
   	

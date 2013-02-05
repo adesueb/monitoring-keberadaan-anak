@@ -48,6 +48,16 @@ public class BinderHandlerMonak{
 		removeUIHandlerWaiting(MonakService.WAITING_KONFIRMASI_AKTIF);
 	}
 	
+	public void bindUIHandlerWaitingKonfirmasiHapusAnak(Handler handler){
+		addHandlerUIWaiting(MonakService.WAITING_KONFIRMASI_HAPUS_ANAK, handler);
+	}
+	
+	public void unBindUIHandlerWaitingKonfirmasiHapusAnak(){
+		removeUIHandlerWaiting(MonakService.WAITING_KONFIRMASI_HAPUS_ANAK);
+	}
+	
+	
+	
 	public Handler getSingleBindUIHandler(String key){
 		if(mapUIHandler==null)return null;
 		return mapUIHandler.get(key);

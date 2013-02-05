@@ -1,15 +1,15 @@
 package org.ade.monak.ortu.util;
 
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
 public class IDGenerator {
 
-	public IDGenerator(Context context, DatabaseManager databaseManager){
+	public IDGenerator(Context context, DatabaseManagerOrtu databaseManager){
 		if(databaseManager==null){
-			mDatabaseManager = new DatabaseManager(context);
+			mDatabaseManager = new DatabaseManagerOrtu(context);
 		}else{
 			mDatabaseManager = databaseManager;
 		}
@@ -74,5 +74,5 @@ public class IDGenerator {
 	
 	private Context mContext;
 	
-	private DatabaseManager mDatabaseManager;
+	private DatabaseManagerOrtu mDatabaseManager;
 }

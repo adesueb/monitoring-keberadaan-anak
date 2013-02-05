@@ -48,6 +48,7 @@
     
     <string name="clear_all_monitoring">Clear All Monitoring</string>
     <string name="clear_all_pelanggaran">Clear All Pelanggaran</string>
+    <string name="clear_all_anak">Clear All Anak</string>
     <string name="registrasi_anak">Registrasi Anak</string>
     <string name="monitoring_aktif">Monitoring sedang Aktif</string>
     <string name="monitoring_deaktif">Monitoring sedang tidak Aktif</string>

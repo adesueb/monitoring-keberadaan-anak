@@ -5,7 +5,9 @@ import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
+import org.ade.monak.ortu.util.KontrolLog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -34,17 +36,22 @@ public class ReceiverLokasi{
 		lokasi.setLatitude(Double.parseDouble(cvs[1]));
 		lokasi.setLongitude(Double.parseDouble(cvs[2]));
 		lokasi.setTime(Long.parseLong(cvs[3]));
-		
+		lokasi.setLog(true);
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[4]);
 		anak.setAktif(true);
-		anak.setLastLokasi(lokasi);
-		
+		anak.setLastLokasi(lokasi);	
 		lokasi.setAnak(anak);
 		
-		DatabaseManager databaseManager = new DatabaseManager(context);
-		databaseManager.addLastLokasiAnak(anak);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
+		Lokasi lastLokasi = databaseManager.getAnakById(cvs[4], false, false).getLastLokasi();
+		if(lastLokasi==null||lastLokasi.getlatitude()!=lastLokasi.getlatitude()||lastLokasi.getLongitude()!=lokasi.getLongitude()){
+			databaseManager.addLastLokasiAnak(anak);	
+
+		}
 		databaseManager.setAktifAnak(anak);
+
+		KontrolLog.kontrolDeleteLogLokasi(databaseManager);
 		
 		if(binderHandlerMonak==null)return;
     	
@@ -79,5 +86,6 @@ public class ReceiverLokasi{
 	private final Context context;
 	
 	private String[] 	cvs;
+
 	
 }

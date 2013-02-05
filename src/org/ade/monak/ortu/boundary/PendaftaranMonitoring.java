@@ -18,7 +18,8 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.map.service.TandaLokasiSendiri;
 import org.ade.monak.ortu.map.view.Peta;
 import org.ade.monak.ortu.service.gate.monak.SenderPesanData;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.util.BundleEntityMaker;
 import org.ade.monak.ortu.util.EntityBundleMaker;
 import org.ade.monak.ortu.util.IDGenerator;
@@ -54,7 +55,7 @@ public class PendaftaranMonitoring extends Activity{
 		
 		justView = getIntent().getBooleanExtra(EXTRA_JUST_VIEW, false);
 	
-		databaseManager = new DatabaseManager(this);
+		databaseManager = new DatabaseManagerOrtu(this);
 		dataMonitoring 	= EntityBundleMaker.getDataMonitoringFromBundle(getIntent().getExtras());
 		mIDGenerator	= new IDGenerator(this,databaseManager);
 		
@@ -599,7 +600,7 @@ public class PendaftaranMonitoring extends Activity{
 		this.dataMonitoring = dataMonitoring;
 	}
 
-	private DatabaseManager databaseManager;
+	private DatabaseManagerOrtu databaseManager;
 	
 	private PilihAnak 		pilihAnak;
 	private PilihWaktu 		pilihWaktu;

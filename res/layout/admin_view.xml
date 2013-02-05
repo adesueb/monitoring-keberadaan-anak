@@ -34,124 +34,7 @@
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical" >
 
-	            <LinearLayout
-	                android:id="@+id/LinearLayout01"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/back_menu" >
 
-	                <TextView
-	                    android:id="@+id/TextView07"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:padding="10dip"
-	                    android:text="@string/set_detik_monitoring"
-	                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-	                <ImageView
-	                    android:id="@+id/ImageView03"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingTop="10dip"
-	                    android:src="@drawable/enter" />
-
-	                <TextView
-	                    android:id="@+id/adminDetikMonitoring"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingLeft="5dip"
-	                    android:text="@string/kosong" />
-	            </LinearLayout>
-	            
-
-	            <LinearLayout
-	                android:id="@+id/monitoringButtonAnak"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/back_menu" >
-
-	                <TextView
-	                    android:id="@+id/TextView04"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:padding="10dip"
-	                    android:text="@string/set_meter_monitoring"
-	                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-	                <ImageView
-	                    android:id="@+id/ImageView01"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingTop="10dip"
-	                    android:src="@drawable/enter" />
-
-	                <TextView
-	                    android:id="@+id/adminMeterMonitoring"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingLeft="5dip"
-	                    android:text="@string/kosong" />
-	            </LinearLayout>
-
-	            <LinearLayout
-	                android:id="@+id/monitoringButtonStatus"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/back_menu" >
-
-	                <TextView
-	                    android:id="@+id/TextView05"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:padding="10dip"
-	                    android:text="@string/set_detik_tracking"
-	                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-	                <ImageView
-	                    android:id="@+id/ImageView02"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingTop="10dip"
-	                    android:src="@drawable/enter" />
-
-	                <TextView
-	                    android:id="@+id/adminDetikTracking"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingLeft="5dip" 
-	                    android:text="@string/kosong"/>
-	            </LinearLayout>
-
-		       
-		        <LinearLayout
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content" 
-		            android:background="@drawable/back_menu" 
-		            android:id="@+id/monitoringButtonWaktu">
-		
-		            <TextView
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:padding="10dip"
-		                android:text="@string/max_log"
-		                android:textAppearance="?android:attr/textAppearanceLarge" />
-		
-		            <ImageView
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:src="@drawable/enter" 
-		                android:paddingTop="10dip"/>
-
-		                
-		            <TextView 
-		            	android:paddingLeft="5dip"
-		             	android:layout_width="wrap_content" 
-		             	android:layout_height="wrap_content" 
-		             	android:id="@+id/adminMaxLog" 
-		             	android:text="@string/kosong"></TextView>
-		
-		        </LinearLayout>
-		        
 		         <LinearLayout
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content" 
@@ -190,7 +73,7 @@
 		             android:id="@+id/adminButtonClearMonitoring"
 		             android:layout_width="match_parent"
 		             android:layout_height="wrap_content"
-		             android:background="@drawable/back_menu_green"
+		             android:background="@drawable/back_menu"
 		             android:gravity="center_horizontal" >
 
 		             <TextView
@@ -205,7 +88,7 @@
 		             android:id="@+id/adminButtonClearLokasi"
 		             android:layout_width="match_parent"
 		             android:layout_height="wrap_content"
-		             android:background="@drawable/back_menu_green"
+		             android:background="@drawable/back_menu"
 		             android:gravity="center_horizontal" >
 
 		             <TextView
@@ -220,7 +103,7 @@
 		             android:id="@+id/adminButtonClearPelanggaran"
 		             android:layout_width="match_parent"
 		             android:layout_height="wrap_content"
-		             android:background="@drawable/back_menu_green"
+		             android:background="@drawable/back_menu"
 		             android:gravity="center_horizontal" >
 
 		             <TextView
@@ -228,6 +111,21 @@
 		                 android:layout_height="wrap_content"
 		                 android:padding="10dip"
 		                 android:text="@string/clear_all_pelanggaran"
+		                 android:textAppearance="?android:attr/textAppearanceLarge" />
+		         </LinearLayout>
+		         
+		            <LinearLayout
+		             android:id="@+id/adminButtonClearAnak"
+		             android:layout_width="match_parent"
+		             android:layout_height="wrap_content"
+		             android:background="@drawable/back_menu"
+		             android:gravity="center_horizontal" >
+
+		             <TextView
+		                 android:layout_width="wrap_content"
+		                 android:layout_height="wrap_content"
+		                 android:padding="10dip"
+		                 android:text="@string/clear_all_anak"
 		                 android:textAppearance="?android:attr/textAppearanceLarge" />
 		         </LinearLayout>
 		      

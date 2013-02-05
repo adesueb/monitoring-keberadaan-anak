@@ -3,6 +3,7 @@ package org.ade.monak.ortu.service.gate.monak;
 import org.ade.monak.ortu.Variable.TipePesanMonak;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 
@@ -13,11 +14,15 @@ public class SenderTrackingMode extends ASenderMonak{
 	}
 	
 	public void sendStartTracking(Anak anak){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_START_TRACKING+"");
+
+		IDGenerator idGenerator = new IDGenerator(getContext(), null);
+		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_START_TRACKING+","+idGenerator.getIdOrangTua());
 	}
 	
 	public void sendStopTracking(Anak anak){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_STOP_TRACKING+"");
+
+		IDGenerator idGenerator = new IDGenerator(getContext(), null);
+		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_STOP_TRACKING+","+idGenerator.getIdOrangTua());
 	}
 	
 	@Override

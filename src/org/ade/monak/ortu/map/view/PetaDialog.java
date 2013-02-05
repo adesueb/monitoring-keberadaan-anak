@@ -6,7 +6,8 @@ import java.util.List;
 import org.ade.monak.ortu.R;
 import org.ade.monak.ortu.Variable.VariableEntity;
 import org.ade.monak.ortu.entity.Anak;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 import android.app.Dialog;
 import android.util.SparseBooleanArray;
@@ -19,7 +20,7 @@ public class PetaDialog {
 
 	public PetaDialog(Peta peta){
 		this.peta = peta;
-		this.databaseManager = new DatabaseManager(peta);
+		this.databaseManager = new DatabaseManagerOrtu(peta);
 	}
 	
 
@@ -139,11 +140,22 @@ public class PetaDialog {
 		Button buttonOk = (Button) dialog.findViewById(R.id.listGeneralButtonOk);
 		buttonOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				int selected = 0;
-				selected = listView.getSelectedItemPosition()+1;
+				LogMonakFileManager.debug("test lah");
+				List<Integer> pilihanOverlay = null;
 				
-				if(selected>0){
-					peta.actionOkLogDialog(anaks.get(selected-1));	
+				int len = listView.getCount();
+				pilihanOverlay = new ArrayList<Integer>();
+				SparseBooleanArray checked = listView.getCheckedItemPositions();
+				for (int i = 0; i < len; i++){
+					 if (checked.get(i)) {
+						 pilihanOverlay.add(i);
+					 }
+				}	
+				if(pilihanOverlay.size()>0){
+					for(Integer angka:pilihanOverlay){
+						peta.actionOkLogDialog(anaks.get(angka));	
+						break;
+					}
 				}
 					
 				dialog.dismiss();
@@ -158,5 +170,5 @@ public class PetaDialog {
 	private Dialog dialogTrack;
 	
 	private final Peta 				peta;
-	private final DatabaseManager 	databaseManager;
+	private final DatabaseManagerOrtu 	databaseManager;
 }

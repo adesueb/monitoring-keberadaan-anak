@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ade.monak.ortu.R;
 import org.ade.monak.ortu.entity.Lokasi;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -65,6 +65,13 @@ public class AdminActivity extends Activity{
 				showDialog(DIALOG_CLEAR_PELANGGARAN);
 			}
 		});
+		LinearLayout buttonViewClearAnak = (LinearLayout) findViewById(R.id.adminButtonClearAnak);
+		buttonViewClearAnak.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				showDialog(DIALOG_CLEAR_ANAK);
+			}
+		});
 	}
 	
 	
@@ -77,12 +84,12 @@ public class AdminActivity extends Activity{
 			}case DIALOG_CLEAR_LOKASI:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
-				alert.setMessage("Anda mau menghapus Semua Data Monitoring dan Lokasi?");                
+				alert.setMessage("Anda mau menghapus Semua Data Monitoring?");                
 
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
 				        databaseManager.deleteAllLokasi();
 				        return;                  
 			         }  
@@ -106,7 +113,7 @@ public class AdminActivity extends Activity{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
 				        databaseManager.deleteAllPelanggarans();				       
 						return;                  
 			         }  
@@ -125,13 +132,37 @@ public class AdminActivity extends Activity{
 			}case DIALOG_CLEAR_MONITORING:{
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 				alert.setTitle("Perhatian !!!");  
-				alert.setMessage("Anda mau menghapus Semua Pelanggaran?");                
+				alert.setMessage("Anda mau menghapus Semua Monitoring?");                
 
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManager databaseManager = new DatabaseManager(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
 						databaseManager.deleteAllDataMonitoring();
+						return;                  
+			         }  
+			     });  
+
+				alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+
+						dialog.dismiss();
+						return;   
+					}
+				});
+				AlertDialog alertDialog = alert.create();
+				return alertDialog;
+			}case DIALOG_CLEAR_ANAK:{
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+				alert.setTitle("Perhatian !!!");  
+				alert.setMessage("Anda mau menghapus Semua Anak?");                
+
+				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+			      
+					public void onClick(DialogInterface dialog, int whichButton) {
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
+						databaseManager.deleteAllAnak();
 						return;                  
 			         }  
 			     });  
@@ -159,7 +190,7 @@ public class AdminActivity extends Activity{
 		
 		final ListView listView = (ListView) dialog.findViewById(R.id.listGeneral);
 		
-		DatabaseManager databaseManager = new DatabaseManager(this);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(this);
 		final List<Lokasi> lokasis = databaseManager.getAllLokasi();
 		if(lokasis==null){
 			Toast.makeText(this, "tidak ada lokasi", Toast.LENGTH_SHORT).show();
@@ -190,6 +221,7 @@ public class AdminActivity extends Activity{
 	private static final int DIALOG_CLEAR_LOKASI		= 1;
 	private static final int DIALOG_CLEAR_PELANGGARAN	= 2;
 	private static final int DIALOG_CLEAR_MONITORING	= 3;
+	private static final int DIALOG_CLEAR_ANAK			= 4;
 	
 
 }

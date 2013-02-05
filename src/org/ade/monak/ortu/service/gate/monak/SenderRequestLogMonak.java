@@ -3,6 +3,7 @@ package org.ade.monak.ortu.service.gate.monak;
 import org.ade.monak.ortu.Variable.TipePesanMonak;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 
@@ -13,7 +14,9 @@ public class SenderRequestLogMonak extends ASenderMonak{
 	}
 	
 	public void sendRequest(Anak anak){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOG_LOCATION+"");
+
+		IDGenerator idGenerator = new IDGenerator(getContext(), null);
+		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOG_LOCATION+","+idGenerator.getIdOrangTua());
 	}
 	
 	@Override

@@ -9,8 +9,10 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.map.service.GpsManager;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
+import org.ade.monak.ortu.service.gate.monak.SenderRequestLogMonak;
 import org.ade.monak.ortu.service.gate.monak.SenderRequestLokasiAnak;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
 import org.ade.monak.ortu.service.util.ServiceMonakConnection;
@@ -64,7 +66,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 		
 		setToolbarMenu();
 		
-		databaseManager = new DatabaseManager(this);
+		databaseManager = new DatabaseManagerOrtu(this);
 		
 		gpsManager 		= new GpsManager(this, new PetaHandlerLocationOrangTua(this));
 		
@@ -221,6 +223,11 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
   	
   	private void requestLogMonakAnak(Anak anak){
+  		LogMonakFileManager.debug("nama anak yg mw di log adalah : "+anak.getNamaAnak());
+  		List<Lokasi> lokasis = databaseManager.getAllLokasiAnak(anak);
+  		overlayControllerMonak.setOverlayLogLocationAnak(anak.getIdAnak(), lokasis);
+  		SenderRequestLogMonak sender = new SenderRequestLogMonak(this);
+  		sender.sendRequest(anak);
   		PetaLogController petaLog = new PetaLogController(this);
   		petaLog.action(anak);
   		if(bound && handlerBinder!=null && anak!=null){
@@ -339,7 +346,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	
 	private MapController 				mapController;
 	private GpsManager					gpsManager;
-	private DatabaseManager				databaseManager;
+	private DatabaseManagerOrtu				databaseManager;
 		
 	private BinderHandlerMonak			handlerBinder;
 	

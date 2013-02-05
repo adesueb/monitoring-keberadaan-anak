@@ -11,7 +11,7 @@ import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.map.view.Peta;
 import org.ade.monak.ortu.service.gate.monak.SenderPesanData;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.util.BundleEntityMaker;
 import org.ade.monak.ortu.util.EntityBundleMaker;
 import org.ade.monak.ortu.util.IFormOperation;
@@ -42,7 +42,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		Intent intent = getIntent();
 		final Bundle bundle = intent.getExtras();
 		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
-		databaseManager = new DatabaseManager(this);
+		databaseManager = new DatabaseManagerOrtu(this);
 		if(anak==null){
 			dataMonitorings	= databaseManager.getAllDataMonitorings(true, true);
 			justView = true;
@@ -183,7 +183,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		return super.onCreateDialog(id, bundle);
 	}
 	
-	private DatabaseManager 		databaseManager;
+	private DatabaseManagerOrtu 		databaseManager;
 	private AdapterDaftarMonitoring daftarMonitoringAdapter;
 	private List<DataMonitoring>	dataMonitorings;
 	

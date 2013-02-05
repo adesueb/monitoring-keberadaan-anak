@@ -20,10 +20,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 
-public class DatabaseManager {
+public class DatabaseManagerOrtu {
 
 	
-	public DatabaseManager (Context context) { 
+	public DatabaseManagerOrtu (Context context) { 
 		this.context = context;
 		mDatabaseHelper = new DatabaseHelper(context);
 	}
@@ -281,6 +281,29 @@ public class DatabaseManager {
 			return null;
 		}
 	}
+	
+	public List<Pelanggaran> getAllPelanggaranByMonitoring(String idMonitoring){
+		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, COLUMN_MONITORING_PELANGGARAN+"='"+idMonitoring+"'");
+		if(cursor!=null && cursor.getCount()>0){
+			List<Pelanggaran> pelanggarans = getPelanggaransFromCursor(cursor, false, false);
+			if(cursor!=null && !cursor.isClosed()){
+				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
+			}
+			return pelanggarans;
+		}else{
+			if(cursor!=null && !cursor.isClosed()){
+				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
+			}
+			return null;
+		}
+	}
+	
 	
 	public List<Pelanggaran> getDataPelanggaransByAnak(String idAnak){
 		Cursor cursor = actionQuery(PELANGGARAN_TABLE_NAME, null, COLUMN_ANAK_PELANGGARAN+"='"+idAnak+"'");
@@ -546,13 +569,20 @@ public class DatabaseManager {
 	}
 	
 	public void deleteAllPelanggarans(){
-		getDb().delete(PELANGGARAN_TABLE_NAME, null, null);
+		List<Pelanggaran> pelanggarans = getAllDataPelanggarans(false, false);
+		for(Pelanggaran pelanggaran:pelanggarans){
+			deletePelanggaran(pelanggaran);
+		}
 	}
 	
 	public void deleteAllPelanggaranByMonitoring(DataMonitoring dataMonitoring){
-		getDb().delete(PELANGGARAN_TABLE_NAME, 
-				COLUMN_MONITORING_PELANGGARAN+"='"+dataMonitoring.getIdMonitoring()+"'", 
-				null);
+		List<Pelanggaran> pelanggarans = getAllPelanggaranByMonitoring(dataMonitoring.getIdMonitoring()); 
+		if(pelanggarans!=null){
+			for(Pelanggaran pelanggaran:pelanggarans){
+				deletePelanggaran(pelanggaran);
+			}	
+		}
+		
 	}
 	
 	public void deleteDataMonitoring(DataMonitoring dataMonitoring){

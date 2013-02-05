@@ -10,7 +10,7 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.entity.Pelanggaran;
 import org.ade.monak.ortu.entity.Peringatan;
 import org.ade.monak.ortu.service.Notifikasi;
-import org.ade.monak.ortu.service.storage.DatabaseManager;
+import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
@@ -22,13 +22,13 @@ public class ReceiverPesanData {
 		if(pesanData!=null){
 			switch(pesanData.getTipe()){
 				case TipePesanMonak.DATAMONITORING_BARU:{
-					new DatabaseManager(context).addDataMonitoring((DataMonitoring) pesanData);
+					new DatabaseManagerOrtu(context).addDataMonitoring((DataMonitoring) pesanData);
 					break;
 				}case TipePesanMonak.DATAMONITORING_UPDATE:{
-					new DatabaseManager(context).updateDataMonitoring((DataMonitoring) pesanData);
+					new DatabaseManagerOrtu(context).updateDataMonitoring((DataMonitoring) pesanData);
 					break;
 				}case TipePesanMonak.DATAMONITORING_DELETE:{
-					new DatabaseManager(context).deleteDataMonitoring((DataMonitoring) pesanData);
+					new DatabaseManagerOrtu(context).deleteDataMonitoring((DataMonitoring) pesanData);
 					break;
 				}case TipePesanMonak.PERINGATAN_SEHARUSNYA:{
 				}case TipePesanMonak.PERINGATAN_TERLARANG:{
@@ -42,7 +42,7 @@ public class ReceiverPesanData {
 	
 	private void simpanPelanggaranDariPeringatan(Context context, Peringatan peringatan){
 		
-		DatabaseManager databaseManager = new DatabaseManager(context);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
 		IDGenerator idGenerator = new IDGenerator(context, databaseManager);
 		
 		Pelanggaran pelanggaran = new Pelanggaran();

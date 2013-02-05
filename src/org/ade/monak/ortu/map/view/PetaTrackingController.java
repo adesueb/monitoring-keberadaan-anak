@@ -22,6 +22,8 @@ public class PetaTrackingController {
 			sender.sendStartTracking(anak);	
 		}
 	}
+	
+	
 	private final SenderTrackingMode sender;
 	
 }

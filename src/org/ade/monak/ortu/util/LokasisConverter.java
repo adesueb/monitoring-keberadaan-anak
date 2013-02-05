@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monak.ortu.entity.Lokasi;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 public class LokasisConverter {
 
@@ -24,9 +25,10 @@ public class LokasisConverter {
 	 */
 	public final static Lokasi convertTextToSingleLokasi(String text){
 		String[]splitText = text.split(",");
+		LogMonakFileManager.debug("lokasi satu pesatu textnya adalah : "+text);
 		Lokasi lokasi = new Lokasi();
 		lokasi.setLatitude(Double.parseDouble(splitText[1]));
-		lokasi.setLongitude(Double.parseDouble(splitText[12]));
+		lokasi.setLongitude(Double.parseDouble(splitText[2]));
 		lokasi.setTime(Long.parseLong(splitText[0]));
 		return lokasi;
 	}
