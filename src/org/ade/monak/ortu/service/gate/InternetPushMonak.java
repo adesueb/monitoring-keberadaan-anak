@@ -70,7 +70,7 @@ public class InternetPushMonak implements Runnable{
 	public void startConnection(){
 		if(isNetworkAvailable()){
 			startConnection = true;
-//			new Thread(this).start();	
+			new Thread(this).start();	
 		}
 		
 	}
