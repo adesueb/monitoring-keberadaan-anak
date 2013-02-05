@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.ade.monak.ortu.service.MonakService;
-import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
@@ -36,9 +36,12 @@ public class InternetPushMonak implements Runnable{
 			
 			while(startConnection){
 				String pesan = buff.readLine();
+				if(pesan==null){
+					break;
+				}
 				Bundle bundle = new Bundle();
 				bundle.putInt(MonakService.START_CALL, MonakService.RECEIVER_INTERNET);
-				bundle.putString("pesan", pesan);
+				bundle.putString(MonakService.PESAN_INTERNET, pesan);
 				Intent intent = new Intent(MonakService.MONAK_SERVICE);
 				intent.putExtras(bundle);
 				context.startService(intent);
@@ -51,15 +54,17 @@ public class InternetPushMonak implements Runnable{
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			
+		} finally{
 			if(startConnection){
 				try {
-					Thread.sleep(5000);
+					LogMonakFileManager.debug("try to connect to push");
+					Thread.sleep(3000);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
 				startConnection();
 			}
-		} finally{
 		}
 	}
 	
@@ -71,8 +76,9 @@ public class InternetPushMonak implements Runnable{
 		if(isNetworkAvailable()){
 			startConnection = true;
 			new Thread(this).start();	
+		}else{
+			startConnection = false;
 		}
-		
 	}
 	
 	public boolean isStart(){
@@ -88,7 +94,7 @@ public class InternetPushMonak implements Runnable{
 	private final Context context;
 	private Socket socket;
 	private boolean startConnection = false;
-	private static final String IP_SERVER = "49.50.8.137";
+	private static final String IP_SERVER = "192.168.2.108";
 	private static final int PORT  = 4444;
 	
 

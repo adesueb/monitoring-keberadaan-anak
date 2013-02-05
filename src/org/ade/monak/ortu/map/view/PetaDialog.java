@@ -140,7 +140,6 @@ public class PetaDialog {
 		Button buttonOk = (Button) dialog.findViewById(R.id.listGeneralButtonOk);
 		buttonOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				LogMonakFileManager.debug("test lah");
 				List<Integer> pilihanOverlay = null;
 				
 				int len = listView.getCount();

@@ -62,7 +62,6 @@ public class OverlayControllerMonak {
   			mapView.getOverlays().add(overlayFactory.getTerlarang());
   		}
   		
-  		LogMonakFileManager.debug("lumayan kalau sudah masuk sini");
   		
   		for(DataMonitoring dataMonitoring:dataMonitorings){
   			

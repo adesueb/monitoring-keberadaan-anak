@@ -132,6 +132,15 @@
 						"monak_service"/>
 				</intent-filter>
 		</service>
+		
+          <service 	android:name=".service.gate.InternetStatus"
+            		android:exported="false"
+					android:icon="@drawable/icon" >
+            	<intent-filter>
+					<action android:name=
+						"ConnectivityManager.CONNECTIVITY_ACTION"/>
+				</intent-filter>
+		</service>
 
     </application>
 </manifest>

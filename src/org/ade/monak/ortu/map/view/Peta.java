@@ -223,7 +223,6 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
   	
   	private void requestLogMonakAnak(Anak anak){
-  		LogMonakFileManager.debug("nama anak yg mw di log adalah : "+anak.getNamaAnak());
   		List<Lokasi> lokasis = databaseManager.getAllLokasiAnak(anak);
   		overlayControllerMonak.setOverlayLogLocationAnak(anak.getIdAnak(), lokasis);
   		SenderRequestLogMonak sender = new SenderRequestLogMonak(this);

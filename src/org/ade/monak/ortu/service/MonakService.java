@@ -58,9 +58,17 @@ public class MonakService extends Service{
 	    	        	receiveSMS(bundle);
 	    	        	break;
 	    	        }case RECEIVER_INTERNET:{
+	    	        	routeToGateMonak(bundle.getString(PESAN_INTERNET));
 	    	        	break;
 	    	        }
             	}	
+            	
+            	if(bundle.getInt(STATUS_INTERNET)==START){
+            		if(internetPush.isStart()){
+                		internetPush.startConnection();            			
+            		}
+
+            	}
             }
         	
         }
@@ -156,6 +164,8 @@ public class MonakService extends Service{
 	
 	private BinderService binderService;
 	
+	public final static String STATUS_INTERNET					= "status_internet";
+	public final static String PESAN_INTERNET					= "pesan_internet";
 	public final static String START_CALL						= "start_call";
 	public final static String MONAK_SERVICE					= "monak_service";
 	public final static String WAITING_LOCATION 				= "waiting_location";
@@ -166,6 +176,10 @@ public class MonakService extends Service{
 	
 	public final static int RECEIVER_SMS 				= 1;
 	public final static int RECEIVER_INTERNET			= 2;
+	
+
+	public final static int START	= 1;
+	public final static int STOP	= 2;
 	
 	public class BinderService extends Binder{
 		public BinderService(MonakService monakService){
