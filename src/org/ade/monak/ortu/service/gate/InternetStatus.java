@@ -12,6 +12,8 @@ public class InternetStatus extends BroadcastReceiver{
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+
+   	 LogMonakFileManager.debug("change");
 		 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
 	     if(!noConnectivity){
 	    	 LogMonakFileManager.debug("connect to internet");

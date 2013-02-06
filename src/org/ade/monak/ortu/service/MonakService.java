@@ -64,7 +64,7 @@ public class MonakService extends Service{
             	}	
             	
             	if(bundle.getInt(STATUS_INTERNET)==START){
-            		if(internetPush.isStart()){
+            		if(!internetPush.isStart()){
                 		internetPush.startConnection();            			
             		}
 
