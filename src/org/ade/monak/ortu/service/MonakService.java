@@ -151,7 +151,15 @@ public class MonakService extends Service{
 	    	}case TipePesanMonak.KONFIRMASI_HAPUS_ANAK:{
 	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
 	    		receiver.receiverKonfirmasiHapusAnak(cvs);
-	    		
+	    		break;
+	    	}case TipePesanMonak.KONFIRMASI_START_TRACKING:{
+	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
+	    		receiver.receiveKonfirmasiStartTrack(cvs);
+	    		break;
+	    	}case TipePesanMonak.KONFIRMASI_STOP_TRACKING:{
+	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
+	    		receiver.receiveKonfirmasiStopTrack(cvs);
+	    		break;
 	    	}
 	    }
 	}
@@ -172,6 +180,7 @@ public class MonakService extends Service{
 	public final static String WAITING_LOG_LOCATION				= "waiting_log_location";
 	public final static String WAITING_KONFIRMASI_AKTIF			= "waiting_konfirmasi_aktif";
 	public final static String WAITING_KONFIRMASI_HAPUS_ANAK 	= "waiting_konfirmasi_hapus";
+	public final static String WAITING_KONFIRMASI_TRACK			= "waiting_konfirmasi_track";
 	public final static String STORAGE_WAITING_LOCATION 		= "storage_waiting_location";
 	
 	public final static int RECEIVER_SMS 				= 1;

@@ -72,6 +72,44 @@ public class ReceiverKonfirmasi {
 		}
 	}
 	
+	public void receiveKonfirmasiStartTrack(String [] cvs){
+		Anak anak = new Anak();
+		anak.setIdAnak(cvs[1]);
+		anak.setTrack(true);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
+		databaseManager.setTrackAnak(anak);
+		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_TRACK);
+		if(handler!=null){
+			Message message = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("track", true);
+			bundle.putString("idAnak", cvs[1]);
+			message.setData(bundle);
+			message.what = Status.SUCCESS;
+			handler.sendMessage(message);
+		}
+	}
+	
+	public void receiveKonfirmasiStopTrack(String [] cvs){
+		Anak anak = new Anak();
+		anak.setIdAnak(cvs[1]);
+		anak.setTrack(false);
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
+		databaseManager.setTrackAnak(anak);
+		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_TRACK);
+		if(handler!=null){
+			Message message = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("track", false);
+			bundle.putString("idAnak", cvs[1]);
+			message.setData(bundle);
+			message.what = Status.SUCCESS;
+			handler.sendMessage(message);
+
+		}
+	}
+	
+	
 	private final Context context;
 	private BinderHandlerMonak binderHandlerMonak;
 }

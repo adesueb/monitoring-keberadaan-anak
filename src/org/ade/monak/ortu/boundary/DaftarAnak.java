@@ -16,6 +16,7 @@ import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.gate.monak.SenderPendaftaranAnak;
 import org.ade.monak.ortu.service.gate.monak.SenderStartMonitoring;
 import org.ade.monak.ortu.service.gate.monak.SenderStopMonitoring;
+import org.ade.monak.ortu.service.gate.monak.SenderTrackingMode;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
 import org.ade.monak.ortu.service.util.ServiceMonakConnection;
@@ -229,6 +230,18 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
+	private void startTrack(Anak anak){
+		SenderTrackingMode senderTrackingMode = new SenderTrackingMode(this);
+		senderTrackingMode.sendStartTracking(anak);
+		Toast.makeText(this, "anak :"+anak.getNamaAnak()+" akan ditracking", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void stopTrack(Anak anak){
+		SenderTrackingMode senderTrackingMode = new SenderTrackingMode(this);
+		senderTrackingMode.sendStopTracking(anak);
+		Toast.makeText(this, "anak :"+anak.getNamaAnak()+" akan stop tracking", Toast.LENGTH_SHORT).show();
+	}
+	
 	private void startAnakMonitoring(Anak anak){
 		SenderStartMonitoring sender = new SenderStartMonitoring(this);
 		sender.sendStartMonitoring(anak);
@@ -258,6 +271,36 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
+	public void dialogToPetaTrack(final Anak anak) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+		alert.setTitle("Perhatian !!!");  
+		alert.setMessage("Anda mau menampilkan track dalam bentuk tampilan peta?");                
+
+		alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
+	      
+			public void onClick(DialogInterface dialog, int whichButton) {  
+				Intent intent = new Intent(DaftarAnak.this, Peta.class);
+				Bundle bundle = BundleEntityMaker.makeBundleFromAnak(anak);
+				bundle.putInt(Peta.EXTRA_ACTION, Peta.EXTRA_TRACK);
+				intent.putExtras(bundle);
+				DaftarAnak.this.startActivity(intent);		
+				dialog.dismiss();
+				return;                  
+	         }  
+	     });  
+
+		alert.setNegativeButton("tidak", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+
+				dialog.dismiss();
+				return;   
+			}
+		});
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -265,6 +308,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 			handlerBinder.unBindUIHandlerWaitingLocation();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiAktif();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiTrack();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -274,6 +318,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		handlerBinder = binderHandlerMonak;
 		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationHandler(this));	
 		handlerBinder.bindUIHandlerWaitingKonfirmasiAktif(new WaitingKonfirmasiAktifHandler(this));
+		handlerBinder.bindUIHandlerWaitingKonfirmasiTrack(new WaitingKonfirmasiTrackHandler(this));
 		handlerBinder.bindUIHandlerWaitingKonfirmasiHapusAnak(new WaitingKonfirmasiHapusHandler(this));
 	}
 
@@ -354,11 +399,11 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				
 				rowView.setOnLongClickListener(new DaftarAnakLongClick(daftarAnak, anak));
 				
-				Button btnStart = (Button) rowView.findViewById(R.id.daftarAnakButtonStart);
-				btnStart.setOnClickListener(new BtnStartOnClick(daftarAnak, anak));
+				Button btnStartMonitoring = (Button) rowView.findViewById(R.id.daftarAnakButtonStart);
+				btnStartMonitoring.setOnClickListener(new BtnStartOnClick(daftarAnak, anak));
 				
-				Button btnStop = (Button) rowView.findViewById(R.id.daftarAnakButtonStop);				
-				btnStop.setOnClickListener(new BtnStopOnClick(daftarAnak, anak));
+				Button btnStopMonitoring = (Button) rowView.findViewById(R.id.daftarAnakButtonStop);				
+				btnStopMonitoring.setOnClickListener(new BtnStopOnClick(daftarAnak, anak));
 				
 				LinearLayout llAktif = (LinearLayout) rowView.findViewById(R.id.daftarAnakStatusAktif);
 				LinearLayout llDeAktif = (LinearLayout) rowView.findViewById(R.id.daftarAnakStatusDeaktif);
@@ -379,16 +424,40 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 					
 				}
 				
+				Button btnStartTrack = (Button) rowView.findViewById(R.id.daftarAnakButtonStartTrack);
+				btnStartTrack.setOnClickListener(new BtnStartTrackOnClick(daftarAnak, anak));
+			
+				
+				Button btnStopTrack = (Button) rowView.findViewById(R.id.daftarAnakButtonStopTrack);				
+				btnStopTrack.setOnClickListener(new BtnStopTrackOnClick(daftarAnak, anak));
+				
+				LinearLayout llStartTrack 	= (LinearLayout) rowView.findViewById(R.id.daftarAnakTrackStart);
+				LinearLayout llStopTrack 	= (LinearLayout) rowView.findViewById(R.id.daftarAnakTrackStop);
+				
+				if(anak.isTrack()){
+					llStartTrack.setVisibility(View.VISIBLE);					
+					llStopTrack.setVisibility(View.GONE);
+					
+				}else{
+					llStartTrack.setVisibility(View.GONE);
+					llStopTrack.setVisibility(View.VISIBLE);
+					
+				}
+				
 				TextView txtAktif = (TextView) rowView.findViewById(R.id.daftarAnakTextStatusAktif);
 				TextView txtDeAktif = (TextView) rowView.findViewById(R.id.daftarAnakTextStatusDeaktif);
 				if(anak.getLastLokasi()==null){
-					btnStart.setEnabled(false);
-					btnStop.setEnabled(false);
+					btnStartMonitoring.setEnabled(false);
+					btnStopMonitoring.setEnabled(false);
+					btnStartTrack.setEnabled(false);
+					btnStopTrack.setEnabled(false);
 					txtAktif.setText(rowView.getResources().getString(R.string.registrasi_anak));
 					txtDeAktif.setText(rowView.getResources().getString(R.string.registrasi_anak));
 				}else{
-					btnStart.setEnabled(true);
-					btnStop.setEnabled(true);
+					btnStartMonitoring.setEnabled(true);
+					btnStopMonitoring.setEnabled(true);
+					btnStartTrack.setEnabled(true);
+					btnStopTrack.setEnabled(true);
 					txtAktif.setText(rowView.getResources().getString(R.string.monitoring_aktif));
 					txtDeAktif.setText(rowView.getResources().getString(R.string.monitoring_deaktif));
 				}
@@ -564,6 +633,36 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		
 	}
 	
+	private static final class BtnStartTrackOnClick implements View.OnClickListener{
+
+		public BtnStartTrackOnClick(DaftarAnak daftarAnak, Anak anak){
+			this.daftarAnak = daftarAnak;
+			this.anak		= anak;
+		}
+		public void onClick(View v) {
+			daftarAnak.startTrack(anak);
+		}
+		
+		private final DaftarAnak 	daftarAnak;
+		private final Anak 			anak;
+		
+	}
+	
+	private static final class BtnStopTrackOnClick implements View.OnClickListener{
+
+		public BtnStopTrackOnClick(DaftarAnak daftarAnak, Anak anak){
+			this.daftarAnak = daftarAnak;
+			this.anak		= anak;
+		}
+		public void onClick(View v) {			
+			daftarAnak.stopTrack(anak);
+		}
+		
+		private final DaftarAnak 	daftarAnak;
+		private final Anak 			anak;
+		
+	}
+	
 	
 	
 	private final static class WaitingKonfirmasiAktifHandler extends Handler{
@@ -584,6 +683,39 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				for(Anak anakFor:daftarAnak.anaks){
 					if(anakFor.getIdAnak().equals(idAnak)){
 						anakFor.setAktif(data.getBoolean("aktif"));
+					}
+				}						
+				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();
+			}
+		}
+		
+		private final DaftarAnak daftarAnak;
+		
+	}	
+	
+
+	private final static class WaitingKonfirmasiTrackHandler extends Handler{
+
+		public WaitingKonfirmasiTrackHandler(DaftarAnak daftarAnak){
+			this.daftarAnak = daftarAnak;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle data = msg.getData();
+				
+				//cek apakah anak ini yang mau di update datanya...
+				String idAnak = data.getString("idAnak");
+				//.................................................
+				
+				for(Anak anakFor:daftarAnak.anaks){
+					if(anakFor.getIdAnak().equals(idAnak)){
+						anakFor.setTrack(data.getBoolean("track"));
+						if(anakFor.isTrack()){
+							daftarAnak.dialogToPetaTrack(anakFor);
+						}
+						break;
 					}
 				}						
 				daftarAnak.daftarAnakAdapter.notifyDataSetChanged();

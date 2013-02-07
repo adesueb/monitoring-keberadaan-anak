@@ -24,4 +24,6 @@ public class TipePesanMonak {
 	public final static int ANAK_DELETE						= 21;
 	public final static int ANAK_UPDATE						= 22;
 	public final static int KONFIRMASI_HAPUS_ANAK			= 23;
+	public final static int KONFIRMASI_START_TRACKING		= 24;
+	public final static int KONFIRMASI_STOP_TRACKING		= 25;
 }

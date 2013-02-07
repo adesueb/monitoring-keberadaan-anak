@@ -165,6 +165,27 @@ public class DatabaseManagerOrtu {
 		return null;
 	}
 	
+	public List<Anak> getAllAnakTrack(boolean withPelanggaran, boolean withMonitoring){
+		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null,COLUMN_TRACK_ANAK+"='1'");
+		if(cursor!=null && cursor.getCount()>0){
+			List<Anak> anaks = getAnaksFromCursor(cursor, withPelanggaran, withMonitoring);
+			if(cursor!=null && !cursor.isClosed()){
+				cursor.close();
+				if(getDb().isOpen()){
+					getDb().close();
+				}
+			}
+			return anaks;
+		}
+		if(cursor!=null && !cursor.isClosed()){
+			cursor.close();
+			if(getDb().isOpen()){
+				getDb().close();
+			}
+		}
+		return null;
+	}
+	
 	public List<Anak> getAllAnak(boolean withPelanggaran, boolean withMonitoring){
 		Cursor cursor = actionQuery(ANAK_TABLE_NAME, null, null);
 		if(cursor!=null && cursor.getCount()>0){
@@ -769,6 +790,12 @@ public class DatabaseManagerOrtu {
 				cv.put(COLUMN_AKTIF_ANAK, "0");	
 			}
 			
+			if(anak.isTrack()){
+				cv.put(COLUMN_TRACK_ANAK, "1");	
+			}else{
+				cv.put(COLUMN_TRACK_ANAK, "0");	
+			}
+			
 			long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
 
 			if(result > 0 && anak.getLokasis()!=null){
@@ -803,6 +830,12 @@ public class DatabaseManagerOrtu {
 			cv.put(COLUMN_AKTIF_ANAK, "1");	
 		}else{
 			cv.put(COLUMN_AKTIF_ANAK, "0");	
+		}
+		
+		if(anak.isTrack()){
+			cv.put(COLUMN_TRACK_ANAK, "1");	
+		}else{
+			cv.put(COLUMN_TRACK_ANAK, "0");	
 		}
 		
 		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
@@ -846,6 +879,12 @@ public class DatabaseManagerOrtu {
 			cv.put(COLUMN_AKTIF_ANAK, "1");	
 		}else{
 			cv.put(COLUMN_AKTIF_ANAK, "0");	
+		}
+		
+		if(anak.isTrack()){
+			cv.put(COLUMN_TRACK_ANAK, "1");	
+		}else{
+			cv.put(COLUMN_TRACK_ANAK, "0");	
 		}
 
 		long result = getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
@@ -934,6 +973,21 @@ public class DatabaseManagerOrtu {
 		
 	}
 	
+	public void setTrackAnak(Anak anak){
+
+		ContentValues cv = new ContentValues();
+		if(anak.isTrack()){
+			cv.put(COLUMN_TRACK_ANAK, "1");	
+		}else{
+			cv.put(COLUMN_TRACK_ANAK, "0");	
+		}
+		
+		getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		
+	}
+	
+	
+	
 	public void addAnak(Anak anak){
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID_ANAK, anak.getIdAnak());
@@ -945,6 +999,13 @@ public class DatabaseManagerOrtu {
 		}else{
 			cv.put(COLUMN_AKTIF_ANAK, "0");	
 		}
+		
+		if(anak.isTrack()){
+			cv.put(COLUMN_TRACK_ANAK, "1");	
+		}else{
+			cv.put(COLUMN_TRACK_ANAK, "0");	
+		}
+		
 		long result = getDb().insert(ANAK_TABLE_NAME, null, cv);
 		
 		if(result <=0 || anak.getPelanggarans()==null){
@@ -1123,6 +1184,7 @@ public class DatabaseManagerOrtu {
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
 			int indexLocationAnak 	= cursor.getColumnIndex(COLUMN_LAST_LOCATION_ANAK);
 			int indexAktifAnak	= cursor.getColumnIndex(COLUMN_AKTIF_ANAK);
+			int indexTrackAnak	= cursor.getColumnIndex(COLUMN_TRACK_ANAK);
 			
 			anak.setIdAnak(cursor.getString(indexIdAnak));
 			
@@ -1131,6 +1193,14 @@ public class DatabaseManagerOrtu {
 			}else{
 				anak.setAktif(false);
 			}
+			
+
+			if(cursor.getString(indexTrackAnak).equals("1")){
+				anak.setTrack(true);
+			}else{
+				anak.setTrack(false);
+			}
+			
 			
 			anak.setIdOrtu(cursor.getString(indexOrtuAnak));
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
@@ -1383,7 +1453,7 @@ public class DatabaseManagerOrtu {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 9;
+	    private static final int DATABASE_VERSION = 10;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1393,7 +1463,8 @@ public class DatabaseManagerOrtu {
 	    		COLUMN_ORTU_ANAK+" VARCHAR(40),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50),"+
-	    		COLUMN_AKTIF_ANAK+" VARCHAR(1))";
+	    		COLUMN_AKTIF_ANAK+" VARCHAR(1),"+
+	    		COLUMN_TRACK_ANAK+" VARCHAR(1))";
 	    
 	    private static final String CREATE_PELANGGARAN = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1466,7 +1537,8 @@ public class DatabaseManagerOrtu {
     private static final String COLUMN_NAMA_ANAK			= "nama";
     private static final String COLUMN_NO_HP_ANAK			= "no_hp";
     private static final String COLUMN_LAST_LOCATION_ANAK 	= "lokasi";
-    private static final String COLUMN_AKTIF_ANAK				= "aktif";
+    private static final String COLUMN_AKTIF_ANAK			= "aktif";
+    private static final String COLUMN_TRACK_ANAK			= "track";
     
     private static final String PELANGGARAN_TABLE_NAME			=
     		"pelanggaran";

@@ -60,7 +60,7 @@ public class ReceiverLogMonak{
 					break;
 				}
 			}
-			if(sama){
+			if(!sama){
 				lokasisBaru.add(lokasi);
 			}
 			

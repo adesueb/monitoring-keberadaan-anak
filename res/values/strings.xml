@@ -52,6 +52,8 @@
     <string name="registrasi_anak">Registrasi Anak</string>
     <string name="monitoring_aktif">Monitoring sedang Aktif</string>
     <string name="monitoring_deaktif">Monitoring sedang tidak Aktif</string>
+    <string name="track_start">Tracking sedang Aktif</string>
+    <string name="track_stop">Tracking sedang tidak Aktif</string>
     <string name="setting">SETTING</string>
     <string name="start">start</string>
     <string name="stop">stop</string>

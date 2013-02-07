@@ -34,14 +34,7 @@ public class MultipleChoiceAnak extends MultipleChoiceMonak{
 		getActivity().startActivity(intent);
 	}
 
-	@Override
-	protected void onTrack(Bundle bundle) {
-		Intent intent = new Intent(getActivity(), Peta.class);
-		bundle.putInt(Peta.EXTRA_ACTION, Peta.EXTRA_TRACK);
-		intent.putExtras(bundle);
-		getActivity().startActivity(intent);		
-	}
-	
+
 	private final DaftarAnak daftarAnak;
 
 	

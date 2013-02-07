@@ -72,6 +72,13 @@ public class Anak implements IEntity{
 		this.lastLokasi = lastLokasi;
 
 	}
+	public boolean isTrack() {
+		return isTrack;
+	}
+
+	public void setTrack(boolean isTrack) {
+		this.isTrack = isTrack;
+	}
 
 	public String getIdEntity() {
 		return idAnak;
@@ -85,6 +92,7 @@ public class Anak implements IEntity{
     private String noHpAnak;
     private Lokasi lastLokasi;
     private boolean isAktif;
+    private boolean isTrack;
     
     private List<Lokasi>			lokasis;
     private List<Pelanggaran> 		pelanggarans;

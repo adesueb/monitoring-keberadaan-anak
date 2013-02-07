@@ -27,11 +27,7 @@ public class MultipleChoiceDataMonitoring extends MultipleChoiceMonak{
 	@Override
 	protected void onLog(Bundle bundle) {		
 	}
-
-	@Override
-	protected void onTrack(Bundle bundle) {		
-	}
-
+	
 	private DaftarMonitoring daftarMonitoring;
 
 }
