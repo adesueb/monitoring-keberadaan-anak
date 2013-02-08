@@ -1,6 +1,7 @@
 package org.ade.monak.ortu.util;
 
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -58,9 +59,11 @@ public class IDGenerator {
 		}
 		
 		idAngka++;
+		LogMonakFileManager.debug("angka :"+idAngka);
 		
 		String angka = ""+idAngka;
-		for(int i=8;i>0;i--){
+		int zeroLength = 9-angka.length();
+		for(int i=zeroLength;i>0;i--){
 			angka = "0"+angka;
 		}
 
