@@ -1335,6 +1335,7 @@ public class DatabaseManagerOrtu {
 			int indexLatitude 	= cursor.getColumnIndex(COLUMN_LATITUDE);
 			int indexLongitude 	= cursor.getColumnIndex(COLUMN_LONGITUDE);
 			int indexLog		= cursor.getColumnIndex(COLUMN_LOG);
+			int indexTime		= cursor.getColumnIndex(COLUMN_TIME);
 			
 			lokasi.setId(cursor.getString(indexIdLokasi));
 			if(cursor.getString(indexLog).equals("1")){
@@ -1344,6 +1345,7 @@ public class DatabaseManagerOrtu {
 			}
 			lokasi.setLatitude(cursor.getDouble(indexLatitude));
 			lokasi.setLongitude(cursor.getDouble(indexLongitude));
+			lokasi.setTime(cursor.getLong(indexTime));
 			
 			return lokasi;
 		}

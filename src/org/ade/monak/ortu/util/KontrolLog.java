@@ -13,7 +13,7 @@ public class KontrolLog {
 		Calendar cal = Calendar.getInstance();
 		long maxDay = cal.getTimeInMillis()-MAX_DAY;
 		for(Lokasi lokasiFor:lokasis){
-			if(lokasiFor.getTime()>maxDay){
+			if(lokasiFor.getTime()<maxDay){
 				databaseManager.deleteLokasi(lokasiFor);
 			}
 		}
