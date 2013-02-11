@@ -27,8 +27,6 @@ public class MonakService extends Service{
 		pref = new PreferenceMonitoringManager(this);
 		pref.setActiveService();
 
-		handlerMonakBinder = new BinderHandlerMonak();
-
 		internetPush = new InternetPushMonak(this);
 		internetPush.startConnection();
 	}

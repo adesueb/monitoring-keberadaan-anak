@@ -6,6 +6,7 @@ import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class ReceiverKonfirmasi {
 		databaseManager.setAktifMonitoring(dataMonitoring);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
 		if(handler!=null){
+			LogMonakFileManager.debug("handler ada isinya");
 			Message message = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("aktif", true);
@@ -33,6 +35,8 @@ public class ReceiverKonfirmasi {
 			message.setData(bundle);
 			message.what = Status.SUCCESS;
 			handler.sendMessage(message);
+		}else{
+			LogMonakFileManager.debug("handler kosong");
 		}
 	}
 	
@@ -44,6 +48,7 @@ public class ReceiverKonfirmasi {
 		databaseManager.setAktifMonitoring(dataMonitoring);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
 		if(handler!=null){
+			LogMonakFileManager.debug("handler ada isinya");	
 			Message message = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("aktif", false);
@@ -52,6 +57,8 @@ public class ReceiverKonfirmasi {
 			message.what = Status.SUCCESS;
 			handler.sendMessage(message);
 
+		}else{
+			LogMonakFileManager.debug("handler kosong");
 		}
 	}
 	

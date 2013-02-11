@@ -111,10 +111,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 	protected void onStop() {
 		super.onStop();
 		if(bound){
-			handlerBinder.unBindUIHandlerWaitingLocation();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiAktif();
-			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
-			handlerBinder.unBindUIHandlerWaitingKonfirmasiTrack();
 			unbindService(serviceConnection);
 		}
 		bound = false;
@@ -458,6 +455,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 				//cek apakah anak ini yang mau di update datanya...
 				String idMonitoring = data.getString("idMonitoring");
 				//.................................................
+				LogMonakFileManager.debug("handler di invoke");					
 				
 				if(daftarMonitoring.dataMonitorings!=null && daftarMonitoring.dataMonitorings.size()>0){
 					boolean all = false;

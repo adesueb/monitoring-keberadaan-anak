@@ -304,7 +304,6 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 		super.onStop();
 		if(bound){
 			handlerBinder.unBindUIHandlerWaitingLocation();
-			handlerBinder.unBindUIHandlerWaitingKonfirmasiAktif();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiTrack();
 			unbindService(serviceConnection);
