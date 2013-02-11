@@ -539,12 +539,9 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				String idAnak = data.getString("idAnak");
 				//.................................................
 
-				LogMonakFileManager.debug("invoke handler id anak:"+idAnak);
 				for(Anak anakFor:daftarAnak.anaks){
-					LogMonakFileManager.debug("invoke handler id for:"+anakFor.getIdAnak());
 					if(anakFor.getIdAnak().equals(idAnak)){
 						anakFor.setLastLokasi(lokasi);
-						LogMonakFileManager.debug("dapet lokasi buat anak");
 					}
 				}		
 				

@@ -16,6 +16,7 @@ import org.ade.monak.ortu.service.gate.monak.SenderPesanData;
 import org.ade.monak.ortu.service.gate.monak.SenderStartMonitoring;
 import org.ade.monak.ortu.service.gate.monak.SenderStopMonitoring;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
 import org.ade.monak.ortu.service.util.ServiceMonakConnection;
 import org.ade.monak.ortu.util.BundleEntityMaker;
@@ -463,8 +464,10 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 					if(idMonitoring.equals(daftarMonitoring.anak.getIdAnak())){
 						all = true;
 					}
-					
+					LogMonakFileManager.debug("dapat dataMonitoring dengan idMonitoring : "+idMonitoring);					
 					for(DataMonitoring dataMonitoring:daftarMonitoring.dataMonitorings){
+						LogMonakFileManager.debug("dapat for dengan id datamonitoring for : "+dataMonitoring.getIdMonitoring());
+
 						if(all){
 							dataMonitoring.setAktif(data.getBoolean("aktif"));
 							continue;
