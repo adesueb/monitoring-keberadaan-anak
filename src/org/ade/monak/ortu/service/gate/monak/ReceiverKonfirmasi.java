@@ -2,6 +2,7 @@ package org.ade.monak.ortu.service.gate.monak;
 
 import org.ade.monak.ortu.Variable.Status;
 import org.ade.monak.ortu.entity.Anak;
+import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
@@ -18,17 +19,17 @@ public class ReceiverKonfirmasi {
 	}	
 	
 	public void receiveKonfirmasiAktifMonitoring(String [] cvs){
-		Anak anak = new Anak();
-		anak.setIdAnak(cvs[1]);
-		anak.setAktif(true);
+		DataMonitoring dataMonitoring = new DataMonitoring();
+		dataMonitoring.setIdMonitoring(cvs[1]);
+		dataMonitoring.setAktif(true);
 		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
-		databaseManager.setAktifAnak(anak);
+		databaseManager.setAktifMonitoring(dataMonitoring);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
 		if(handler!=null){
 			Message message = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("aktif", true);
-			bundle.putString("idAnak", cvs[1]);
+			bundle.putString("idMonitoring", cvs[1]);
 			message.setData(bundle);
 			message.what = Status.SUCCESS;
 			handler.sendMessage(message);
@@ -36,17 +37,39 @@ public class ReceiverKonfirmasi {
 	}
 	
 	public void receiveKonfirmasiDeAktifMonitoring(String [] cvs){
-		Anak anak = new Anak();
-		anak.setIdAnak(cvs[1]);
-		anak.setAktif(false);
+		DataMonitoring dataMonitoring = new DataMonitoring();
+		dataMonitoring.setIdMonitoring(cvs[1]);
+		dataMonitoring.setAktif(false);
 		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
-		databaseManager.setAktifAnak(anak);
+		databaseManager.setAktifMonitoring(dataMonitoring);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
 		if(handler!=null){
 			Message message = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("aktif", false);
-			bundle.putString("idAnak", cvs[1]);
+			bundle.putString("idMonitoring", cvs[1]);
+			message.setData(bundle);
+			message.what = Status.SUCCESS;
+			handler.sendMessage(message);
+
+		}
+	}
+	
+	public void receiveKonfirmasiDeAktifAnak(String [] cvs){
+
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
+		Anak anak = databaseManager.getAnakById(cvs[1], false, true);
+		for(DataMonitoring dataMonitoring: anak.getDataMonitorings()){
+			dataMonitoring.setIdMonitoring(cvs[1]);
+			dataMonitoring.setAktif(false);
+			databaseManager.setAktifMonitoring(dataMonitoring);
+		}
+		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);
+		if(handler!=null){
+			Message message = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("aktif", false);
+			bundle.putString("idMonitoring", cvs[1]);
 			message.setData(bundle);
 			message.what = Status.SUCCESS;
 			handler.sendMessage(message);
@@ -57,7 +80,6 @@ public class ReceiverKonfirmasi {
 	public void receiverKonfirmasiHapusAnak(String [] cvs){
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[1]);
-		anak.setAktif(false);
 		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
 		databaseManager.deleteAnak(anak);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_HAPUS_ANAK);

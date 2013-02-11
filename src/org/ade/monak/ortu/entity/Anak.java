@@ -5,13 +5,6 @@ import java.util.List;
 public class Anak implements IEntity{
 
     public Anak () { }
-  
-    public boolean isAktif() {
-		return isAktif;
-	}
-	public void setAktif(boolean isAktif) {
-		this.isAktif = isAktif;
-	}
 	
 	public String getIdOrtu() {
 		return idOrtu;
@@ -91,7 +84,6 @@ public class Anak implements IEntity{
     private String namaAnak;
     private String noHpAnak;
     private Lokasi lastLokasi;
-    private boolean isAktif;
     private boolean isTrack;
     
     private List<Lokasi>			lokasis;

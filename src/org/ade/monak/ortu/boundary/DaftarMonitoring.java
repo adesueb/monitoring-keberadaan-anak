@@ -10,8 +10,14 @@ import org.ade.monak.ortu.boundary.submenu.MultipleChoiceDataMonitoring;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.map.view.Peta;
+import org.ade.monak.ortu.service.BinderHandlerMonak;
+import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.gate.monak.SenderPesanData;
+import org.ade.monak.ortu.service.gate.monak.SenderStartMonitoring;
+import org.ade.monak.ortu.service.gate.monak.SenderStopMonitoring;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
+import org.ade.monak.ortu.service.util.ServiceMonakConnection;
 import org.ade.monak.ortu.util.BundleEntityMaker;
 import org.ade.monak.ortu.util.EntityBundleMaker;
 import org.ade.monak.ortu.util.IFormOperation;
@@ -29,11 +35,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class DaftarMonitoring extends ListActivity implements IFormOperation{
+public class DaftarMonitoring extends ListActivity implements IFormOperation,  IBindMonakServiceConnection{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +49,13 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		setContentView(R.layout.list_monak);
 		Intent intent = getIntent();
 		final Bundle bundle = intent.getExtras();
-		Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
+		anak = EntityBundleMaker.getAnakFromBundle(bundle);
 		databaseManager = new DatabaseManagerOrtu(this);
 		if(anak==null){
 			dataMonitorings	= databaseManager.getAllDataMonitorings(true, true);
+			if(dataMonitorings!=null && dataMonitorings.size()>0){
+				anak = dataMonitorings.get(0).getAnak(); 	
+			}
 			justView = true;
 		}else{
 			dataMonitorings	= databaseManager.getDataMonitoringsByAnak(anak.getIdAnak());
@@ -80,6 +91,35 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		getListView().setAdapter(daftarMonitoringAdapter);
 		
 	}
+	
+	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		bound = false;
+		serviceConnection = new ServiceMonakConnection(this);
+		bindService(new Intent(MonakService.MONAK_SERVICE), 
+													serviceConnection, 
+													Context.BIND_AUTO_CREATE);
+	}
+
+
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if(bound){
+			handlerBinder.unBindUIHandlerWaitingLocation();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiAktif();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
+			handlerBinder.unBindUIHandlerWaitingKonfirmasiTrack();
+			unbindService(serviceConnection);
+		}
+		bound = false;
+	}
+
+
 
 	public void onAdd(Bundle bundle) {
 		Intent intent = new Intent(this, PendaftaranMonitoring.class);
@@ -182,12 +222,74 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		}
 		return super.onCreateDialog(id, bundle);
 	}
+
+
+	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
+		handlerBinder = binderHandlerMonak;
+		handlerBinder.bindUIHandlerWaitingKonfirmasiAktif(new WaitingKonfirmasiAktifHandler(this));
+		
+	}
+
+	public void setBound(boolean bound) {
+		this.bound = bound;
+	}	
 	
+	private void startMonitoring(DataMonitoring dataMonitoring){
+		SenderStartMonitoring sender = new SenderStartMonitoring(this);
+		dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		sender.sendStartMonitoring(dataMonitoring);
+		Toast.makeText(this, "monitoring:"+dataMonitoring.getKeterangan()+" akan diaktifkan", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void stopMonitoring(DataMonitoring dataMonitoring){
+		SenderStopMonitoring sender = new SenderStopMonitoring(this);
+		dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);
+		sender.sendStopMonitoring(dataMonitoring);
+		Toast.makeText(this, "monitoring:"+dataMonitoring.getKeterangan()+" akan dinonaktifkan", Toast.LENGTH_SHORT).show();
+	}
+	
+
+	private ServiceMonakConnection serviceConnection;
 	private DatabaseManagerOrtu 		databaseManager;
 	private AdapterDaftarMonitoring daftarMonitoringAdapter;
 	private List<DataMonitoring>	dataMonitorings;
+	private Anak anak;
+	private boolean bound	= false;
+	private BinderHandlerMonak handlerBinder;
 	
 	private boolean justView = false;
+	
+	private static final class BtnStartOnClick implements View.OnClickListener{
+
+
+		public BtnStartOnClick(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+			this.daftarMonitoring 	= daftarMonitoring;
+			this.dataMonitoring		= dataMonitoring;
+		}
+		public void onClick(View v) {
+			daftarMonitoring.startMonitoring(dataMonitoring);
+		}
+		
+		private final DaftarMonitoring 	daftarMonitoring;
+		private final DataMonitoring	dataMonitoring;
+		
+		
+	}
+	
+	private static final class BtnStopOnClick implements View.OnClickListener{
+
+		public BtnStopOnClick(DaftarMonitoring daftarMonitoring, DataMonitoring dataMonitoring){
+			this.daftarMonitoring 	= daftarMonitoring;
+			this.dataMonitoring		= dataMonitoring;
+		}
+		public void onClick(View v) {
+			daftarMonitoring.stopMonitoring(dataMonitoring);
+		}
+		
+		private final DaftarMonitoring 	daftarMonitoring;
+		private final DataMonitoring	dataMonitoring;
+		
+	}
 	
 	private final static class AdapterDaftarMonitoring extends ArrayAdapter<DataMonitoring>{
 
@@ -238,12 +340,29 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 				}
 				
 				LinearLayout llBackground = (LinearLayout) rowView.findViewById(R.id.background);
-				if(dataMonitoring.isSeharusnya()){
+				
+				Button btnAktifMonitoring = (Button) rowView.findViewById(R.id.daftarMonitoringButtonStart);
+				btnAktifMonitoring.setOnClickListener(new BtnStartOnClick(daftarMonitoring, dataMonitoring));
+			
+				
+				Button btnDeAktifMonitoring = (Button) rowView.findViewById(R.id.daftarMonitoringButtonStop);				
+				btnDeAktifMonitoring.setOnClickListener(new BtnStopOnClick(daftarMonitoring, dataMonitoring));
+				
+				LinearLayout llAktifMonitoring 	= (LinearLayout) rowView.findViewById(R.id.daftarMonitoringStatusAktif);
+				
+				LinearLayout llDeAktifMonitoring= (LinearLayout) rowView.findViewById(R.id.daftarMonitoringStatusDeaktif);
 
+				
+				if(dataMonitoring.isAktif()){
 					llBackground.setBackgroundResource(R.drawable.back_menu_green);
-				}else{
+					llDeAktifMonitoring.setVisibility(View.GONE);
 
+					llAktifMonitoring.setVisibility(View.VISIBLE);
+				}else{
 					llBackground.setBackgroundResource(R.drawable.back_menu);
+					llAktifMonitoring.setVisibility(View.GONE);
+					llDeAktifMonitoring.setVisibility(View.VISIBLE);
+					
 				}
 				
 				
@@ -323,6 +442,48 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation{
 		private final DataMonitoring 	dataMonitoring;
 	}
 	
+
+	private final static class WaitingKonfirmasiAktifHandler extends Handler{
+
+		public WaitingKonfirmasiAktifHandler(DaftarMonitoring daftarMonitoring){
+			this.daftarMonitoring = daftarMonitoring;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what==Status.SUCCESS){
+				Bundle data = msg.getData();
+				
+				//cek apakah anak ini yang mau di update datanya...
+				String idMonitoring = data.getString("idMonitoring");
+				//.................................................
+				
+				if(daftarMonitoring.dataMonitorings!=null && daftarMonitoring.dataMonitorings.size()>0){
+					boolean all = false;
+					if(idMonitoring.equals(daftarMonitoring.anak.getIdAnak())){
+						all = true;
+					}
+					
+					for(DataMonitoring dataMonitoring:daftarMonitoring.dataMonitorings){
+						if(all){
+							dataMonitoring.setAktif(data.getBoolean("aktif"));
+							continue;
+						}
+						if(dataMonitoring.getIdMonitoring().equals(idMonitoring)){
+							dataMonitoring.setAktif(data.getBoolean("aktif"));
+						}
+					}						
+					daftarMonitoring.daftarMonitoringAdapter.notifyDataSetChanged();
+				}
+			}
+		}
+		
+		private final DaftarMonitoring daftarMonitoring;
+		
+	}
+
+	
+
 	
 
 }

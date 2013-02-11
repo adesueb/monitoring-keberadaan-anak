@@ -720,6 +720,12 @@ public class DatabaseManagerOrtu {
 			dataMonitoring.getLokasi().setId(idLokasi);
 		}
 		
+		if(dataMonitoring.isAktif()){
+			cv.put(COLUMN_AKTIF_MONITORING, "1");	
+		}else{
+			cv.put(COLUMN_AKTIF_MONITORING, "0");	
+		}
+		
 		
 		Lokasi lokasi = getLokasiByIdLokasi(idLokasi);
 		if(lokasi==null){
@@ -784,12 +790,7 @@ public class DatabaseManagerOrtu {
 				cv.put(COLUMN_LAST_LOCATION_ANAK, "-");
 			}
 			
-			if(anak.isAktif()){
-				cv.put(COLUMN_AKTIF_ANAK, "1");	
-			}else{
-				cv.put(COLUMN_AKTIF_ANAK, "0");	
-			}
-			
+		
 			if(anak.isTrack()){
 				cv.put(COLUMN_TRACK_ANAK, "1");	
 			}else{
@@ -824,12 +825,6 @@ public class DatabaseManagerOrtu {
 		
 		if(lokasis!=null && lokasis.size()>0){
 			cv.put(COLUMN_LAST_LOCATION_ANAK, lokasis.get(lokasis.size()-1).getId());	
-		}
-		
-		if(anak.isAktif()){
-			cv.put(COLUMN_AKTIF_ANAK, "1");	
-		}else{
-			cv.put(COLUMN_AKTIF_ANAK, "0");	
 		}
 		
 		if(anak.isTrack()){
@@ -875,11 +870,6 @@ public class DatabaseManagerOrtu {
 			cv.put(COLUMN_LAST_LOCATION_ANAK, lastLokasi.getId());	
 		}
 		
-		if(anak.isAktif()){
-			cv.put(COLUMN_AKTIF_ANAK, "1");	
-		}else{
-			cv.put(COLUMN_AKTIF_ANAK, "0");	
-		}
 		
 		if(anak.isTrack()){
 			cv.put(COLUMN_TRACK_ANAK, "1");	
@@ -931,6 +921,12 @@ public class DatabaseManagerOrtu {
 			cv.put(COLUMN_TOLERANCY_MONITORING, dataMonitoring.getTolerancy());
 			cv.put(COLUMN_KET_MONITORING, dataMonitoring.getKeterangan());
 			
+			if(dataMonitoring.isAktif()){
+				cv.put(COLUMN_AKTIF_MONITORING, "1");	
+			}else{
+				cv.put(COLUMN_AKTIF_MONITORING, "0");	
+			}
+			
 			String idLokasi = dataMonitoring.getLokasi().getId();
 			if(idLokasi==null || idLokasi.equals("")){
 				IDGenerator idGenerator = new IDGenerator(context, this);
@@ -960,16 +956,16 @@ public class DatabaseManagerOrtu {
 		}
 	}
 	
-	public void setAktifAnak(Anak anak){
+	public void setAktifMonitoring(DataMonitoring dataMonitoring){
 
 		ContentValues cv = new ContentValues();
-		if(anak.isAktif()){
-			cv.put(COLUMN_AKTIF_ANAK, "1");	
+		if(dataMonitoring.isAktif()){
+			cv.put(COLUMN_AKTIF_MONITORING, "1");	
 		}else{
-			cv.put(COLUMN_AKTIF_ANAK, "0");	
+			cv.put(COLUMN_AKTIF_MONITORING, "0");	
 		}
 		
-		getDb().update(ANAK_TABLE_NAME, cv, COLUMN_ID_ANAK+"='"+anak.getIdAnak()+"'", null);
+		getDb().update(MONITORING_TABLE_NAME, cv, COLUMN_ID_MONITORING+"='"+dataMonitoring.getIdMonitoring()+"'", null);
 		
 	}
 	
@@ -994,12 +990,7 @@ public class DatabaseManagerOrtu {
 		cv.put(COLUMN_ORTU_ANAK, anak.getIdOrtu());
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
-		if(anak.isAktif()){
-			cv.put(COLUMN_AKTIF_ANAK, "1");	
-		}else{
-			cv.put(COLUMN_AKTIF_ANAK, "0");	
-		}
-		
+			
 		if(anak.isTrack()){
 			cv.put(COLUMN_TRACK_ANAK, "1");	
 		}else{
@@ -1183,18 +1174,10 @@ public class DatabaseManagerOrtu {
 			int indexNamaAnak	= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
 			int indexLocationAnak 	= cursor.getColumnIndex(COLUMN_LAST_LOCATION_ANAK);
-			int indexAktifAnak	= cursor.getColumnIndex(COLUMN_AKTIF_ANAK);
 			int indexTrackAnak	= cursor.getColumnIndex(COLUMN_TRACK_ANAK);
 			
 			anak.setIdAnak(cursor.getString(indexIdAnak));
 			
-			if(cursor.getString(indexAktifAnak).equals("1")){
-				anak.setAktif(true);
-			}else{
-				anak.setAktif(false);
-			}
-			
-
 			if(cursor.getString(indexTrackAnak).equals("1")){
 				anak.setTrack(true);
 			}else{
@@ -1245,6 +1228,7 @@ public class DatabaseManagerOrtu {
 			int indexDateSelesaiMonitoring	= cursor.getColumnIndex(COLUMN_DATE_SELESAI_MONITORING);
 			int indexStatusMonitoring 		= cursor.getColumnIndex(COLUMN_STATUS_MONITORING);
 			int indexTolerancy				= cursor.getColumnIndex(COLUMN_TOLERANCY_MONITORING);
+			int indexAktifMonitoring		= cursor.getColumnIndex(COLUMN_AKTIF_MONITORING);
 			
 			dataMonitoring.setIdMonitoring(cursor.getString(indexIdMonitoring));
 			dataMonitoring.setLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationMonitoring)));
@@ -1253,6 +1237,11 @@ public class DatabaseManagerOrtu {
 			dataMonitoring.setWaktuSelesai(cursor.getLong(indexDateSelesaiMonitoring));
 			dataMonitoring.setStatus(cursor.getInt(indexStatusMonitoring));
 			dataMonitoring.setTolerancy(cursor.getInt(indexTolerancy));
+			if(cursor.getString(indexAktifMonitoring).equals("1")){
+				dataMonitoring.setAktif(true);
+			}else{
+				dataMonitoring.setAktif(false);
+			}
 			if(withWaktuMonitoring){
 				dataMonitoring.setTanggals
 					(getTanggalMonitoringsByMonitoring
@@ -1455,7 +1444,7 @@ public class DatabaseManagerOrtu {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 10;
+	    private static final int DATABASE_VERSION = 11;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+
@@ -1465,7 +1454,6 @@ public class DatabaseManagerOrtu {
 	    		COLUMN_ORTU_ANAK+" VARCHAR(40),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50),"+
-	    		COLUMN_AKTIF_ANAK+" VARCHAR(1),"+
 	    		COLUMN_TRACK_ANAK+" VARCHAR(1))";
 	    
 	    private static final String CREATE_PELANGGARAN = 
@@ -1490,7 +1478,8 @@ public class DatabaseManagerOrtu {
 	    		COLUMN_LOCATION_MONITORING+" VARCHAR(10),"+
 	    		COLUMN_DATE_MULAI_MONITORING+" INTEGER,"+	    		
 	    		COLUMN_DATE_SELESAI_MONITORING+" INTEGER,"+
-	    		COLUMN_STATUS_MONITORING+" INTEGER,"+	    		
+	    		COLUMN_STATUS_MONITORING+" INTEGER,"+
+	    		COLUMN_AKTIF_MONITORING+" VARCHAR(1),"+	    		
 	    		COLUMN_TOLERANCY_MONITORING+" INTEGER)";
 	    
 	    private static final String CREATE_LOCATION = 
@@ -1539,7 +1528,6 @@ public class DatabaseManagerOrtu {
     private static final String COLUMN_NAMA_ANAK			= "nama";
     private static final String COLUMN_NO_HP_ANAK			= "no_hp";
     private static final String COLUMN_LAST_LOCATION_ANAK 	= "lokasi";
-    private static final String COLUMN_AKTIF_ANAK			= "aktif";
     private static final String COLUMN_TRACK_ANAK			= "track";
     
     private static final String PELANGGARAN_TABLE_NAME			=
@@ -1560,7 +1548,7 @@ public class DatabaseManagerOrtu {
     private static final String COLUMN_DATE_SELESAI_MONITORING	= "selesai";
     private static final String COLUMN_STATUS_MONITORING		= "status";
     private static final String COLUMN_TOLERANCY_MONITORING		= "tolerancy";
-
+    private static final String COLUMN_AKTIF_MONITORING			= "aktif";
     private static final String DAY_MONITORING_TABLE_NAME		=
     		"day";
     private static final String COLUMN_MONITORING_DAY_MONITORING	= "monitoring";

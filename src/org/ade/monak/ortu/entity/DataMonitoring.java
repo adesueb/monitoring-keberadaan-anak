@@ -130,6 +130,14 @@ public class DataMonitoring implements IPesanData, IEntity{
 		}
 	}
 	
+	public boolean isAktif() {
+		return isAktif;
+	}
+
+	public void setAktif(boolean isAktif) {
+		this.isAktif = isAktif;
+	}
+
 	public void setTipe(int tipe) {
 		this.tipe = tipe;
 	}
@@ -145,8 +153,6 @@ public class DataMonitoring implements IPesanData, IEntity{
 	public String getIdEntity() {
 		return idMonitoring;
 	}
-	
-	
 
 	private String	keterangan;
 	private String 	idMonitoring;
@@ -156,6 +162,7 @@ public class DataMonitoring implements IPesanData, IEntity{
     private int		tolerancy;
     private long 	waktuMulai;
     private long 	waktuSelesai;
+    private boolean isAktif;
     private int 	tipe;
     private List<DayMonitoring> haris;
     private List<DateMonitoring>tanggals;

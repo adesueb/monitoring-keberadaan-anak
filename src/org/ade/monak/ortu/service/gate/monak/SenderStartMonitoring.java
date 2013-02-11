@@ -1,7 +1,7 @@
 package org.ade.monak.ortu.service.gate.monak;
 
 import org.ade.monak.ortu.Variable.TipePesanMonak;
-import org.ade.monak.ortu.entity.Anak;
+import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
 import org.ade.monak.ortu.service.gate.SenderSMS;
 import org.ade.monak.ortu.util.IDGenerator;
@@ -16,9 +16,9 @@ public class SenderStartMonitoring extends ASenderMonak{
 
 	}
 	
-	public void sendStartMonitoring(Anak anak){
+	public void sendStartMonitoring(DataMonitoring dataMonitoring){
 		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		this.senderSms.sendSMS(anak.getNoHpAnak(), TipePesanMonak.START_MONITORING+","+anak.getIdAnak()+","+idGenerator.getIdOrangTua());
+		getSenderSMS().sendSMS(dataMonitoring.getAnak().getNoHpAnak(), TipePesanMonak.START_MONITORING+","+dataMonitoring.getIdMonitoring()+","+idGenerator.getIdOrangTua());
 	}
 	
 	@Override

@@ -124,7 +124,7 @@ public class MonakService extends Service{
         	if(pesanData!=null){
 
         		ReceiverPesanData receiverPesanData = new ReceiverPesanData();
-        		receiverPesanData.menerimaPesanData(this, pesanData);	
+        		receiverPesanData.menerimaPesanData(this, pesanData, getBinderHandlerMonak());	
         	}
         }
 		switch(status){
@@ -147,6 +147,10 @@ public class MonakService extends Service{
 	    	}case TipePesanMonak.KONFIRMASI_DEAKTIF_MONITORING:{
 	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
 	    		receiver.receiveKonfirmasiDeAktifMonitoring(cvs);
+	    		break;
+	    	}case TipePesanMonak.KONFIRMASI_DEAKTIF_ANAK:{
+	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());
+	    		receiver.receiveKonfirmasiDeAktifAnak(cvs);
 	    		break;
 	    	}case TipePesanMonak.KONFIRMASI_HAPUS_ANAK:{
 	    		ReceiverKonfirmasi receiver = new ReceiverKonfirmasi(this, getBinderHandlerMonak());

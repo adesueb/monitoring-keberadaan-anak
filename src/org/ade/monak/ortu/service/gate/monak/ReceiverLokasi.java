@@ -39,7 +39,6 @@ public class ReceiverLokasi{
 		lokasi.setLog(true);
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[4]);
-		anak.setAktif(true);
 		anak.setLastLokasi(lokasi);	
 		lokasi.setAnak(anak);
 		
@@ -49,7 +48,6 @@ public class ReceiverLokasi{
 			databaseManager.addLastLokasiAnak(anak);	
 
 		}
-		databaseManager.setAktifAnak(anak);
 
 		KontrolLog.kontrolDeleteLogLokasi(databaseManager);
 		

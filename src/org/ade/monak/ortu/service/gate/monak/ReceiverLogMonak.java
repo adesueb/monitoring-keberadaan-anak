@@ -79,8 +79,6 @@ public class ReceiverLogMonak{
 			anak.setLastLokasi(lokasisBaru.get(lokasis.size()-1));		
 			databaseManager.updateLastLokasiAnak(anak);
 		}
-		anak.setAktif(true);
-		databaseManager.setAktifAnak(anak);
 		
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOG_LOCATION);
 		if(handler!=null){

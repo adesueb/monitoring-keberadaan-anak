@@ -49,59 +49,7 @@
 
 
     </LinearLayout>
-    
     <LinearLayout
-   	    android:layout_width="match_parent"
-   	    android:layout_height="wrap_content" >
-    
-	   	<LinearLayout
-	   	    android:id="@+id/daftarAnakStatusAktif"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content" >
-	
-	   	    <TextView
-	   	        android:id="@+id/daftarAnakTextStatusAktif"
-	   	        android:layout_width="0dp"
-	   	        android:layout_height="wrap_content"
-	   	        android:layout_weight="2"
-	   	        android:paddingLeft="5dip"
-	   	        android:text="@string/monitoring_aktif"
-	   	        android:textAppearance="?android:attr/textAppearanceSmall" />
-	
-	   	    <Button
-	   	        android:id="@+id/daftarAnakButtonStop"
-	   	        android:layout_width="0dp"
-	   	        android:layout_height="wrap_content"
-	   	        android:layout_weight="1"
-	   	        android:text="@string/stop" />
-	   	</LinearLayout>
-	   	<LinearLayout
-	   	    android:id="@+id/daftarAnakStatusDeaktif"
-	   	    android:layout_width="match_parent"
-	   	    android:visibility="gone"
-	   	    android:layout_height="wrap_content" >
-	
-	   	    <TextView
-	   	        android:id="@+id/daftarAnakTextStatusDeaktif"
-	   	        android:layout_width="0dp"
-	   	        android:layout_height="wrap_content"
-	   	        android:layout_weight="2"
-	   	        android:paddingLeft="5dip"
-	   	        android:text="@string/monitoring_deaktif"
-	   	        android:textAppearance="?android:attr/textAppearanceSmall" />
-	
-	   	    <Button
-	   	        android:id="@+id/daftarAnakButtonStart"
-	   	        android:layout_width="0dp"
-	   	        android:layout_height="wrap_content"
-	   	        android:layout_weight="1"
-	   	        android:text="@string/start" />
-	   	</LinearLayout>
-	
-    </LinearLayout>
-
-    
-      <LinearLayout
    	    android:layout_width="match_parent"
    	    android:layout_height="wrap_content" >
     
@@ -111,7 +59,7 @@
 	   	    android:layout_height="wrap_content" >
 	
 	   	    <TextView
-	   	        android:id="@+id/daftarAnakTexTrackStart"
+	   	        android:id="@+id/daftarAnakTextTrackStart"
 	   	        android:layout_width="0dp"
 	   	        android:layout_height="wrap_content"
 	   	        android:layout_weight="2"
