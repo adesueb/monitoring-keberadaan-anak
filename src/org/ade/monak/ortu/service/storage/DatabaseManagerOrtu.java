@@ -69,22 +69,22 @@ public class DatabaseManagerOrtu {
 	//.....................................................................
 	
 	// get last id.........................................................
-	public String getLasIdAnak(){
+	public List<String> getIdAnaks(){
 		Cursor cursor = 
-				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
-		String id = getLastIdFromCursor(cursor);
+				actionQuery("SELECT "+COLUMN_ID+" from "+ANAK_TABLE_NAME+" order by "+COLUMN_ID+" ASC");
+		List<String> ids = getIdsFromCursor(cursor);
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
 			if(getDb().isOpen()){
 				getDb().close();
 			}
 		}
-		return id;
+		return ids;
 	}
-	public String getLastIDLokasi(){
+	public List<String> getIdLokasis(){
 		Cursor cursor = 
-				actionQuery("SELECT "+COLUMN_ID+" from "+LOCATION_TABLE_NAME+" order by "+COLUMN_ID_LOCATION+" DESC limit 1");
-		String id = getLastIdFromCursor(cursor);
+				actionQuery("SELECT "+COLUMN_ID+" from "+LOCATION_TABLE_NAME+" order by "+COLUMN_ID_LOCATION+" ASC");
+		List<String> ids = getIdsFromCursor(cursor);
 
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
@@ -93,12 +93,12 @@ public class DatabaseManagerOrtu {
 			}
 		}
 		
-		return id;
+		return ids;
 	}
-	public String getLastIdMonitoring(){
+	public List<String> getIdMonitorings(){
 		Cursor cursor = 
-				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
-		String id = getLastIdFromCursor(cursor);
+				actionQuery("SELECT "+COLUMN_ID+" from "+MONITORING_TABLE_NAME+" order by "+COLUMN_ID+" ASC");
+		List<String> ids = getIdsFromCursor(cursor);
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
 			if(getDb().isOpen()){
@@ -106,20 +106,20 @@ public class DatabaseManagerOrtu {
 			}
 		}
 		
-		return id;
+		return ids;
 	}
-	public String getLastIdPelanggaran(){
+	public List<String> getIdPelanggarans(){
 		Cursor cursor = 
-				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" DESC limit 1");
+				actionQuery("SELECT "+COLUMN_ID+" from "+PELANGGARAN_TABLE_NAME+" order by "+COLUMN_ID+" ASC");
 		
-		String id = getLastIdFromCursor(cursor);
+		List<String> ids = getIdsFromCursor(cursor);
 		if(cursor!=null && !cursor.isClosed()){
 			cursor.close();
 			if(getDb().isOpen()){
 				getDb().close();
 			}
 		}
-		return id;
+		return ids;
 	}
 	//.....................................................................
 	
@@ -1136,13 +1136,15 @@ public class DatabaseManagerOrtu {
 	
 	//get from Cursor.............................................................
 	
-	private String getLastIdFromCursor(Cursor cursor){
+	private List<String> getIdsFromCursor(Cursor cursor){
+		List<String> ids = new ArrayList<String>();
 		if(cursor.moveToFirst()){
-			String result = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+			do{
+				ids.add(cursor.getString(cursor.getColumnIndex(COLUMN_ID)));
+			}while(cursor.moveToNext());
 			cursor.close();
-			return result;
 		}
-		return "";
+		return ids;
 	}
 
 	private List<Lokasi> getAllLokasiFromCursor(Cursor cursor){

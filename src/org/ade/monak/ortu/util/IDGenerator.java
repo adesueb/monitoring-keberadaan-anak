@@ -1,5 +1,7 @@
 package org.ade.monak.ortu.util;
 
+import java.util.List;
+
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
@@ -20,27 +22,26 @@ public class IDGenerator {
 	}
 	
 	public String getIdAnak(){
-		String id = mDatabaseManager.getLasIdAnak();
-
-		id = ID_ANAK+generateAngkaId(id);
+		List<String> ids = mDatabaseManager.getIdAnaks();
+		String id = ID_ANAK+generateAngkaId(ids);
 		return id;
 	}
 	
 	public String getIdMonitoring(){
-		String id = mDatabaseManager.getLastIdMonitoring();
-		id = ID_MONITORING+generateAngkaId(id);
+		List<String> ids = mDatabaseManager.getIdMonitorings();
+		String id = ID_MONITORING+generateAngkaId(ids);
 		return id;
 	}
 	
 	public String getIdPelanggaran(){
-		String id = mDatabaseManager.getLastIdPelanggaran();
-		id = ID_PELANGGARAN+generateAngkaId(id);
+		List<String> ids = mDatabaseManager.getIdPelanggarans();
+		String id = ID_PELANGGARAN+generateAngkaId(ids);
 		return id;
 	}
 	
 	public String getIdLocation(){
-		String id = mDatabaseManager.getLastIDLokasi();
-		id = ID_LOCATION+generateAngkaId(id);
+		List<String> ids = mDatabaseManager.getIdLokasis();
+		String id = ID_LOCATION+generateAngkaId(ids);
 		return id;
 	}
 	
@@ -50,15 +51,38 @@ public class IDGenerator {
 		return telephonyManager.getDeviceId();
 	}
 	
-	private String generateAngkaId(String id){
+	private String generateAngkaId(List<String> ids){
 		int idAngka = 0;
-		if(id!=null&&!id.equals("")){
-			idAngka = Integer.parseInt(id.substring(1));
-		}else{
-			idAngka = 0;	
+
+		boolean ada = false;
+		
+		if(ids!=null && ids.size()>0){
+			int i=1;
+			for(String id:ids){
+				
+				if(id!=null&&!id.equals("")){
+					idAngka = Integer.parseInt(id.substring(1));
+				}else{
+					idAngka = 0;	
+				}
+				
+				if(idAngka==i){
+					ada = true;
+					i++;
+				
+				}else{
+					ada = false;
+					idAngka = i;
+					break;
+				}
+				
+			}
+		}
+	
+		if(ada){
+			idAngka++;	
 		}
 		
-		idAngka++;
 		LogMonakFileManager.debug("angka :"+idAngka);
 		
 		String angka = ""+idAngka;
@@ -69,6 +93,7 @@ public class IDGenerator {
 
 		return angka;
 	}
+	
 	
 	private static final char ID_ANAK 			= 'A';
 	private static final char ID_MONITORING 	= 'M';
