@@ -57,7 +57,7 @@ public class IDGenerator {
 		boolean ada = false;
 		
 		if(ids!=null && ids.size()>0){
-			int i=1;
+			int i=0;
 			for(String id:ids){
 				
 				if(id!=null&&!id.equals("")){

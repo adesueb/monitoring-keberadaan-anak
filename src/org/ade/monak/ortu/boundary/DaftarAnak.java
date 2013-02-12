@@ -228,10 +228,22 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				anak.setIdOrtu	(idGenerator.getIdOrangTua());
 				anak.setNamaAnak(bundle.getString("nama"));
 				anak.setNoHpAnak(bundle.getString("noHp"));
-
-				databaseManager.deleteLokasiAnak(anak);
+				anak = databaseManager.getAnakById(anak.getIdAnak(), false, false);
+				if(anak.getLastLokasi()==null){
+					for(Anak anakFor:anaks){
+						if(anak.getIdAnak().equals(anakFor.getIdAnak())){
+							anaks.remove(anakFor);
+							break;
+						}
+					}
+					daftarAnakAdapter.notifyDataSetChanged();
+					databaseManager.deleteAnak(anak);
+				}else{
+					databaseManager.deleteLokasiAnak(anak);
+					
+					sendRequestLocationAnak(anak, DELETE);	
+				}
 				
-				sendRequestLocationAnak(anak, DELETE);
 				break;
 			}
 			
@@ -633,6 +645,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				for(Anak anakFor:daftarAnak.anaks){
 					if(idAnak.equals(anakFor.getIdAnak())){
 						daftarAnak.anaks.remove(anakFor);
+						break;
 					}
 				}		
 				

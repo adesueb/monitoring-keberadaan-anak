@@ -95,24 +95,26 @@ public class MonitoringOverlayFactory {
 			for(int i = 0 ;i<anaks.size();i++){
 				Lokasi 	lokasi 	= lokasis.get(i);
 				Anak	anak	= anaks.get(i);
-				
-				GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
-				
-				String pesan = "-";
-				if(lokasi.getTime()!=0){
-					Calendar cal = Calendar.getInstance();
-					cal.setTimeInMillis(lokasi.getTime());
-					pesan = "anak berada disini jam "+
-							cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
-							cal.get(Calendar.SECOND);
-						
-				}		
-				
-				OverlayItem overlayItem = 
-						new OverlayItem
-							(point, anak.getNamaAnak(),pesan);
+				if(lokasi!=null){
+					GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+					
+					String pesan = "-";
+					if(lokasi.getTime()!=0){
+						Calendar cal = Calendar.getInstance();
+						cal.setTimeInMillis(lokasi.getTime());
+						pesan = "anak berada disini jam "+
+								cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+								cal.get(Calendar.SECOND);
+							
+					}		
+					
+					OverlayItem overlayItem = 
+							new OverlayItem
+								(point, anak.getNamaAnak(),pesan);
 
-				petaOverlay.addOverLay(overlayItem);
+					petaOverlay.addOverLay(overlayItem);
+				}
+			
 				
 			}
 

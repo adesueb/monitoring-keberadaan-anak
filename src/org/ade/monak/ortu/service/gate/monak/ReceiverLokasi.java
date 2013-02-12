@@ -31,7 +31,6 @@ public class ReceiverLokasi{
 	private void action(){
 		
 		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
-			
 		Lokasi lokasi = new Lokasi();
 		lokasi.setLatitude(Double.parseDouble(cvs[1]));
 		lokasi.setLongitude(Double.parseDouble(cvs[2]));
