@@ -66,9 +66,20 @@ public class MonitoringOverlayFactory {
 		Lokasi lokasi = anak.getLastLokasi();
 		if(lokasi!=null){
 			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+			
+			String pesan = "-";
+			if(lokasi.getTime()!=0){
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(lokasi.getTime());
+				pesan = "anak berada disini jam "+
+						cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+						cal.get(Calendar.SECOND);
+					
+			}	
+			
 			OverlayItem overlayItem = 
 					new OverlayItem
-						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());	
+						(point, anak.getNamaAnak(),pesan);	
 			petaOverlay.addOverLay(overlayItem);
 
 			monitoringOverlays.put(ANAK, petaOverlay);
@@ -86,9 +97,20 @@ public class MonitoringOverlayFactory {
 				Anak	anak	= anaks.get(i);
 				
 				GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+				
+				String pesan = "-";
+				if(lokasi.getTime()!=0){
+					Calendar cal = Calendar.getInstance();
+					cal.setTimeInMillis(lokasi.getTime());
+					pesan = "anak berada disini jam "+
+							cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+							cal.get(Calendar.SECOND);
+						
+				}		
+				
 				OverlayItem overlayItem = 
 						new OverlayItem
-							(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
+							(point, anak.getNamaAnak(),pesan);
 
 				petaOverlay.addOverLay(overlayItem);
 				
@@ -103,9 +125,20 @@ public class MonitoringOverlayFactory {
 		for(int i=0;i<lokasis.size();i++){
 			Lokasi lokasi = lokasis.get(i);
 			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+			
+			String pesan = "-";
+			if(lokasi.getTime()!=0){
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(lokasi.getTime());
+				pesan = "anak berada disini jam "+
+						cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+						cal.get(Calendar.SECOND);
+					
+			}		
+					
 			OverlayItem overlayItem = 
 					new OverlayItem
-						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
+						(point, anak.getNamaAnak(),pesan);
 
 			petaOverlay.addOverLay(overlayItem);
 		}
