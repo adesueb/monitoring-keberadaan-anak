@@ -76,7 +76,7 @@ public class ReceiverLogMonak{
 			
 		}
 		if(lokasisBaru.size()>0){
-			anak.setLastLokasi(lokasisBaru.get(lokasis.size()-1));		
+			anak.setLastLokasi(lokasisBaru.get(lokasisBaru.size()-1));		
 			databaseManager.updateLastLokasiAnak(anak);
 		}
 		

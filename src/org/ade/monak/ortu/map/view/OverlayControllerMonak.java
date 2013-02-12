@@ -67,11 +67,11 @@ public class OverlayControllerMonak {
   			
   			if(dataMonitoring.getStatus()==DataMonitoring.SEHARUSNYA){
   				RadiusOverlay dataMonitoringOverlay = 
-  						new RadiusOverlay(ID_SEHARUSNYA, dataMonitoring.getLokasi(), 100, COLOR_SEHARUSNYA);
+  						new RadiusOverlay(ID_SEHARUSNYA, dataMonitoring.getLokasi(), dataMonitoring.getTolerancy(), COLOR_SEHARUSNYA);
   	  			mapView.getOverlays().add(dataMonitoringOverlay);
   			}else{
   				RadiusOverlay dataMonitoringOverlay = 
-  						new RadiusOverlay(ID_TERLARANG, dataMonitoring.getLokasi(), 100, COLOR_TERLARANG);
+  						new RadiusOverlay(ID_TERLARANG, dataMonitoring.getLokasi(), dataMonitoring.getTolerancy(), COLOR_TERLARANG);
   	  			mapView.getOverlays().add(dataMonitoringOverlay);
   			}
   		}
@@ -101,8 +101,8 @@ public class OverlayControllerMonak {
 	  	  	if(overlayFactory.anyAnak()){
 	  			mapView.getOverlays().add(overlayFactory.getAnak());	
 	  		}
-  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
-  			mapView.getOverlays().add(anakOverlay);  			
+//  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
+//  			mapView.getOverlays().add(anakOverlay);  			
   		}
 
   	}
@@ -120,45 +120,53 @@ public class OverlayControllerMonak {
   			mapView.getOverlays().add(overlayFactory.getAnak());	
   		}
   		
-  		for(Lokasi lokasi:lokasis){
-  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
-  			mapView.getOverlays().add(anakOverlay);
-  		}
+//  		for(Lokasi lokasi:lokasis){
+//  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
+//  			mapView.getOverlays().add(anakOverlay);
+//  		}
   	}
   	
 	public void setOverlayNewPelanggaran(Handler handler){
 		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(true, true);
-  		int size = pelanggarans.size();
-		if(size>0){
-			
-			Pelanggaran pelanggaran = pelanggarans.get(size-1);
-			overlayFactory.makeOverlayNewPelanggaran(pelanggaran);
-			if(overlayFactory.anyPelanggaran()){
-	  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
-	  		}
-			
-  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
-  	  		mapView.getOverlays().add(pelanggaranOverlay);
-  	  		Message message = new Message();
-  	  		Bundle data = BundleEntityMaker.makeBundleFromLokasi(pelanggaran.getLokasi());
-  	  		message.setData(data);
-  	  		handler.sendMessage(message);
+  		if(pelanggarans!=null){
+  			int size = pelanggarans.size();
+  			if(size>0){
+  				
+  				Pelanggaran pelanggaran = pelanggarans.get(size-1);
+  				overlayFactory.makeOverlayNewPelanggaran(pelanggaran);
+  				if(overlayFactory.anyPelanggaran()){
+  		  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
+  		  		}
+  				
+  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
+  	  	  		mapView.getOverlays().add(pelanggaranOverlay);
+  	  	  		Message message = new Message();
+  	  	  		Bundle data = BundleEntityMaker.makeBundleFromLokasi(pelanggaran.getLokasi());
+  	  	  		message.setData(data);
+  	  	  		handler.sendMessage(message);
+  	  		}
   		}
+		
 		
 	}
 	
   	public void setOverlayPelanggarans(){
   		List<Pelanggaran> pelanggarans = databaseManager.getAllDataPelanggarans(true, true);
-  		overlayFactory.makeOverlayPelanggarans(pelanggarans);
   		
-  		if(overlayFactory.anyPelanggaran()){
-  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
+  		if(pelanggarans!=null){
+  			overlayFactory.makeOverlayPelanggarans(pelanggarans);
+  	  		
+  	  		if(overlayFactory.anyPelanggaran()){
+  	  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
+  	  		}
+  	  		
+  	  		for(Pelanggaran pelanggaran : pelanggarans){
+  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
+  	  			mapView.getOverlays().add(pelanggaranOverlay);
+  	  		}
   		}
   		
-  		for(Pelanggaran pelanggaran : pelanggarans){
-  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(ID_PELANGGARAN, pelanggaran.getLokasi(), 100, COLOR_PELANGGARAN);
-  			mapView.getOverlays().add(pelanggaranOverlay);
-  		}
+  		
   	}
   	
   	public void setFirstOverlayOrangTua(){
@@ -181,8 +189,8 @@ public class OverlayControllerMonak {
   			if(overlayFactory.anyOrangTua()){
   				mapView.getOverlays().add(overlayFactory.getOrangTua());
   			}
-  			RadiusOverlay orangTuaOverlay = new RadiusOverlay(ID_ORANGTUA,lokasi, 100, COLOR_ORTU);
-  			mapView.getOverlays().add(orangTuaOverlay);
+//  			RadiusOverlay orangTuaOverlay = new RadiusOverlay(ID_ORANGTUA,lokasi, 100, COLOR_ORTU);
+//  			mapView.getOverlays().add(orangTuaOverlay);
   		}
   	}
   	
@@ -250,10 +258,10 @@ public class OverlayControllerMonak {
 	private final static String ID_SEHARUSNYA	= "seharusnya";
 	private final static String ID_TERLARANG	= "terlarang";
 
-	private final static int COLOR_PELANGGARAN 	= 0x99AA0000;
-	private final static int COLOR_ANAK			= 0x9900AA00;
-	private final static int COLOR_SEHARUSNYA	= 0x999966FF;
-	private final static int COLOR_TERLARANG	= 0x99FFFF00;
-	private final static int COLOR_ORTU			= 0x990000AA;
+	private final static int COLOR_PELANGGARAN 	= 0x55AA0000;
+	private final static int COLOR_ANAK			= 0x5500AA00;
+	private final static int COLOR_SEHARUSNYA	= 0x559966FF;
+	private final static int COLOR_TERLARANG	= 0x55FFFF00;
+	private final static int COLOR_ORTU			= 0x550000AA;
   	
 }

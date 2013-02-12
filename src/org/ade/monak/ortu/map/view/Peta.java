@@ -139,7 +139,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 //		requestAllAnakLocations();
 		
 		
-		mapController.setZoom(12);
+		mapController.setZoom(14);
 	    mapView.setBuiltInZoomControls(true);
 	}
   	

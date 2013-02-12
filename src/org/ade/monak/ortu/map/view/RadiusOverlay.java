@@ -25,7 +25,7 @@ public class RadiusOverlay extends Overlay {
 	    this.id		= id;
 	
 	    paint1 = new Paint();
-	    paint1.setColor(color);
+	    paint1.setARGB(255, 0, 0, 0);  
 	    paint1.setStrokeWidth(2);
 	    paint1.setStrokeCap(Paint.Cap.ROUND);
 	    paint1.setAntiAlias(true);
@@ -33,8 +33,7 @@ public class RadiusOverlay extends Overlay {
 	    paint1.setStyle(Paint.Style.STROKE);
 	
 	    paint2 = new Paint();
-	    paint2.setARGB(64, 0, 0, 255);  
-	
+	    paint2.setColor(color);
 	}
 	
 	@Override

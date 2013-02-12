@@ -1,5 +1,6 @@
 package org.ade.monak.ortu.map.view;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,20 +80,22 @@ public class MonitoringOverlayFactory {
 	public void makeOverlayAnaks(List<Anak> anaks, List<Lokasi> lokasis){
 		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
 		
-		for(int i = 0 ;i<anaks.size();i++){
-			Lokasi 	lokasi 	= lokasis.get(i);
-			Anak	anak	= anaks.get(i);
-			
-			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
-			OverlayItem overlayItem = 
-					new OverlayItem
-						(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
+		if(anaks!=null){
+			for(int i = 0 ;i<anaks.size();i++){
+				Lokasi 	lokasi 	= lokasis.get(i);
+				Anak	anak	= anaks.get(i);
+				
+				GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+				OverlayItem overlayItem = 
+						new OverlayItem
+							(point, anak.getNamaAnak(),"posisi "+anak.getNamaAnak());
 
-			petaOverlay.addOverLay(overlayItem);
-			
+				petaOverlay.addOverLay(overlayItem);
+				
+			}
+
+			monitoringOverlays.put(ANAK, petaOverlay);
 		}
-
-		monitoringOverlays.put(ANAK, petaOverlay);
 	}
 	
 	public void makeOverlayLogAnak(Anak anak, List<Lokasi> lokasis){
@@ -119,13 +122,15 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayPelanggarans(List<Pelanggaran> pelanggarans){
 		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);
-		
-		for(Pelanggaran pelanggaran:pelanggarans){
-			OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
-			monitoringOverlay.addOverLay(overlayItem);
+		if(pelanggarans!=null){
+			for(Pelanggaran pelanggaran:pelanggarans){
+				OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
+				monitoringOverlay.addOverLay(overlayItem);
+			}
+			
+			monitoringOverlays.put(PELANGGARAN, monitoringOverlay);
 		}
 		
-		monitoringOverlays.put(PELANGGARAN, monitoringOverlay);
 	}
 	
 	public void makeOverlayOrtu(Lokasi lokasi){
@@ -148,23 +153,25 @@ public class MonitoringOverlayFactory {
 		MonitoringOverlay petaOverlaySeharusnya 	= createPetaOverlay(SEHARUSNYA);
 		
 		MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(TERLARANG);
-		
-		for(DataMonitoring dataMonitoring: dataMonitorings){
-			OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
-			if(dataMonitoring.isSeharusnya()){
-				petaOverlaySeharusnya.addOverLay(overlayItem);
-			}else{
-				petaOverlayTerlarang.addOverLay(overlayItem);
+		if(dataMonitorings!=null){
+			for(DataMonitoring dataMonitoring: dataMonitorings){
+				OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
+				if(dataMonitoring.isSeharusnya()){
+					petaOverlaySeharusnya.addOverLay(overlayItem);
+				}else{
+					petaOverlayTerlarang.addOverLay(overlayItem);
+				}
+				
+			}
+			if(petaOverlaySeharusnya.size()>0){
+				monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);		
 			}
 			
-		}
-		if(petaOverlaySeharusnya.size()>0){
-			monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);		
+			if(petaOverlayTerlarang.size()>0){
+				monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);			
+			}
 		}
 		
-		if(petaOverlayTerlarang.size()>0){
-			monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);			
-		}
 	}
 	
 	private OverlayItem makeOverlayItemSinggleDataMonitoring(DataMonitoring dataMonitoring){
@@ -179,9 +186,20 @@ public class MonitoringOverlayFactory {
 	private OverlayItem makeOverlayItemSingglePelanggaran(Pelanggaran pelanggaran){
 		Lokasi lokasi = pelanggaran.getLokasi();
 		GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(lokasi.getTime());
+		String pesan = "pelanggaran terjadi jam "+
+				cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND)+
+				"\npelanggaran adalah "+pelanggaran.getDataMonitoring().getKeterangan();
+		String headPesan = "anak " +pelanggaran.getAnak().getNamaAnak();
+		if(pelanggaran.getDataMonitoring().getStatus()==DataMonitoring.SEHARUSNYA){
+			headPesan +=" melanggar pelanggaran seharusnya";
+		}else{
+			headPesan +=" melanggar pelanggaran terlarang";
+		}
 		OverlayItem overlayItem = 
 				new OverlayItem
-					(point, pelanggaran.getAnak().getNamaAnak(), pelanggaran.getDataMonitoring().getKeterangan());
+					(point, headPesan, pesan);
 		return overlayItem;
 	}
 	

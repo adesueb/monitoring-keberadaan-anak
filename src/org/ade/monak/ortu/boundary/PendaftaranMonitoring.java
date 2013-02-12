@@ -367,6 +367,7 @@ public class PendaftaranMonitoring extends Activity{
 	
 	private void save(){
 		if(isEdit){
+			dataMonitoring.setAktif(false);
 			databaseManager.updateDataMonitoring(dataMonitoring);
 		}else{
 			databaseManager.addDataMonitoring(dataMonitoring);	
