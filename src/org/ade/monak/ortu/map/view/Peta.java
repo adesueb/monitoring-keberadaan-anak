@@ -204,10 +204,16 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	}
   	
   	public void actionOkSearchDialog(List<Integer> pilihanOverlay){
+  		overlayControllerMonak.removeOverlayAnaks();
+  		overlayControllerMonak.removeOverlayPelanggarans();
+  		overlayControllerMonak.removeOverlayDataMonitorings();
   		overlayControllerMonak.refreshOverlay(pilihanOverlay);
   	}
   	
   	public void actionOkLogDialog(Anak anak){
+
+  		overlayControllerMonak.removeOverlayAnaks();
+  		overlayControllerMonak.removeOverlayLogs();
   		requestLogMonakAnak(anak);
   	}
   	
@@ -220,6 +226,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
    	
   	public void refreshLogFromAnak(String idAnak, List<Lokasi> lokasis){
+  		overlayControllerMonak.removeOverlayLogs();
   		overlayControllerMonak.setOverlayLogLocationAnak(idAnak, lokasis);
   	}
   	  	
@@ -231,8 +238,6 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	private void requestLogMonakAnak(Anak anak){
   		List<Lokasi> lokasis = databaseManager.getAllLokasiAnak(anak);
   		overlayControllerMonak.setOverlayLogLocationAnak(anak.getIdAnak(), lokasis);
-  		SenderRequestLogMonak sender = new SenderRequestLogMonak(this);
-  		sender.sendRequest(anak);
   		PetaLogController petaLog = new PetaLogController(this);
   		petaLog.action(anak);
   		if(bound && handlerBinder!=null && anak!=null){

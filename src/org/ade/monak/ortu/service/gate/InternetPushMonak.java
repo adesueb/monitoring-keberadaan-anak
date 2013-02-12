@@ -53,7 +53,6 @@ public class InternetPushMonak implements Runnable{
 					bundle.putInt(MonakService.START_CALL, MonakService.RECEIVER_INTERNET);
 					bundle.putString(MonakService.PESAN_INTERNET, pesan);
 
-					LogMonakFileManager.debug("dapet pesan "+pesan);
 					Intent intent = new Intent(MonakService.MONAK_SERVICE);
 					intent.putExtras(bundle);
 					context.startService(intent);	

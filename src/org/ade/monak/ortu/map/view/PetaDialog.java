@@ -153,7 +153,6 @@ public class PetaDialog {
 				if(pilihanOverlay.size()>0){
 					for(Integer angka:pilihanOverlay){
 						peta.actionOkLogDialog(anaks.get(angka));	
-						break;
 					}
 				}
 					

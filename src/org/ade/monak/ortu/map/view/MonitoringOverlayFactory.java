@@ -27,12 +27,12 @@ public class MonitoringOverlayFactory {
 		mHandler = handler;
 	}
 	
-	private MonitoringOverlay createPetaOverlay(int status){
+	private MonitoringOverlay createPetaOverlay(String id, int status){
 		if(mHandler != null){
 			return new PetaAmbilLokasiOverlay(mContext.getResources().getDrawable(status), mContext, mHandler);
 			
 		}else{
-			return new PetaOverlay(mContext.getResources().getDrawable(status), mContext);
+			return new PetaOverlay(id,mContext.getResources().getDrawable(status), mContext);
 			
 		}
 	}
@@ -62,7 +62,7 @@ public class MonitoringOverlayFactory {
 	}
 	
 	public void makeOverlayAnak(Anak anak){
-		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ID_ANAK, ANAK);
 		Lokasi lokasi = anak.getLastLokasi();
 		if(lokasi!=null){
 			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
@@ -89,7 +89,7 @@ public class MonitoringOverlayFactory {
 	}
 	
 	public void makeOverlayAnaks(List<Anak> anaks, List<Lokasi> lokasis){
-		MonitoringOverlay petaOverlay	= createPetaOverlay(ANAK);
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ID_ANAK, ANAK);
 		
 		if(anaks!=null){
 			for(int i = 0 ;i<anaks.size();i++){
@@ -123,7 +123,7 @@ public class MonitoringOverlayFactory {
 	}
 	
 	public void makeOverlayLogAnak(Anak anak, List<Lokasi> lokasis){
-		MonitoringOverlay petaOverlay = createPetaOverlay(LOG);
+		MonitoringOverlay petaOverlay = createPetaOverlay(ID_LOG,LOG);
 		for(int i=0;i<lokasis.size();i++){
 			Lokasi lokasi = lokasis.get(i);
 			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
@@ -149,14 +149,14 @@ public class MonitoringOverlayFactory {
 	}
 	
 	public void makeOverlayNewPelanggaran(Pelanggaran pelanggaran){
-		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);		
+		MonitoringOverlay monitoringOverlay = createPetaOverlay(ID_PELANGGARAN, PELANGGARAN);		
 		OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
 		monitoringOverlay.addOverLay(overlayItem);
 		monitoringOverlays.put(PELANGGARAN, monitoringOverlay);
 	}
 	
 	public void makeOverlayPelanggarans(List<Pelanggaran> pelanggarans){
-		MonitoringOverlay monitoringOverlay = createPetaOverlay(PELANGGARAN);
+		MonitoringOverlay monitoringOverlay = createPetaOverlay(ID_PELANGGARAN, PELANGGARAN);
 		if(pelanggarans!=null){
 			for(Pelanggaran pelanggaran:pelanggarans){
 				OverlayItem overlayItem = makeOverlayItemSingglePelanggaran(pelanggaran);
@@ -170,7 +170,7 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayOrtu(Lokasi lokasi){
 		
-		MonitoringOverlay petaOverlay	= createPetaOverlay(ORANG_TUA);
+		MonitoringOverlay petaOverlay	= createPetaOverlay(ID_ORANGTUA, ORANG_TUA);
 		
 		GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
 		
@@ -185,9 +185,9 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayDataMonitoring(List<DataMonitoring> dataMonitorings){
 		
-		MonitoringOverlay petaOverlaySeharusnya 	= createPetaOverlay(SEHARUSNYA);
+		MonitoringOverlay petaOverlaySeharusnya 	= createPetaOverlay(ID_SEHARUSNYA,SEHARUSNYA);
 		
-		MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(TERLARANG);
+		MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(ID_TERLARANG,TERLARANG);
 		if(dataMonitorings!=null){
 			for(DataMonitoring dataMonitoring: dataMonitorings){
 				OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
@@ -263,12 +263,24 @@ public class MonitoringOverlayFactory {
 		return monitoringOverlays.get(LOG);
 	}
 	
+	public Map<Integer,MonitoringOverlay> getMonitoringOverlays(){
+		return this.monitoringOverlays;
+	}
+	
 	
 	private Map<Integer,MonitoringOverlay> monitoringOverlays = 
 			new HashMap<Integer, MonitoringOverlay>();
 	
 	private final Context mContext;
 	private final Handler mHandler;
+	
+
+	public final static String ID_ORANGTUA		= "orang_tua";
+	public final static String ID_ANAK			= "anak";
+	public final static String ID_PELANGGARAN 	= "pelanggaran";
+	public final static String ID_SEHARUSNYA	= "seharusnya";
+	public final static String ID_TERLARANG		= "terlarang";
+	public final static String ID_LOG			= "log";
 	
 	public final static int ANAK		= R.drawable.anakkecil;
 	public final static int SEHARUSNYA 	= R.drawable.seharusnya;

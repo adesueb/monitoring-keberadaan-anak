@@ -11,9 +11,10 @@ import com.google.android.maps.OverlayItem;
 
 public class PetaOverlay extends MonitoringOverlay{
 
-	public PetaOverlay(Drawable defaultMarker, Context context) {
+	public PetaOverlay(String id, Drawable defaultMarker, Context context) {
 		super(boundCenterBottom(defaultMarker));
 		mContext 	= context;
+		this.id 	= id;
 		
 	}
 
@@ -44,7 +45,18 @@ public class PetaOverlay extends MonitoringOverlay{
 	}
 	
 	
+	
+	public String getId() {
+		return id;
+	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+
+	private String 	id;
 	private Context mContext;
 	private List<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 }
