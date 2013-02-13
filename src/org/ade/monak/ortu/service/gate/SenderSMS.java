@@ -1,8 +1,8 @@
 package org.ade.monak.ortu.service.gate;
 
-import java.util.ArrayList;
-
 import org.ade.monak.ortu.Variable.Status;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
+import org.ade.monak.ortu.util.IDGenerator;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -94,26 +94,89 @@ public class SenderSMS{
 	    }, new IntentFilter(DELIVERED));   
 	    
 	    
+	    
 
 	    SmsManager sms = SmsManager.getDefault();
-	    ArrayList<String> parts = sms.divideMessage(message);
+//	    ArrayList<String> parts = sms.divideMessage(message);
 	    
-	    ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
-	    ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
+//	    ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
+//	    ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
 
-	    for (int i = 0; i < parts.size(); i++) {
-		    sentIntents.add(sentPI);
-		    deliveryIntents.add(deliveredPI);
-	    }
+//	    for (int i = 0; i < parts.size(); i++) {
+//		    sentIntents.add(sentPI);
+//		    deliveryIntents.add(deliveredPI);
+//	    }
+//	    sms.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, deliveryIntents);
+//	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);     
 	    
-	    sms.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, deliveryIntents);
-//	    sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
+	           
+	    int countSms = (message.length()/MAX_SMS_MESSAGE_LENGTH)+1;
+	    if(countSms==1){
+	     	sms.sendDataMessage(phoneNumber, null, PORT_NUMBER, message.getBytes(), sentPI, deliveredPI);	
+	    }else{
+	    	
+	    	String 	id 			= IDGenerator.getIdMultiSms();
+		    int 	startbyte	= 0;
+		    
+	    	for(int i = 0;i<countSms;i++){
+	  		    
+	    		byte[] data = new byte[MAX_SMS_MESSAGE_LENGTH+2]; 
+	  		    int indexData=0;
+	  		    
+	  		    for(int index = 0;index<id.length();index++){
+	  		    	data[indexData] = (byte)id.charAt(index);
+	  		    	indexData++;
+	  		    }
+	  		    
+	  		    data[indexData] = (byte)'#';
+	  		    indexData++;
+	  		    
+	  		    String indexPesan = ""+i;
+	  		    for(int index = 0;index<indexPesan.length();index++){
+		  		    data[indexData] = (byte)indexPesan.charAt(index);
+		  		    indexData++;
+	  		    }
+	  		    
+
+	  		    data[indexData] = (byte)'#';
+	  		    indexData++;
+	  		    
+	  	    	for(int index=startbyte; index<message.length() && indexData < MAX_SMS_MESSAGE_LENGTH; index++){
+    				data[indexData] = (byte)message.charAt(index);
+  	                indexData++;	
+  	                startbyte++;
+	  	        }	
+	  	    	
+	  	    	if(i!=countSms-1){
+	  	    		data[indexData]=(byte)'#';
+	  	    		indexData++;
+	  	    		data[indexData]=(byte)'N';
+	  	    		indexData++;
+	  	    		LogMonakFileManager.debug("kirim sms : "+new String(data));
+		  	    	sms.sendDataMessage(phoneNumber, null, PORT_NUMBER, data, sentPI, deliveredPI);	
+	  	    	}else{
+	  	    		data[indexData]=(byte)'#';
+	  	    		indexData++;
+	  	    		data[indexData]=(byte)'Y';
+	  	    		indexData++;
+	  	    		byte[] dataEnd = new byte[indexData];
+	  	    		for(int y=0;y<indexData;y++){
+	  	    			dataEnd[y]=data[y];
+	  	    		}
+	  	    		LogMonakFileManager.debug("kirim sms Terakhir : "+new String(dataEnd));
+		  	    	sms.sendDataMessage(phoneNumber, null, PORT_NUMBER, dataEnd, sentPI, deliveredPI);
+		  	    	break;
+	  	    	}
+	  	    	
+	  	    }
+	  	    
+	    }
+	  
+
 	}
 
-	
-	
-	
-
+    private static final int MAX_SMS_MESSAGE_LENGTH = 98;
+  	private static final short PORT_NUMBER = 8081;
 	private Context mContext;
 	private Handler mHandler;
 	

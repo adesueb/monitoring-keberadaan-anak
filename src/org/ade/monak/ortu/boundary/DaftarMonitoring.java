@@ -154,7 +154,6 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 			}
 		}
 		daftarMonitoringAdapter.notifyDataSetChanged();
-		dismissDialog(Operation.DELETE);
 	}
 	
 	@Override
@@ -200,8 +199,24 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 					public void onClick(DialogInterface dialog, int whichButton) {
 						DataMonitoring dataMonitoring = EntityBundleMaker.getDataMonitoringFromBundle(bundle);
 						dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(dataMonitoring.getIdMonitoring(), true, true);	
-						SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerDeleteSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
-						sender.sendDataMonitoringDelete(dataMonitoring);
+						if(dataMonitoring.isAktif()){
+							SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, new HandlerDeleteSendermonitoring(DaftarMonitoring.this, dataMonitoring));		
+							sender.sendDataMonitoringDelete(dataMonitoring);	
+						}else{
+							databaseManager.deleteDataMonitoring(dataMonitoring);
+							for(DataMonitoring dataMonitoringFor:dataMonitorings){
+								if(dataMonitoringFor.getIdMonitoring().equals(dataMonitoring.getIdMonitoring())){
+									dataMonitorings.remove(dataMonitoringFor);
+									break;
+								}
+							}
+							daftarMonitoringAdapter.notifyDataSetChanged();
+							SenderPesanData sender = new SenderPesanData(DaftarMonitoring.this, null);		
+							sender.sendDataMonitoringDelete(dataMonitoring);			
+						}
+
+						dialog.dismiss();
+						dismissDialog(Operation.DELETE);
 						return;                  
 			         }  
 			     });  
@@ -211,6 +226,7 @@ public class DaftarMonitoring extends ListActivity implements IFormOperation,  I
 					public void onClick(DialogInterface dialog, int which) {
 
 						dialog.dismiss();
+						dismissDialog(Operation.DELETE);
 						return;   
 					}
 				});

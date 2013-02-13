@@ -528,8 +528,11 @@ public class DatabaseManagerOrtu {
 	// delete............................................................
 	
 	public void deleteLokasiAnak(Anak anak){
-		getDb().delete
-			(LOCATION_TABLE_NAME, COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'", null);
+		if(anak!=null){
+			getDb().delete
+				(LOCATION_TABLE_NAME, COLUMN_ANAK_LOCATION+"='"+anak.getIdAnak()+"'", null);		
+		}
+	
 	}
 	
 
@@ -635,6 +638,9 @@ public class DatabaseManagerOrtu {
 	}
 	
 	public void deleteAnak(Anak anak){
+		if(anak==null){
+			return;
+		}
 		List<DataMonitoring> dataMonitorings = anak.getDataMonitorings();
 		if(dataMonitorings==null){
 			dataMonitorings = getDataMonitoringsByAnak(anak.getIdAnak());

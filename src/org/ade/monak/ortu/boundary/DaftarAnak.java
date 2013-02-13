@@ -241,8 +241,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				}else{
 					databaseManager.deleteLokasiAnak(anak);
 					
-					sendRequestLocationAnak(anak, DELETE);	
 				}
+				sendRequestLocationAnak(anak, DELETE);	
 				
 				break;
 			}

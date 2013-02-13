@@ -1,5 +1,6 @@
 package org.ade.monak.ortu.util;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
@@ -19,6 +20,18 @@ public class IDGenerator {
 		if(context!=null){
 			mContext = context;			
 		}
+	}
+	
+	public static String getIdMultiSms(){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		
+		Long time = System.currentTimeMillis()-cal.getTimeInMillis();
+		return time+"";
 	}
 	
 	public String getIdAnak(){
