@@ -36,7 +36,7 @@ public class OverlayControllerMonak {
   		for(int i:pilihanOverlay){
   			switch(i){
   				case VariableEntity.DATA_MONITORING:{
-  					setOverlayDataMonitoring();
+  					setOverlayDataMonitorings();
   					break;
   				}case VariableEntity.ANAK:{
   					setOverlayAnaks();
@@ -49,11 +49,11 @@ public class OverlayControllerMonak {
   		}
   	}
 	
-  	private void setOverlayDataMonitoring(){
+  	private void setOverlayDataMonitorings(){
   		List<DataMonitoring> dataMonitorings = databaseManager.getAllDataMonitorings(true, true);
   		
   		if(dataMonitorings!=null){
-  			overlayFactory.makeOverlayDataMonitoring(dataMonitorings);
+  			overlayFactory.makeOverlayDataMonitorings(dataMonitorings);
   	  		
   	  		if(overlayFactory.anySeharusnya()){
   	  			mapView.getOverlays().add(overlayFactory.getSeharusnya());
@@ -144,10 +144,15 @@ public class OverlayControllerMonak {
   				
   	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(MonitoringOverlayFactory.ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
   	  	  		mapView.getOverlays().add(pelanggaranOverlay);
+  	  	  		
+  	  	  		DataMonitoring dataMonitoring = pelanggaran.getDataMonitoring();
+  	  	  		setOverlayDataMonitoring(dataMonitoring);
+  	  	  		
   	  	  		Message message = new Message();
   	  	  		Bundle data = BundleEntityMaker.makeBundleFromLokasi(pelanggaran.getLokasi());
   	  	  		message.setData(data);
   	  	  		handler.sendMessage(message);
+  	  	  		
   	  		}
   		}
 		
@@ -184,6 +189,31 @@ public class OverlayControllerMonak {
   				lokasi = prefrenceManager.getMapLokasi();
   			}
   			setOverlayOrangtua(lokasi);
+  		}
+  	}
+  	
+  	private void setOverlayDataMonitoring(DataMonitoring dataMonitoring){
+  		if(dataMonitoring!=null){
+  		
+  			overlayFactory.makeOverlayDataMonitoring(dataMonitoring);
+  	  		
+  	  	  	if(overlayFactory.anySeharusnya()){
+  	  			mapView.getOverlays().add(overlayFactory.getSeharusnya());
+  	  		}
+  	  		
+  	  		if(overlayFactory.anyTerlarang()){
+  	  			mapView.getOverlays().add(overlayFactory.getTerlarang());
+  	  		}
+  	  		
+  	  		if(dataMonitoring.getStatus()==DataMonitoring.SEHARUSNYA){
+  				RadiusOverlay dataMonitoringOverlay = 
+  						new RadiusOverlay(MonitoringOverlayFactory.ID_SEHARUSNYA, dataMonitoring.getLokasi(), dataMonitoring.getTolerancy(), COLOR_SEHARUSNYA);
+  	  			mapView.getOverlays().add(dataMonitoringOverlay);
+  			}else{
+  				RadiusOverlay dataMonitoringOverlay = 
+  						new RadiusOverlay(MonitoringOverlayFactory.ID_TERLARANG, dataMonitoring.getLokasi(), dataMonitoring.getTolerancy(), COLOR_TERLARANG);
+  	  			mapView.getOverlays().add(dataMonitoringOverlay);
+  			}
   		}
   	}
   	

@@ -183,9 +183,9 @@ public class MonitoringOverlayFactory {
 		monitoringOverlays.put(ORANG_TUA, petaOverlay);
 	}
 	
-	public void makeOverlayDataMonitoring(List<DataMonitoring> dataMonitorings){
+	public void makeOverlayDataMonitorings(List<DataMonitoring> dataMonitorings){
 		
-		MonitoringOverlay petaOverlaySeharusnya 	= createPetaOverlay(ID_SEHARUSNYA,SEHARUSNYA);
+		MonitoringOverlay petaOverlaySeharusnya = createPetaOverlay(ID_SEHARUSNYA,SEHARUSNYA);
 		
 		MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(ID_TERLARANG,TERLARANG);
 		if(dataMonitorings!=null){
@@ -209,12 +209,38 @@ public class MonitoringOverlayFactory {
 		
 	}
 	
+	public void makeOverlayDataMonitoring(DataMonitoring dataMonitoring){
+
+		if(dataMonitoring!=null){
+			if(dataMonitoring.isSeharusnya()){
+				MonitoringOverlay petaOverlaySeharusnya = createPetaOverlay(ID_SEHARUSNYA,SEHARUSNYA);
+				OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
+				petaOverlaySeharusnya.addOverLay(overlayItem);
+				monitoringOverlays.put(SEHARUSNYA, petaOverlaySeharusnya);					
+			}else{
+				MonitoringOverlay petaOverlayTerlarang 	= createPetaOverlay(ID_TERLARANG,TERLARANG);	
+				OverlayItem overlayItem = makeOverlayItemSinggleDataMonitoring(dataMonitoring);
+				petaOverlayTerlarang.addOverLay(overlayItem);
+				monitoringOverlays.put(TERLARANG, petaOverlayTerlarang);						
+			}	
+		}
+		
+	}
+	
 	private OverlayItem makeOverlayItemSinggleDataMonitoring(DataMonitoring dataMonitoring){
 		Lokasi lokasi = dataMonitoring.getLokasi();
 		GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(lokasi.getTime());
+		
+		String pesan = "keterangan : "+dataMonitoring.getKeterangan()+"\n"+
+				"jam : "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND)+"\n"+
+				"tipe Monitoring : "+(dataMonitoring.isSeharusnya()?"seharusnya":"terlarang");
+		
 		OverlayItem overlayItem = 
 				new OverlayItem
-					(point, dataMonitoring.getAnak().getNamaAnak(), dataMonitoring.getKeterangan());
+					(point, dataMonitoring.getAnak().getNamaAnak(), pesan);
 		return overlayItem;
 	}
 	
