@@ -124,28 +124,30 @@ public class MonitoringOverlayFactory {
 	
 	public void makeOverlayLogAnak(Anak anak, List<Lokasi> lokasis){
 		MonitoringOverlay petaOverlay = createPetaOverlay(ID_LOG,LOG);
-		for(int i=0;i<lokasis.size();i++){
-			Lokasi lokasi = lokasis.get(i);
-			GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
-			
-			String pesan = "-";
-			if(lokasi.getTime()!=0){
-				Calendar cal = Calendar.getInstance();
-				cal.setTimeInMillis(lokasi.getTime());
-				pesan = "anak berada disini jam "+
-						cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
-						cal.get(Calendar.SECOND);
-					
-			}		
-					
-			OverlayItem overlayItem = 
-					new OverlayItem
-						(point, anak.getNamaAnak(),pesan);
+		if(lokasis!=null){
+			for(int i=0;i<lokasis.size();i++){
+				Lokasi lokasi = lokasis.get(i);
+				GeoPoint point = new GeoPoint((int)(lokasi.getlatitude()*1E6),(int) (lokasi.getLongitude()*1E6));
+				
+				String pesan = "-";
+				if(lokasi.getTime()!=0){
+					Calendar cal = Calendar.getInstance();
+					cal.setTimeInMillis(lokasi.getTime());
+					pesan = "anak berada disini jam "+
+							cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+							cal.get(Calendar.SECOND);
+				}		
+						
+				OverlayItem overlayItem = 
+						new OverlayItem
+							(point, anak.getNamaAnak(),pesan);
 
-			petaOverlay.addOverLay(overlayItem);
+				petaOverlay.addOverLay(overlayItem);
+			}
+
+			monitoringOverlays.put(LOG, petaOverlay);
 		}
 
-		monitoringOverlays.put(LOG, petaOverlay);
 	}
 	
 	public void makeOverlayNewPelanggaran(Pelanggaran pelanggaran){

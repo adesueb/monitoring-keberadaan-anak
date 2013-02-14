@@ -83,18 +83,22 @@ public class OverlayControllerMonak {
   	
   	public void setOverlayLogLocationAnak(String idAnak, List<Lokasi> lokasis){
   		
-  		Anak anak = databaseManager.getAnakById(idAnak, false, false);
-  		overlayFactory.makeOverlayLogAnak(anak, lokasis);
-  		
-  		if(overlayFactory.anyLog()){
-  			mapView.getOverlays().add(overlayFactory.getLog());
+  		if(lokasis!=null){
+  			Anak anak = databaseManager.getAnakById(idAnak, false, false);
+  	  		overlayFactory.makeOverlayLogAnak(anak, lokasis);
+  	  		
+  	  		if(overlayFactory.anyLog()){
+  	  			mapView.getOverlays().add(overlayFactory.getLog());
+  	  		}
+  	  		
+  	  		int size = lokasis.size();
+  	  		if(size>0){
+  	  			anak.setLastLokasi(lokasis.get(size-1));		
+  	  		}
+  	  		setOverlayAnak(anak);
+  	  			
   		}
   		
-  		int size = lokasis.size();
-  		if(size>0){
-  			anak.setLastLokasi(lokasis.get(size-1));		
-  		}
-  		setOverlayAnak(anak);
   		
   	}
   	
@@ -142,11 +146,14 @@ public class OverlayControllerMonak {
   		  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
   		  		}
   				
-  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(MonitoringOverlayFactory.ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
-  	  	  		mapView.getOverlays().add(pelanggaranOverlay);
+//  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(MonitoringOverlayFactory.ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
+//  	  	  		mapView.getOverlays().add(pelanggaranOverlay);
   	  	  		
   	  	  		DataMonitoring dataMonitoring = pelanggaran.getDataMonitoring();
-  	  	  		setOverlayDataMonitoring(dataMonitoring);
+  	  	  		if(dataMonitoring!=null){
+  	  	  			dataMonitoring.setAnak(pelanggaran.getAnak());
+  	  	  	  		setOverlayDataMonitoring(dataMonitoring);
+  	  	  		}
   	  	  		
   	  	  		Message message = new Message();
   	  	  		Bundle data = BundleEntityMaker.makeBundleFromLokasi(pelanggaran.getLokasi());
@@ -169,10 +176,10 @@ public class OverlayControllerMonak {
   	  			mapView.getOverlays().add(overlayFactory.getPelanggaran());
   	  		}
   	  		
-  	  		for(Pelanggaran pelanggaran : pelanggarans){
-  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(MonitoringOverlayFactory.ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
-  	  			mapView.getOverlays().add(pelanggaranOverlay);
-  	  		}
+//  	  		for(Pelanggaran pelanggaran : pelanggarans){
+//  	  			RadiusOverlay pelanggaranOverlay = new RadiusOverlay(MonitoringOverlayFactory.ID_PELANGGARAN, pelanggaran.getLokasi(), pelanggaran.getDataMonitoring().getTolerancy(), COLOR_PELANGGARAN);
+//  	  			mapView.getOverlays().add(pelanggaranOverlay);
+//  	  		}
   		}
   		
   		

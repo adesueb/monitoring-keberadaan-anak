@@ -227,6 +227,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
    	
   	public void refreshLogFromAnak(String idAnak, List<Lokasi> lokasis){
   		overlayControllerMonak.removeOverlayLogs();
+  		overlayControllerMonak.removeOverlayAnaks();
   		overlayControllerMonak.setOverlayLogLocationAnak(idAnak, lokasis);
   	}
   	  	
