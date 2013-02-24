@@ -1,10 +1,12 @@
 package org.ade.monak.ortu.boundary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monak.ortu.R;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +14,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,17 +22,17 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AdminActivity extends Activity{
+public class Setting extends Activity{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.admin_view);
+		setContentView(R.layout.setting_view);
 		LinearLayout buttonViewMonitoring =  (LinearLayout) findViewById(R.id.adminButtonViewMonitoring);
 		buttonViewMonitoring.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-				Intent intent = new Intent(AdminActivity.this, DaftarMonitoring.class);
+				Intent intent = new Intent(Setting.this, DaftarMonitoring.class);
 				startActivity(intent);
 			}
 		});
@@ -41,6 +44,15 @@ public class AdminActivity extends Activity{
 				showDialog(DIALOG_LOKASI);
 			}
 		});
+		
+		LinearLayout buttonSetTipeKoneksi = (LinearLayout) findViewById(R.id.adminButtonSetTipeKoneksi);
+		buttonSetTipeKoneksi.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				showDialog(DIALOG_SET_TIPE_KONEKSI);
+			}
+		});
+		
 		
 		LinearLayout buttonViewClearLokasi = (LinearLayout) findViewById(R.id.adminButtonClearLokasi);
 		buttonViewClearLokasi.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +101,7 @@ public class AdminActivity extends Activity{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(Setting.this);
 				        databaseManager.deleteAllLokasi();
 				        return;                  
 			         }  
@@ -113,7 +125,7 @@ public class AdminActivity extends Activity{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(Setting.this);
 				        databaseManager.deleteAllPelanggarans();				       
 						return;                  
 			         }  
@@ -137,7 +149,7 @@ public class AdminActivity extends Activity{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(Setting.this);
 						databaseManager.deleteAllDataMonitoring();
 						return;                  
 			         }  
@@ -161,7 +173,7 @@ public class AdminActivity extends Activity{
 				alert.setPositiveButton("ya", new DialogInterface.OnClickListener() {  
 			      
 					public void onClick(DialogInterface dialog, int whichButton) {
-						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(AdminActivity.this);
+						DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(Setting.this);
 						databaseManager.deleteAllAnak();
 						return;                  
 			         }  
@@ -177,12 +189,54 @@ public class AdminActivity extends Activity{
 				});
 				AlertDialog alertDialog = alert.create();
 				return alertDialog;
+			}case DIALOG_SET_TIPE_KONEKSI:{
+				return makeDialogSetTipeKoneksi();
 			}
 		}
 		return null;
 	}
 
 
+	private Dialog makeDialogSetTipeKoneksi(){
+		final PreferenceMonitoringManager pref = new PreferenceMonitoringManager(Setting.this);
+		
+		final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.list_general);
+		
+		final ListView listView = (ListView) dialog.findViewById(R.id.listGeneral);
+				
+		String [] tipeKoneksis = new String[2];
+		tipeKoneksis[0] = "internet";
+		tipeKoneksis[1] = "sms";
+		
+		ArrayAdapter<String>listAdapter = 
+				new ArrayAdapter<String>
+					(this, android.R.layout.simple_list_item_single_choice, tipeKoneksis);
+		listView.setAdapter(listAdapter);
+		listView.setSelection(pref.getTipeKoneksi());
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+		Button buttonOk = (Button) dialog.findViewById(R.id.listGeneralButtonOk);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				
+				int len = listView.getCount();
+				List<Integer> pilihanOverlay = new ArrayList<Integer>();
+				SparseBooleanArray checked = listView.getCheckedItemPositions();
+				for (int i = 0; i < len; i++){
+					 if (checked.get(i)) {
+						 pilihanOverlay.add(i);
+					 }
+				}
+				if(pilihanOverlay.size()>0){
+					pref.setTipeKoneksi(pilihanOverlay.get(0));	
+				}
+				dialog.dismiss();
+			}
+		});
+		
+		return dialog;
+	}
 
 	private Dialog makeDialogLokasi(){
 		final Dialog dialog = new Dialog(this);
@@ -222,6 +276,5 @@ public class AdminActivity extends Activity{
 	private static final int DIALOG_CLEAR_PELANGGARAN	= 2;
 	private static final int DIALOG_CLEAR_MONITORING	= 3;
 	private static final int DIALOG_CLEAR_ANAK			= 4;
-	
-
+	private static final int DIALOG_SET_TIPE_KONEKSI	= 5;	
 }

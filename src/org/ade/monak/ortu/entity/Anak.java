@@ -72,6 +72,14 @@ public class Anak implements IEntity{
 	public void setTrack(boolean isTrack) {
 		this.isTrack = isTrack;
 	}
+	
+	public String getNoImeiAnak() {
+		return noImeiAnak;
+	}
+
+	public void setNoImeiAnak(String noImeiAnak) {
+		this.noImeiAnak = noImeiAnak;
+	}
 
 	public String getIdEntity() {
 		return idAnak;
@@ -82,6 +90,7 @@ public class Anak implements IEntity{
 	private String idOrtu;
 	//..........................
     private String namaAnak;
+    private String noImeiAnak;
     private String noHpAnak;
     private Lokasi lastLokasi;
     private boolean isTrack;

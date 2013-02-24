@@ -43,6 +43,7 @@
     <string name="set_detik_tracking">Detik Tracking</string>
     <string name="max_log">Max Log</string>
     <string name="view_all_monitoring">View All Monitoring</string>
+    <string name="set_tipe_koneksi">Set Tipe Koneksi</string>
     <string name="view_all_lokasi">View All Lokasi</string>
     <string name="clear_all_lokasi">Clear All Lokasi</string>
     
@@ -57,4 +58,5 @@
     <string name="setting">SETTING</string>
     <string name="start">start</string>
     <string name="stop">stop</string>
+    <string name="sms">sms</string>
 </resources>

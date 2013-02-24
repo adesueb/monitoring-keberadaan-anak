@@ -13,27 +13,33 @@ public class SenderSeting extends ASenderMonak{
 	}
 	
 	public void sendSetMiliseconds(Anak anak, int miliseconds){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.SET_TRACK_MILISECONDS+","+miliseconds);
+		String pesan = TipePesanMonak.SET_TRACK_MILISECONDS+","+miliseconds;
+		kirimPesan(anak, pesan);
 	}
 	
 	public void sendSetMeters(Anak anak, int meters){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.SET_TRACK_METERS+","+meters);
+		String pesan = TipePesanMonak.SET_TRACK_METERS+","+meters;
+		kirimPesan(anak, pesan);
 	}
 	
 	public void sendMaxLogs(Anak anak, int maxLogs){
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.SET_MAX_LOGS_LOCATION+","+maxLogs);
-	}
-	
-	@Override
-	public void success(int tipeKoneksi) {
-		// TODO Auto-generated method stub	
+		String pesan = TipePesanMonak.SET_MAX_LOGS_LOCATION+","+maxLogs;
+		kirimPesan(anak, pesan);
 	}
 
 	@Override
-	public void failed(int tipeKoneksi) {
+	public void onSuccess(int tipeKoneksi) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onFailed(int tipeKoneksi) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
 	
 }

@@ -16,25 +16,23 @@ public class SenderTrackingMode extends ASenderMonak{
 	public void sendStartTracking(Anak anak){
 
 		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_START_TRACKING+","+idGenerator.getIdOrangTua());
+		String pesan = TipePesanMonak.REQUEST_START_TRACKING+","+idGenerator.getIdOrangTua();
+		kirimPesan(anak, pesan);
 	}
 	
 	public void sendStopTracking(Anak anak){
 
 		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_STOP_TRACKING+","+idGenerator.getIdOrangTua());
+		String pesan = TipePesanMonak.REQUEST_STOP_TRACKING+","+idGenerator.getIdOrangTua();
+		kirimPesan(anak, pesan);
 	}
 	
 	@Override
-	public void success(int tipeKoneksi) {
-		// TODO Auto-generated method stub
-		
+	public void onSuccess(int tipeKoneksi) {
 	}
 
 	@Override
-	public void failed(int tipeKoneksi) {
-		// TODO : sending throught internet.....
-		
+	public void onFailed(int tipeKoneksi) {
 	}
 
 

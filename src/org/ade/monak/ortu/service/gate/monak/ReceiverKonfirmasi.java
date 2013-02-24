@@ -83,7 +83,7 @@ public class ReceiverKonfirmasi {
 
 		}
 	}
-	
+		
 	public void receiverKonfirmasiHapusAnak(String [] cvs){
 		Anak anak = new Anak();
 		anak.setIdAnak(cvs[1]);

@@ -6,7 +6,6 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
-import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.util.KontrolLog;
 
 import android.content.Context;
@@ -36,12 +35,17 @@ public class ReceiverLokasi{
 		lokasi.setLongitude(Double.parseDouble(cvs[2]));
 		lokasi.setTime(Long.parseLong(cvs[3]));
 		lokasi.setLog(true);
-		Anak anak = new Anak();
-		anak.setIdAnak(cvs[4]);
+		
+
+		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
+		
+		Anak anak = databaseManager.getAnakById(cvs[4], false, false);
+		
+		anak.setNoImeiAnak(cvs[5]);
+				
 		anak.setLastLokasi(lokasi);	
 		lokasi.setAnak(anak);
 		
-		DatabaseManagerOrtu databaseManager = new DatabaseManagerOrtu(context);
 		Lokasi lastLokasi = databaseManager.getAnakById(cvs[4], false, false).getLastLokasi();
 		if(lastLokasi==null||lastLokasi.getlatitude()!=lastLokasi.getlatitude()||lastLokasi.getLongitude()!=lokasi.getLongitude()){
 			databaseManager.addLastLokasiAnak(anak);	

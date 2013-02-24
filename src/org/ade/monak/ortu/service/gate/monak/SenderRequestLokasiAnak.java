@@ -4,7 +4,6 @@ import org.ade.monak.ortu.Variable.Status;
 import org.ade.monak.ortu.Variable.TipePesanMonak;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
-import org.ade.monak.ortu.service.gate.SenderSMS;
 import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
@@ -14,7 +13,6 @@ public class SenderRequestLokasiAnak extends ASenderMonak{
 
 	public SenderRequestLokasiAnak(Context context, Handler handler, Anak anak){
 		super(context);
-		senderSMS		= getSenderSMS();
 		this.handler	= handler;
 		this.anak		= anak;
 	}
@@ -26,24 +24,24 @@ public class SenderRequestLokasiAnak extends ASenderMonak{
 	private void kirimRequestLokasiAnak(Anak anak) {
 
 		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		senderSMS.sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOCATION_ANAK+","+anak.getIdAnak()+","+idGenerator.getIdOrangTua());
+		String pesan = TipePesanMonak.REQUEST_LOCATION_ANAK+","+anak.getIdAnak()+","+idGenerator.getIdOrangTua();
+		kirimPesan(anak,pesan);
 	}
 	
 	
-	public void success(int tipeKoneksi) {
+	public void onSuccess(int tipeKoneksi) {
 		if(handler!=null){
 			handler.sendEmptyMessage(Status.SUCCESS);	
 		}
 		
 	}
 
-	public void failed(int tipeKoneksi) {
+	public void onFailed(int tipeKoneksi) {
 		if(handler!=null){
 			handler.sendEmptyMessage(Status.FAILED);
 		}
 	}
 	
-	private final SenderSMS			senderSMS;
 	private final Handler			handler;
 	private final Anak				anak;
 	

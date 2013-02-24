@@ -1,6 +1,7 @@
 package org.ade.monak.ortu.service.storage;
 
 import org.ade.monak.ortu.Variable.DaftarUrl;
+import org.ade.monak.ortu.Variable.TipeKoneksi;
 import org.ade.monak.ortu.entity.Lokasi;
 
 import android.app.Activity;
@@ -53,6 +54,18 @@ public class PreferenceMonitoringManager {
 		setPrefString(URL_IP, ip);
 	}
 	
+	public int getTipeKoneksi(){
+		SharedPreferences pref = mContext.getSharedPreferences(KONEKSI, Activity.MODE_PRIVATE);
+		return pref.getInt(TIPE_KONEKSI, TipeKoneksi.SMS);
+	}
+	
+	public void setTipeKoneksi(int tipeKoneksi){
+		SharedPreferences pref = mContext.getSharedPreferences(KONEKSI, Activity.MODE_PRIVATE); 
+		Editor editor  = pref.edit();
+		editor.putInt(TIPE_KONEKSI, tipeKoneksi);
+		editor.commit();
+	}
+	
 	public int getPort(){
 		SharedPreferences pref = mContext.getSharedPreferences(URL, Activity.MODE_PRIVATE);
 		return pref.getInt(URL_PORT, DaftarUrl.URL_PORT_DEFAULT);
@@ -92,5 +105,7 @@ public class PreferenceMonitoringManager {
     private static final String URL_IP			= "url_ip";
     private static final String	URL_PORT		= "url_port";
     private static final String SERVICE_STATUS	= "service";
+    private static final String KONEKSI			= "koneksi";
+    private static final String TIPE_KONEKSI	= "tipe_koneksi";
     
 }

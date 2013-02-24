@@ -22,7 +22,7 @@ public class SenderSMS{
 	}
 
 
-  	public void sendSMS(final String phoneNumber, final String message){        
+  	public void kirimPesan(final String phoneNumber, final String message){        
 	    String SENT = "SMS_SENT";
 	    String DELIVERED = "SMS_DELIVERED";
 

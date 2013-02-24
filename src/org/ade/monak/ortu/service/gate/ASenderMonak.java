@@ -1,53 +1,62 @@
 package org.ade.monak.ortu.service.gate;
 
-import org.ade.monak.ortu.Variable.Status;
 import org.ade.monak.ortu.Variable.TipeKoneksi;
+import org.ade.monak.ortu.entity.Anak;
+import org.ade.monak.ortu.service.gate.handler.HandlerSenderInternetMonak;
+import org.ade.monak.ortu.service.gate.handler.HandlerSenderSmsMonak;
+import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
+import android.widget.Toast;
 
 public abstract class ASenderMonak {
+	
 	public ASenderMonak(Context context){
-		senderSms 		= new SenderSMS(context, new HandlerSenderSMS(this));
-		this.context 	= context;
+		this.context	= context;
+		senderSms 		= new SenderSMS(context, new HandlerSenderSmsMonak(this));
+		senderInternet 	= new SenderInternetOrtu(context, new HandlerSenderInternetMonak(this));
 	}
 	
-	public abstract void success(int tipeKoneksi);
-	public abstract void failed	(int tipeKoneksi);
+	public abstract void onSuccess(int tipeKoneksi);
+	public abstract void onFailed	(int tipeKoneksi);
 	
-	protected SenderSMS getSenderSMS(){
-		return this.senderSms;
+	public void success(int tipeKoneksi){
+		onSuccess(tipeKoneksi);
 	}
 	
-	protected Context getContext(){
-		return context;
-	}
-	
-	private SenderSMS 	senderSms;
-	private Context 	context;
-	
-	private static final class HandlerSenderSMS extends Handler{
-
-		public HandlerSenderSMS(ASenderMonak senderMonak){
-			this.senderMonak = senderMonak;
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case Status.FAILED:{
-					senderMonak.failed(TipeKoneksi.SMS);
-					break;
-				}case Status.SUCCESS:{
-					senderMonak.success(TipeKoneksi.SMS);
-					break;
-				}
+	public void failed(int tipeKoneksi){
+		switch(tipeKoneksi){
+			case TipeKoneksi.SMS:{
+				Toast.makeText(context, "pengiriman melalui SMS gagal", Toast.LENGTH_SHORT).show();		
+				break;
+			}case TipeKoneksi.INTERNET:{
+				Toast.makeText(context, "pengiriman melalui Internet gagal", Toast.LENGTH_SHORT).show();
+				break;
 			}
 		}
-		
-		private ASenderMonak senderMonak;
-
+		onFailed(tipeKoneksi);
 	}
 
+	public void kirimPesan(Anak anak, String pesan){
+		PreferenceMonitoringManager pref = new PreferenceMonitoringManager(context);
+		int tipeKoneksi = pref.getTipeKoneksi();
+		switch(tipeKoneksi){
+			case TipeKoneksi.SMS:{
+				senderSms.kirimPesan(anak.getNoHpAnak(), pesan);
+				break;
+			}case TipeKoneksi.INTERNET:{
+				senderInternet.kirimPesan(anak.getNoImeiAnak(), pesan);
+				break;
+			}
+		}
+	}
+	
+	public Context getContext(){
+		return this.context;
+	}
+	
+	private final Context 				context;
+	private final SenderSMS 			senderSms;
+	private final SenderInternetOrtu 	senderInternet;
+	
 }

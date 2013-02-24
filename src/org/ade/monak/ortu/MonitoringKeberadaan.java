@@ -1,7 +1,7 @@
 package org.ade.monak.ortu;
 
 import org.ade.monak.ortu.R;
-import org.ade.monak.ortu.boundary.AdminActivity;
+import org.ade.monak.ortu.boundary.Setting;
 import org.ade.monak.ortu.boundary.DaftarAnak;
 import org.ade.monak.ortu.map.view.Peta;
 import org.ade.monak.ortu.service.MonakService;
@@ -51,7 +51,7 @@ public class MonitoringKeberadaan extends Activity implements View.OnClickListen
     }
     
     private static void goToSetting(Context context){
-    	Intent intent = new Intent(context, AdminActivity.class);
+    	Intent intent = new Intent(context, Setting.class);
     	context.startActivity(intent);
     }
 

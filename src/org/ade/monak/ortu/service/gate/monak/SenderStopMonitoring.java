@@ -15,20 +15,18 @@ public class SenderStopMonitoring extends ASenderMonak{
 	}
 	
 	public void sendStopMonitoring(DataMonitoring dataMonitoring){
-
 		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		getSenderSMS().sendSMS(dataMonitoring.getAnak().getNoHpAnak(), TipePesanMonak.STOP_MONITORING+","+dataMonitoring.getIdMonitoring()+","+idGenerator.getIdOrangTua());
+		String pesan = TipePesanMonak.STOP_MONITORING+","+dataMonitoring.getIdMonitoring()+","+idGenerator.getIdOrangTua();
+		kirimPesan(dataMonitoring.getAnak(),pesan);
+	}
+
+	@Override
+	public void onSuccess(int tipeKoneksi) {
+	}
+
+	@Override
+	public void onFailed(int tipeKoneksi) {
 	}
 	
-	@Override
-	public void success(int tipeKoneksi) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void failed(int tipeKoneksi) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

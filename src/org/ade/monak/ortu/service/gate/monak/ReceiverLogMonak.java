@@ -46,8 +46,7 @@ public class ReceiverLogMonak{
 		List<Lokasi> lokasis = LokasisConverter.covertTextToLokasis(textLogs);
 		if(lokasis.size()<=0)return;
 		
-		Anak anak = new Anak();
-		anak.setIdAnak(idAnak);
+		Anak anak = databaseManager.getAnakById(idAnak, false, false);
 		
 		List<Lokasi> lokasisBaru = new ArrayList<Lokasi>();
 		

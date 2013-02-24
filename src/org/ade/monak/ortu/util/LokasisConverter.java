@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monak.ortu.entity.Lokasi;
-import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 public class LokasisConverter {
 
@@ -15,7 +14,11 @@ public class LokasisConverter {
 		List<Lokasi> lokasis = new ArrayList<Lokasi>(); 
 		String[]splitterText = text.split(":");
 		for(int i=0;i<splitterText.length-1;i++){
-			lokasis.add(convertTextToSingleLokasi(splitterText[i]));
+			Lokasi lokasi = convertTextToSingleLokasi(splitterText[i]);
+			if(lokasi!=null){
+				lokasis.add(lokasi);	
+			}
+			
 		}
 		return lokasis;
 	}
@@ -24,12 +27,17 @@ public class LokasisConverter {
 	 * format text : time,mLatitude,mLongitude,
 	 */
 	public final static Lokasi convertTextToSingleLokasi(String text){
-		String[]splitText = text.split(",");
-		Lokasi lokasi = new Lokasi();
-		lokasi.setLatitude(Double.parseDouble(splitText[1]));
-		lokasi.setLongitude(Double.parseDouble(splitText[2]));
-		lokasi.setTime(Long.parseLong(splitText[0]));
-		return lokasi;
+		try{
+			String[]splitText = text.split(",");
+			Lokasi lokasi = new Lokasi();
+			lokasi.setLatitude(Double.parseDouble(splitText[1]));
+			lokasi.setLongitude(Double.parseDouble(splitText[2]));
+			lokasi.setTime(Long.parseLong(splitText[0]));	
+			return lokasi;
+		}catch(ArrayIndexOutOfBoundsException exception){
+			return null;
+		}
+		
 	}
 	
 	public final static String convertLokasisToText(List<Lokasi> lokasis){

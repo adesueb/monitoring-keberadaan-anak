@@ -11,24 +11,28 @@ public class SenderRequestLogMonak extends ASenderMonak{
 
 	public SenderRequestLogMonak(Context context){
 		super(context);
+		this.context = context;
 	}
 	
 	public void sendRequest(Anak anak){
-
-		IDGenerator idGenerator = new IDGenerator(getContext(), null);
-		getSenderSMS().sendSMS(anak.getNoHpAnak(), TipePesanMonak.REQUEST_LOG_LOCATION+","+idGenerator.getIdOrangTua());
+		IDGenerator idGenerator = new IDGenerator(context, null);
+		String pesan = TipePesanMonak.REQUEST_LOG_LOCATION+","+idGenerator.getIdOrangTua();
+		kirimPesan(anak, pesan);
 	}
 	
 	@Override
-	public void success(int tipeKoneksi) {
-		// TODO Auto-generated method stub
+	public void onSuccess(int tipeKoneksi) {
 		
 	}
 
 	@Override
-	public void failed(int tipeKoneksi) {
-		// TODO Auto-generated method stub
+	public void onFailed(int tipeKoneksi) {
 		
 	}
+	
+	private final Context context;
+
+
+
 
 }

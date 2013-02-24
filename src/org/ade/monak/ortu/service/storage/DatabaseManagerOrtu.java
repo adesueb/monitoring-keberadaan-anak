@@ -772,6 +772,10 @@ public class DatabaseManagerOrtu {
 				cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
 			}
 			
+			if(anak.getNoImeiAnak()!=null && !anak.getNoImeiAnak().equals("")){
+				cv.put(COLUMN_NO_IMEI_ANAK, anak.getNoImeiAnak());	
+			}
+			
 			boolean isDeleteLokasi = true;
 			
 			List<Lokasi> lokasis= anak.getLokasis();
@@ -827,6 +831,11 @@ public class DatabaseManagerOrtu {
 		if(anak.getNoHpAnak()!=null && !anak.getNoHpAnak().equals("")){
 			cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
 		}
+		
+		if(anak.getNoImeiAnak()!=null && !anak.getNoImeiAnak().equals("")){
+			cv.put(COLUMN_NO_IMEI_ANAK, anak.getNoImeiAnak());	
+		}
+		
 		List<Lokasi> lokasis= anak.getLokasis();
 		
 		if(lokasis!=null && lokasis.size()>0){
@@ -864,6 +873,10 @@ public class DatabaseManagerOrtu {
 		
 		if(anak.getNoHpAnak()!=null && !anak.getNoHpAnak().equals("")){
 			cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());	
+		}
+		
+		if(anak.getNoImeiAnak()!=null && !anak.getNoImeiAnak().equals("")){
+			cv.put(COLUMN_NO_IMEI_ANAK, anak.getNoImeiAnak());	
 		}
 		
 		Lokasi lastLokasi = anak.getLastLokasi();
@@ -996,6 +1009,7 @@ public class DatabaseManagerOrtu {
 		cv.put(COLUMN_ORTU_ANAK, anak.getIdOrtu());
 		cv.put(COLUMN_NAMA_ANAK, anak.getNamaAnak());
 		cv.put(COLUMN_NO_HP_ANAK, anak.getNoHpAnak());
+		cv.put(COLUMN_NO_IMEI_ANAK, anak.getNoImeiAnak());
 			
 		if(anak.isTrack()){
 			cv.put(COLUMN_TRACK_ANAK, "1");	
@@ -1181,6 +1195,7 @@ public class DatabaseManagerOrtu {
 			int indexOrtuAnak	= cursor.getColumnIndex(COLUMN_ORTU_ANAK);
 			int indexNamaAnak	= cursor.getColumnIndex(COLUMN_NAMA_ANAK);
 			int indexPhoneAnak	= cursor.getColumnIndex(COLUMN_NO_HP_ANAK);
+			int indexImeiAnak	= cursor.getColumnIndex(COLUMN_NO_IMEI_ANAK);
 			int indexLocationAnak 	= cursor.getColumnIndex(COLUMN_LAST_LOCATION_ANAK);
 			int indexTrackAnak	= cursor.getColumnIndex(COLUMN_TRACK_ANAK);
 			
@@ -1196,6 +1211,8 @@ public class DatabaseManagerOrtu {
 			anak.setIdOrtu(cursor.getString(indexOrtuAnak));
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
+			anak.setNoImeiAnak(cursor.getString(indexImeiAnak));
+			
 			Log.d("database manager", "get lokasi dr anak dgn id lokasi : "+cursor.getString(indexLocationAnak));
 			anak.setLastLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
 			if(withPelanggaran){
@@ -1462,6 +1479,7 @@ public class DatabaseManagerOrtu {
 	    		COLUMN_ORTU_ANAK+" VARCHAR(40),"+
 	    		COLUMN_NAMA_ANAK+" VARCHAR(100),"+
 	    		COLUMN_NO_HP_ANAK+" VARCHAR(50),"+
+	    		COLUMN_NO_IMEI_ANAK+" VARCHAR(50),"+
 	    		COLUMN_TRACK_ANAK+" VARCHAR(1))";
 	    
 	    private static final String CREATE_PELANGGARAN = 
@@ -1535,6 +1553,7 @@ public class DatabaseManagerOrtu {
     private static final String COLUMN_ORTU_ANAK			= "ortu";
     private static final String COLUMN_NAMA_ANAK			= "nama";
     private static final String COLUMN_NO_HP_ANAK			= "no_hp";
+    private static final String COLUMN_NO_IMEI_ANAK			= "no_imei";
     private static final String COLUMN_LAST_LOCATION_ANAK 	= "lokasi";
     private static final String COLUMN_TRACK_ANAK			= "track";
     

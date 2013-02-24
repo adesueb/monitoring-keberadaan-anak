@@ -1,26 +1,21 @@
 package org.ade.monak.ortu.service.gate.monak;
 
 import org.ade.monak.ortu.Variable.Status;
-import org.ade.monak.ortu.Variable.TipeKoneksi;
 import org.ade.monak.ortu.Variable.TipePesanMonak;
+import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.DataMonitoring;
 import org.ade.monak.ortu.entity.IPesanData;
 import org.ade.monak.ortu.service.gate.ASenderMonak;
-import org.ade.monak.ortu.service.gate.SenderInternet;
-import org.ade.monak.ortu.service.gate.SenderSMS;
-import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Message;
 
 public class SenderPesanData extends ASenderMonak{
 	
 	public SenderPesanData(Context context, Handler handler){
 		super(context);
-		senderSMS		= getSenderSMS();
-		senderInternet	= new SenderInternet(context, new HandlerSenderInternetMonitoring(this));
+		this.context	= context;
 		this.handler	= handler;
 	}
 	public void sendDataMonitoringBaru(DataMonitoring dataMonitoring){
@@ -43,67 +38,38 @@ public class SenderPesanData extends ASenderMonak{
 	
 	
 	private void kirimPesanData( IPesanData pesanData ){
-		String phoneNumber = "";
+		Anak anak = null;
 		String pesan = "";
+		
 		switch(pesanData.getTipe()){
 			case TipePesanMonak.DATAMONITORING_BARU:{
 			}case TipePesanMonak.DATAMONITORING_UPDATE:{
 			}case TipePesanMonak.DATAMONITORING_DELETE:{
 				DataMonitoring dataMonitoring = (DataMonitoring) pesanData;
-				phoneNumber = dataMonitoring.getAnak().getNoHpAnak();
-				IDGenerator idGenerator = new IDGenerator(getContext(), null);
+				anak	= dataMonitoring.getAnak();
+				IDGenerator idGenerator = new IDGenerator(context, null);
 				pesan = pesanData.getTipe()+","+pesanData.getJsonPesanData()+","+idGenerator.getIdOrangTua();
 				break;
 			}
 		}
-		senderSMS.sendSMS(phoneNumber, pesan);
+		kirimPesan(anak, pesan);
 	}
 	
-	public void sendInternet(){
-		senderInternet.kirimPesanData(pesanData);
-	}
 	
-	public void success(int tipeKoneksi){
+	public void onSuccess(int tipeKoneksi){
 		if(handler==null) return;
 		handler.sendEmptyMessage(Status.SUCCESS);	
 		
 	}
 	
-	public void failed(int tipeKoneksi){
+	public void onFailed(int tipeKoneksi){
 		if(handler==null) return;
-		if(tipeKoneksi==TipeKoneksi.INTERNET){
-			handler.sendEmptyMessage(Status.FAILED);
-		}else{
-			sendInternet();
-		}
+		handler.sendEmptyMessage(Status.FAILED);
+		
 	}
 	
-	private final SenderSMS			senderSMS;
-	private final SenderInternet	senderInternet;
 	private IPesanData 				pesanData;
 	private final Handler			handler;
+	private final Context			context;
 
-	private static final class HandlerSenderInternetMonitoring extends Handler{
-
-		public HandlerSenderInternetMonitoring(SenderPesanData senderMonitoring){
-			this.senderMonitoring = senderMonitoring;
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-				case Status.SUCCESS:{
-					senderMonitoring.success(TipeKoneksi.INTERNET);
-					break;
-				}case Status.FAILED:{
-					senderMonitoring.failed(TipeKoneksi.INTERNET);
-					break;
-				}
-			}
-		}
-		private SenderPesanData senderMonitoring;
-		
-	}
-
-	
 }
