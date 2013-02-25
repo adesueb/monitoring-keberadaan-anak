@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ade.monak.ortu.R;
+import org.ade.monak.ortu.Variable.TipeKoneksi;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Setting extends Activity{
@@ -84,6 +86,20 @@ public class Setting extends Activity{
 				showDialog(DIALOG_CLEAR_ANAK);
 			}
 		});
+		
+		TextView tipeKoneksiText = (TextView) findViewById(R.id.textTipeKoneksi);
+		PreferenceMonitoringManager pref = new PreferenceMonitoringManager(this);
+		
+		switch(pref.getTipeKoneksi()){
+			case TipeKoneksi.SMS:{
+				tipeKoneksiText.setText("sms");
+				break;
+			}case TipeKoneksi.INTERNET:{
+				tipeKoneksiText.setText("internet");
+				break;
+			}
+		}
+		
 	}
 	
 	
@@ -230,6 +246,18 @@ public class Setting extends Activity{
 				}
 				if(pilihanOverlay.size()>0){
 					pref.setTipeKoneksi(pilihanOverlay.get(0));	
+				}
+				
+				TextView tipeKoneksiText = (TextView) Setting.this.findViewById(R.id.textTipeKoneksi);
+				
+				switch(pref.getTipeKoneksi()){
+					case TipeKoneksi.SMS:{
+						tipeKoneksiText.setText("sms");
+						break;
+					}case TipeKoneksi.INTERNET:{
+						tipeKoneksiText.setText("internet");
+						break;
+					}
 				}
 				dialog.dismiss();
 			}

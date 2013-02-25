@@ -594,8 +594,10 @@ public class DatabaseManagerOrtu {
 	
 	public void deleteAllPelanggarans(){
 		List<Pelanggaran> pelanggarans = getAllDataPelanggarans(false, false);
-		for(Pelanggaran pelanggaran:pelanggarans){
-			deletePelanggaran(pelanggaran);
+		if(pelanggarans!=null){
+			for(Pelanggaran pelanggaran:pelanggarans){
+				deletePelanggaran(pelanggaran);
+			}
 		}
 	}
 	
@@ -877,6 +879,8 @@ public class DatabaseManagerOrtu {
 		
 		if(anak.getNoImeiAnak()!=null && !anak.getNoImeiAnak().equals("")){
 			cv.put(COLUMN_NO_IMEI_ANAK, anak.getNoImeiAnak());	
+
+			LogMonakFileManager.debug("imei di simpan no imei anak : "+anak.getNoImeiAnak());
 		}
 		
 		Lokasi lastLokasi = anak.getLastLokasi();
@@ -1004,6 +1008,7 @@ public class DatabaseManagerOrtu {
 	
 	
 	public void addAnak(Anak anak){
+		LogMonakFileManager.debug("add anak");
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID_ANAK, anak.getIdAnak());
 		cv.put(COLUMN_ORTU_ANAK, anak.getIdOrtu());
@@ -1125,6 +1130,7 @@ public class DatabaseManagerOrtu {
 		if(tanggalMonitoring!=null){
 			ContentValues cv = new ContentValues();
 			cv.put(COLUMN_DATE_DATE_MONITORING, tanggalMonitoring.getDate());
+			LogMonakFileManager.debug("simpan tanggal montioring : "+tanggalMonitoring.getDate());
 			cv.put(COLUMN_MONITORING_DATE_MONITORING, tanggalMonitoring.getDataMonitoring().getIdMonitoring());
 			
 			getDb().insert(DATE_MONITORING_TABLE_NAME, null, cv);	
@@ -1212,7 +1218,7 @@ public class DatabaseManagerOrtu {
 			anak.setNamaAnak(cursor.getString(indexNamaAnak));
 			anak.setNoHpAnak(cursor.getString(indexPhoneAnak));
 			anak.setNoImeiAnak(cursor.getString(indexImeiAnak));
-			
+				
 			Log.d("database manager", "get lokasi dr anak dgn id lokasi : "+cursor.getString(indexLocationAnak));
 			anak.setLastLokasi(getLokasiByIdLokasi(cursor.getString(indexLocationAnak)));
 			if(withPelanggaran){
@@ -1371,9 +1377,12 @@ public class DatabaseManagerOrtu {
 		if(cursor!=null && cursor.getCount()>0){
 			int indexId		= cursor.getColumnIndex("_id");
 			int indexDate 	= cursor.getColumnIndex(COLUMN_DATE_DATE_MONITORING);
+			int indexMonitoring2 = cursor.getColumnIndex(COLUMN_MONITORING_DATE_MONITORING);
+			String idMonitoring2 = cursor.getString(indexMonitoring2);
 			
 			String idDateMonitoring = cursor.getInt(indexId)+"";
-			long tanggalMonitoring = cursor.getInt(indexDate);
+			long tanggalMonitoring = cursor.getLong(indexDate);
+			LogMonakFileManager.debug("dapeting tanggal saat edit : "+tanggalMonitoring+" dengan id monitoring :"+idMonitoring2);
 			dateMonitoring.setId(idDateMonitoring);
 			dateMonitoring.setDate(tanggalMonitoring);
 			
@@ -1469,7 +1478,7 @@ public class DatabaseManagerOrtu {
 		}
 		
 		private static final String DATABASE_NAME = "monitoring_keberadaan.db";
-	    private static final int DATABASE_VERSION = 11;
+	    private static final int DATABASE_VERSION = 12;
 		
 	    private static final String CREATE_ANAK = 
 	    		"CREATE TABLE IF NOT EXISTS "+

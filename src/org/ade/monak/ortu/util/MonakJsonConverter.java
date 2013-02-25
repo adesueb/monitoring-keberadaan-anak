@@ -72,6 +72,7 @@ public class MonakJsonConverter {
 				for(int i=0;i<arrTanggals.length();i++){
 					DateMonitoring tanggal = new DateMonitoring();
 					tanggal.setDataMonitoring(dataMonitoring);
+					tanggal.setDate(arrTanggals.getLong(i));
 					tanggals.add(tanggal);
 				}
 				dataMonitoring.setTanggals(tanggals);	

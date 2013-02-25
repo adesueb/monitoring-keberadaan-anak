@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.ade.monak.ortu.Variable.Status;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 
 import android.content.Context;
 import android.os.Handler;
@@ -37,9 +38,10 @@ public class SenderInternetOrtu{
 		} catch (UnknownHostException e) {
 
 			handler.sendEmptyMessage(Status.FAILED);
+			LogMonakFileManager.debug("salah host");
 			e.printStackTrace();
 		} catch (IOException e) {
-
+			LogMonakFileManager.debug("io exception");
 			handler.sendEmptyMessage(Status.FAILED);
 			e.printStackTrace();
 		}
@@ -48,6 +50,6 @@ public class SenderInternetOrtu{
 
 	private Handler handler;
 
-	private static final String IP_SERVER = "49.50.8.137";
+	private static final String IP_SERVER = "192.168.43.10";
 	private static final int PORT  = 2525;
 }

@@ -15,6 +15,7 @@ public class BundleEntityMaker {
 		bundle.putString("nama", anak.getNamaAnak());
 		bundle.putString("orangTua", anak.getIdOrtu());
 		bundle.putString("noHp", anak.getNoHpAnak());
+		bundle.putString("imei", anak.getNoImeiAnak());
 		if(anak.getLastLokasi()!=null){
 			bundle.putString("lastLokasi", anak.getLastLokasi().getId());
 		}

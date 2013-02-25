@@ -15,6 +15,7 @@ public class EntityBundleMaker {
 		anak.setIdAnak(bundle.getString("idAnak"));
 		anak.setNamaAnak(bundle.getString("nama"));
 		anak.setNoHpAnak(bundle.getString("noHp"));
+		anak.setNoImeiAnak(bundle.getString("imei"));
 		anak.setIdOrtu(bundle.getString("orangTua"));
 		Lokasi lokasi = new Lokasi();
 		lokasi.setId(bundle.getString("lastLokasi"));

@@ -10,7 +10,7 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.map.service.GpsManager;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
-import org.ade.monak.ortu.service.gate.monak.SenderRequestLogMonak;
+import org.ade.monak.ortu.service.Notifikasi;
 import org.ade.monak.ortu.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monak.ortu.service.gate.monak.SenderTrackingMode;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
@@ -27,6 +27,7 @@ import com.google.android.maps.MapView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,7 +62,10 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			}
 		}
  
-		
+
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(ns);
+		mNotificationManager.cancel(Notifikasi.PELANGGARAN_NOTIFIKASI);
 		
 		setContentView(R.layout.monitoring_map);
 		

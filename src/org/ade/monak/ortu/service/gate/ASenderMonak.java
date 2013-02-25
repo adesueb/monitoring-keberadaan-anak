@@ -4,6 +4,7 @@ import org.ade.monak.ortu.Variable.TipeKoneksi;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.service.gate.handler.HandlerSenderInternetMonak;
 import org.ade.monak.ortu.service.gate.handler.HandlerSenderSmsMonak;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 
 import android.content.Context;
@@ -45,6 +46,7 @@ public abstract class ASenderMonak {
 				senderSms.kirimPesan(anak.getNoHpAnak(), pesan);
 				break;
 			}case TipeKoneksi.INTERNET:{
+				LogMonakFileManager.debug("mengirim pesan melalui internet dengan no imei :"+anak.getNoImeiAnak());
 				senderInternet.kirimPesan(anak.getNoImeiAnak(), pesan);
 				break;
 			}

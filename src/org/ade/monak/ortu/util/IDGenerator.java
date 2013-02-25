@@ -61,7 +61,7 @@ public class IDGenerator {
 	public String getIdOrangTua(){
 		TelephonyManager telephonyManager = (TelephonyManager)
 				mContext.getSystemService(Context.TELEPHONY_SERVICE);
-		return telephonyManager.getDeviceId();
+		return telephonyManager.getDeviceId()+"B";
 	}
 	
 	private String generateAngkaId(List<String> ids){

@@ -128,7 +128,7 @@ public class InternetPushMonak implements Runnable{
 	private Socket socket;
 	private DataOutputStream dos;
 	private boolean startConnection = false;
-	private static final String IP_SERVER = "49.50.8.137";
+	private static final String IP_SERVER = "192.168.43.10";
 	private static final int PORT  = 4444;
 	private static final String PING	= "?";
 	private static final String PONG	= "Y";

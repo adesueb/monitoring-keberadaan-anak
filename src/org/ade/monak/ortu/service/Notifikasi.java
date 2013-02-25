@@ -59,13 +59,13 @@ public class Notifikasi {
 
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 		
-		int HELLO_ID = 1;
-
-		mNotificationManager.notify(HELLO_ID, notification);
+		mNotificationManager.notify(PELANGGARAN_NOTIFIKASI, notification);
 	}
   
 	private Context context;
 	
 	private NotificationManager mNotificationManager;
+	
+	public final static int PELANGGARAN_NOTIFIKASI = 1;
 
 }

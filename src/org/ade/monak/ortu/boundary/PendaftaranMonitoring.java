@@ -34,6 +34,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -262,6 +263,7 @@ public class PendaftaranMonitoring extends Activity{
 	    		
 	    		DateMonitoring tanggal = tanggals.get(tanggals.size()-1);
 				long timeMillis = tanggal.getDate();
+				LogMonakFileManager.debug("tanggal dalam time milis : "+timeMillis);
 				cal.setTimeInMillis(timeMillis);
 				
 	    		TextView tv = (TextView) findViewById(R.id.monitoringTextTanggal);

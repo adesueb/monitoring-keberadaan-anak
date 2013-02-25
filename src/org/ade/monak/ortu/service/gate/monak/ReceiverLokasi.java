@@ -6,13 +6,13 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.service.BinderHandlerMonak;
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.util.KontrolLog;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class ReceiverLokasi{
 
@@ -29,7 +29,6 @@ public class ReceiverLokasi{
 	
 	private void action(){
 		
-		Log.d("receiver sms", "dapet lokasi dengan lokasi :"+cvs[1]);
 		Lokasi lokasi = new Lokasi();
 		lokasi.setLatitude(Double.parseDouble(cvs[1]));
 		lokasi.setLongitude(Double.parseDouble(cvs[2]));
@@ -42,7 +41,7 @@ public class ReceiverLokasi{
 		Anak anak = databaseManager.getAnakById(cvs[4], false, false);
 		
 		anak.setNoImeiAnak(cvs[5]);
-				
+		LogMonakFileManager.debug("no imei anak : "+anak.getNoImeiAnak());
 		anak.setLastLokasi(lokasi);	
 		lokasi.setAnak(anak);
 		
