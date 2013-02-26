@@ -86,6 +86,7 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 			public void onClick(View v) {
 				Intent intent = new Intent(DaftarAnak.this, Peta.class);
 				startActivity(intent);
+				isStartPeta = true;
 				finish();
 			}
 		});
@@ -293,8 +294,10 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 				Bundle bundle = BundleEntityMaker.makeBundleFromAnak(anak);
 				bundle.putInt(Peta.EXTRA_ACTION, Peta.EXTRA_TRACK);
 				intent.putExtras(bundle);
-				DaftarAnak.this.startActivity(intent);		
+				DaftarAnak.this.startActivity(intent);	
+				isStartPeta = true;
 				dialog.dismiss();
+				finish();
 				return;                  
 	         }  
 	     });  
@@ -312,10 +315,12 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	}
 	
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 		if(bound){
-			handlerBinder.unBindUIHandlerWaitingLocation();
+			if(!isStartPeta){
+				handlerBinder.unBindUIHandlerWaitingLocation();	
+			}
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiHapusAnak();
 			handlerBinder.unBindUIHandlerWaitingKonfirmasiTrack();
 			unbindService(serviceConnection);
@@ -333,6 +338,8 @@ public class DaftarAnak extends ListActivity implements IFormOperation, IBindMon
 	public void setBound(boolean bound) {
 		this.bound = bound;
 	}
+	
+	private boolean isStartPeta = false;
 
 	private ServiceMonakConnection serviceConnection;
 	private IDGenerator			idGenerator;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ade.monak.ortu.R;
 import org.ade.monak.ortu.Variable.Status;
+import org.ade.monak.ortu.Variable.VariableEntity;
 import org.ade.monak.ortu.entity.Anak;
 import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.map.service.GpsManager;
@@ -14,6 +15,7 @@ import org.ade.monak.ortu.service.Notifikasi;
 import org.ade.monak.ortu.service.gate.monak.SenderRequestLokasiAnak;
 import org.ade.monak.ortu.service.gate.monak.SenderTrackingMode;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 import org.ade.monak.ortu.service.util.IBindMonakServiceConnection;
 import org.ade.monak.ortu.service.util.ServiceMonakConnection;
@@ -118,24 +120,24 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 			requestLogMonakAnak(anak);
 		}
 		
-		if(isTrack){
-			Bundle bundle = getIntent().getExtras();
-			Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
-			
-			anak = databaseManager.getAnakById(anak.getIdAnak(), false, false);
-			
-			Lokasi lastLokasi = null;
-			if(anak.getLastLokasi()!=null){
-				 String idLokasi = anak.getLastLokasi().getId();
-				 lastLokasi = databaseManager.getLokasiByIdLokasi(idLokasi);
-			}else{
-				lastLokasi = databaseManager.getAnakById(anak.getIdAnak(), false, false).getLastLokasi();
-			}
-			anak.setLastLokasi(lastLokasi);
-			
-			overlayControllerMonak.setOverlayAnak(anak);
-			
-		}
+//		if(isTrack){
+//			Bundle bundle = getIntent().getExtras();
+//			Anak anak = EntityBundleMaker.getAnakFromBundle(bundle);
+//			
+//			anak = databaseManager.getAnakById(anak.getIdAnak(), false, false);
+//			
+//			Lokasi lastLokasi = null;
+//			if(anak.getLastLokasi()!=null){
+//				 String idLokasi = anak.getLastLokasi().getId();
+//				 lastLokasi = databaseManager.getLokasiByIdLokasi(idLokasi);
+//			}else{
+//				lastLokasi = databaseManager.getAnakById(anak.getIdAnak(), false, false).getLastLokasi();
+//			}
+//			anak.setLastLokasi(lastLokasi);
+//			
+//			overlayControllerMonak.setOverlayAnak(anak);
+//			
+//		}
 		
 		setMenuAmbilLokasi();
 		
@@ -200,9 +202,10 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   				return petaDialog.getDialogSearch();
   			}case DIALOG_LOG : {
   				return petaDialog.getDialogLog();
-  			}case DIALOG_TRACK : {
-  				return petaDialog.getDialogTrack();
   			}
+//  			}case DIALOG_TRACK : {
+//  				return petaDialog.getDialogTrack();
+//  			}
   		}
   		return  null;
 	}
@@ -212,6 +215,19 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   		overlayControllerMonak.removeOverlayPelanggarans();
   		overlayControllerMonak.removeOverlayDataMonitorings();
   		overlayControllerMonak.refreshOverlay(pilihanOverlay);
+  		
+  		for(int i:pilihanOverlay){
+  			switch(i){
+  				case VariableEntity.DATA_MONITORING:{
+  					break;
+  				}case VariableEntity.ANAK:{
+  					requestAllAnakLocations();
+  					break;
+  				}case VariableEntity.PELANGGARAN:{
+  					break;
+  				}
+  			}
+  		}
   	}
   	
   	public void actionOkLogDialog(Anak anak){
@@ -221,13 +237,13 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   		requestLogMonakAnak(anak);
   	}
   	
-  	public void actionOkTrackDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
-  		PetaTrackingController petaTrack = new PetaTrackingController(this);
-  		petaTrack.refreshTrackingController(pilihanOverlay, anaks);
-  		if(bound && handlerBinder!=null && pilihanOverlay.size()>0){
-  			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
-  		}
-  	}
+//  	public void actionOkTrackDialog(List<Integer> pilihanOverlay, List<Anak> anaks){
+//  		PetaTrackingController petaTrack = new PetaTrackingController(this);
+//  		petaTrack.refreshTrackingController(pilihanOverlay, anaks);
+//  		if(bound && handlerBinder!=null && pilihanOverlay.size()>0){
+//  			handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
+//  		}
+//  	}
    	
   	public void refreshLogFromAnak(String idAnak, List<Lokasi> lokasis){
   		overlayControllerMonak.removeOverlayLogs();
@@ -251,6 +267,7 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
   	}
   	
   	private void updateOverlayAnaks(){
+  		LogMonakFileManager.debug("refresh tracking");
 		overlayControllerMonak.removeOverlayAnaks();
   		overlayControllerMonak.setOverlayAnaks();
   	}
@@ -339,10 +356,12 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 	public void setAnakTracks(List<Anak> anakTracks) {
 		this.anakTracks = anakTracks;
 	}
+	
+	
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 //		if(anakTracks != null && anakTracks.size()>0){
 //			for(Anak anak: anakTracks){
 //				if(anak.getNoHpAnak()==null || anak.getNoHpAnak().equals("") || anak.getNamaAnak()==null || anak.getNoHpAnak().equals("")){
@@ -376,7 +395,8 @@ public class Peta extends MapActivity implements IBindMonakServiceConnection{
 
   	public void setBinderHandlerMonak(BinderHandlerMonak binderHandlerMonak) {
 		handlerBinder = binderHandlerMonak;
-		
+		LogMonakFileManager.debug("binding handler");
+		handlerBinder.bindUIHandlerWaitingLocation(new WaitingLocationAnakHandler(this));
 	}
 
 	public void setBound(boolean bound) {

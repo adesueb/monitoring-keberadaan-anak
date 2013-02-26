@@ -57,7 +57,9 @@ public class ReceiverPesanData {
 		pelanggaran.setIdPelanggaran(idGenerator.getIdPelanggaran());
 
 		DataMonitoring dataMonitoring = databaseManager.getDataMonitoringByIdMonitoring(peringatan.getIdMonitoring(), true, false);
-
+		if(dataMonitoring==null){
+			return;
+		}
 		dataMonitoring.setAktif(false);
 		databaseManager.setAktifMonitoring(dataMonitoring);
 		Handler handler = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_KONFIRMASI_AKTIF);

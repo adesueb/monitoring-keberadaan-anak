@@ -54,9 +54,10 @@ public class ReceiverLokasi{
 		KontrolLog.kontrolDeleteLogLokasi(databaseManager);
 		
 		if(binderHandlerMonak==null)return;
-    	
+		LogMonakFileManager.debug("try to get Handler");    	
 		Handler handlerUI = binderHandlerMonak.getSingleBindUIHandler(MonakService.WAITING_LOCATION);
     	if(handlerUI!=null){
+    		LogMonakFileManager.debug("handler get");
     		Message  message = new Message();
         	Bundle data = new Bundle();
         	data.putDouble("latitude", Double.parseDouble(cvs[1]));

@@ -50,6 +50,6 @@ public class SenderInternetOrtu{
 
 	private Handler handler;
 
-	private static final String IP_SERVER = "192.168.43.10";
+	private static final String IP_SERVER = "103.11.252.5";
 	private static final int PORT  = 2525;
 }

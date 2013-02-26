@@ -10,6 +10,7 @@ import org.ade.monak.ortu.entity.Lokasi;
 import org.ade.monak.ortu.entity.Pelanggaran;
 import org.ade.monak.ortu.map.service.GpsManager;
 import org.ade.monak.ortu.service.storage.DatabaseManagerOrtu;
+import org.ade.monak.ortu.service.storage.LogMonakFileManager;
 import org.ade.monak.ortu.service.storage.PreferenceMonitoringManager;
 import org.ade.monak.ortu.util.BundleEntityMaker;
 
@@ -128,6 +129,9 @@ public class OverlayControllerMonak {
   			mapView.getOverlays().add(overlayFactory.getAnak());	
   		}
   		
+
+		mapView.invalidate();
+		
 //  		for(Lokasi lokasi:lokasis){
 //  			RadiusOverlay anakOverlay = new RadiusOverlay(ID_ANAK, lokasi, 100, COLOR_ANAK);
 //  			mapView.getOverlays().add(anakOverlay);
@@ -270,6 +274,7 @@ public class OverlayControllerMonak {
   	}
   	
   	public void removeOverlayAnaks(){
+  		LogMonakFileManager.debug("remove overlay anak");
   		removeOverlay(MonitoringOverlayFactory.ID_ANAK);
   	}
   	
