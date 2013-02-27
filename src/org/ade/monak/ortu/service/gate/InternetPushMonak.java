@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 import org.ade.monak.ortu.service.MonakService;
 import org.ade.monak.ortu.service.storage.LogMonakFileManager;
+import org.ade.monak.ortu.service.storage.URLFileManager;
 import org.ade.monak.ortu.util.IDGenerator;
 
 import android.content.Context;
@@ -28,7 +29,11 @@ public class InternetPushMonak implements Runnable{
 		boolean timeOut = false;
 		try {
 			IDGenerator idGenerator = new IDGenerator(context, null);
-			socket = new Socket(IP_SERVER, PORT);
+			String ip = URLFileManager.getIp();
+			if(ip==null || ip.equals("")){
+				ip = IP_SERVER;
+			}
+			socket = new Socket(ip, PORT);
 			socket.setSoTimeout(20000);
 			dos = new DataOutputStream(socket.getOutputStream());
 			BufferedReader buff = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
@@ -128,7 +133,7 @@ public class InternetPushMonak implements Runnable{
 	private Socket socket;
 	private DataOutputStream dos;
 	private boolean startConnection = false;
-	private static final String IP_SERVER = "103.11.252.5";
+	private static final String IP_SERVER = "103.11.252.4";
 	private static final int PORT  = 4442;
 	private static final String PING	= "?";
 	private static final String PONG	= "Y";
